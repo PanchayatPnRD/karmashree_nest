@@ -18,9 +18,9 @@ import { ContractorModule } from './api/contractor/contractor.module';
     TypeOrmModule.forRoot({
       type: 'mysql',
       port: 3306,
-      username: 'root',
-      password: '',
-      database: 'karmashree',
+      username: 'wbdeptemployment_karmashreeadmin',
+      password: '89lD{wBg{s!q',
+      database: 'wbdeptemployment_karmashree',
       //  host: 'bhowbums72vrebslxsrz-mysql.services.clever-cloud.com',
       // database: 'bhowbums72vrebslxsrz',
       // username: 'usgtbztvqrdg0vjq',
