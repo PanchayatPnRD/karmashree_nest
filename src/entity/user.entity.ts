@@ -84,11 +84,11 @@ export class master_users{
   @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci',  comment: 'Nodal officer Name', nullable: true })
   technical_officer: string;
 
-  @Column({ type: 'int', width: 10, collation: 'utf8mb4_unicode_ci', nullable: true })
-  tech_designation_id: number;
+  @Column({ type: 'varchar', width: 255, collation: 'utf8mb4_unicode_ci', nullable: true })
+  tech_designation_id: string;
 
-  @Column({ type: 'int', width: 10, collation: 'utf8mb4_unicode_ci', nullable: true })
-  tech_mobile: number;
+  @Column({ type: 'varchar', width: 10, collation: 'utf8mb4_unicode_ci', nullable: true })
+  tech_mobile: string;
 
   @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true })
   tech_email: string;

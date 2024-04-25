@@ -112,11 +112,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
   @IsNotEmpty()
   @ApiProperty({default:'1'})
-  tech_designation_id: number;
+  tech_designation_id: string;
 
   @IsNotEmpty()
   @ApiProperty({default:'75767'})
-  tech_mobile: number;
+  tech_mobile: string;
 
   @IsNotEmpty()
   @ApiProperty({default:'wuvfgwv@gmail.com'})

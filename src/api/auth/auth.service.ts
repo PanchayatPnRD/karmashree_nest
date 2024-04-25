@@ -82,11 +82,11 @@ export class AuthService {
           try {
             const message = `Dear User, Your OTP for mobile verification in PNRD is ${otp} valid upto 1 Minute. Please do not share it with anyone. WBPNRD `;
         
-         const response = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+         const response1 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
             "feedid": 392809,
             "username": 9831519878,
             "password": "Sub1kar#",
-            "mobile": 8001073023,
+            "mobile": contactNo,
             "messages": message
           }, {
             headers: {
@@ -94,7 +94,31 @@ export class AuthService {
             }
           });
             
-            return response.data;
+          const response2 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+      "feedid": 392809,
+      "username": 9831519878,
+      "password": "Sub1kar#",
+      "mobile": "8001073023", 
+      "messages": message
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const response3 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+      "feedid": 392809,
+      "username": 9831519878,
+      "password": "Sub1kar#",
+      "mobile": "8335050997", 
+      "messages": message
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  
+    return [response1, response2,response3];
           } catch (error) {
             throw new Error(error.response.data);
           }
@@ -113,10 +137,15 @@ export class AuthService {
         //     return otp;
         // }
 
-        generateOTP() {
-          return "6666";
-      }
+      //   generateOTP() {
+      //     return "6666";
+      // }
               
+      generateOTP() {
+        // Generate a random 4-digit OTP
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        return otp;
+    }
       async verifyOTP(data: VerifyOtpdto): Promise<any> {
         try {
             const userDetails = await this.user.findOne({
@@ -320,13 +349,13 @@ async passwordReset(data: ForgetpasswordResetDto) {
 
 async sendSMSreset(userId: string, contactNo: string, otp: string) {
   try {
-    const message = `Dear {#var#}, OTP to reset your password is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
+    const message = `Dear ${userId}, OTP to reset your password is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
 
- const response = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+ const response1 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
     "feedid": 392809,
     "username": 9831519878,
     "password": "Sub1kar#",
-    "mobile": 8001073023,
+    "mobile": contactNo,
     "messages": message
   }, {
     headers: {
@@ -334,7 +363,31 @@ async sendSMSreset(userId: string, contactNo: string, otp: string) {
     }
   });
     
-    return response.data;
+  const response2 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+    "feedid": 392809,
+    "username": 9831519878,
+    "password": "Sub1kar#",
+    "mobile": "8001073023", 
+    "messages": message
+  }, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const response3 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+    "feedid": 392809,
+    "username": 9831519878,
+    "password": "Sub1kar#",
+    "mobile": "8335050997", 
+    "messages": message
+  }, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  return [response1, response2,response3];
   } catch (error) {
     throw new Error(error.response.data);
   }
