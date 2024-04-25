@@ -128,13 +128,7 @@ export class UserService {
 
        
 
-            if (data.category === 'HD') {
-             
-              const existingHDUser = await this.userRepository.findOne({ where: { departmentNo: data.departmentNo } });
-              if (existingHDUser) {
-                  return { errorCode: 1, message: 'HD user with the department number already exists' };
-              }
-          }
+       
           if (data.category === 'DIST') {
             if (data.dno_status === '1' && data.districtcode) {
                 const existingDistrictUser = await this.userRepository.findOne({ where: { dno_status: '1', category: 'DIST', districtcode: data.districtcode } });
