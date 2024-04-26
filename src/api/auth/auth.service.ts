@@ -477,15 +477,15 @@ async verifyResetOtp(data: ForgetDto) {
                 return { errorCode: 1, message: 'User not found' };
             }
 
-                const hashedPassword = await bcrypt.hash(passwordDto.password, 10);
+                const hashedPassword = await bcrypt.hash(passwordDto.encryptpassword, 10);
                
                 // Update the fields in userToUpdate object
                 userToUpdate.encryptpassword = hashedPassword; 
-                userToUpdate.pwd = passwordDto.password; 
+                userToUpdate.pwd = passwordDto.encryptpassword; 
                 // Assuming this is the correct field for encrypted password
                 userToUpdate.is_passwordreset = '1'; // Assuming this is the correct field for indicating password reset
                // As
-             
+               const updatedUser = await this.user.save(userToUpdate);
 
             return { errorCode: 0, message: 'Password Change successful', };
         } catch (error) {

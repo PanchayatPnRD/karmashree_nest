@@ -35,10 +35,9 @@ export class ForgetpasswordResetDto {
 
         @IsNotEmpty()
         @ApiProperty({ default: "mri" })
-        password: string
+        encryptpassword: string
     
-        @ApiProperty({ default: "",required:true })
-        confirmpassword:string
+      
     
 
      }
