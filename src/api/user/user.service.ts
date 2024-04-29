@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { master_zp, masterdepartment, user_role } from 'src/entity/mastertable.enity';
+import { gram_panchayat, master_ps, master_subdivision, master_zp, masterdepartment, masterdesignation, user_role } from 'src/entity/mastertable.enity';
 import { master_users } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, SendSMSDto } from './dto/user.dto';
@@ -17,6 +17,14 @@ export class UserService {
         @InjectRepository(masterdepartment) private masterdepartmentREpo: Repository<masterdepartment>,
         @InjectRepository(user_role) private roleRepository: Repository<user_role>,
         @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
+        @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
+        @InjectRepository(master_ps) private masterps: Repository<master_ps>,
+        @InjectRepository(masterdesignation) private masterdesignation: Repository<masterdesignation>,
+        @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
+
+        
+
+        
       ) {}
 
       async userCreate(data: CreateUserDto) {
@@ -285,19 +293,46 @@ export class UserService {
 }
       
       
-      async viewUserById(userIndex: number) {
-        try {
-          const user = await this.userRepository.findOne({where:{userIndex}});
-      
-          if (!user) {
-            return { errorCode: 1, message: 'User not found' };
-          }
-      
-          return { errorCode: 0, result: user };
-        } catch (error) {
-          return { errorCode: 1, message: 'Something went wrong', error: error.message };
-        }
+async viewUserById(userIndex: number) {
+  try {
+      const user = await this.userRepository.findOne({ where: { userIndex } });
+
+      if (!user) {
+          return { errorCode: 1, message: 'User not found' };
       }
+
+      const districtDetails = await this.getAllDistricts(user.districtcode);
+      const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+      const subDetails = await this.getAllsub(user.subDivision);
+      const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : 'Unknown';
+      const blockDetails = await this.getAllblock(user.subDivision);
+      const blockname = blockDetails.result ? blockDetails.result.blockname : 'Unknown';
+      const gpDetails = await this.getAllgp(user.gpCode);
+      const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+      const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+      const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+
+      const designationDetails = await this.getDesignationbyid(user.designationID);
+      const designationName = designationDetails.result ? designationDetails.result.designation : 'Unknown';
+      const userDetails = {
+        ...user,
+        districtName: districtName,
+        subDivisionName: subDivisionName,
+        blockname: blockname,
+        gpName: gpName,
+        deptName:deptName,
+        designationName:designationName
+    };
+
+    return {
+        errorCode: 0,
+        result: userDetails
+    };
+
+  } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong', error: error.message };
+  }
+}
 
 
       async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
@@ -362,12 +397,28 @@ export class UserService {
     
             // Fetch districtName for each user
             const userDetails = await Promise.all(users.map(async (user) => {
-                const districtDetails = await this.getAllDistricts(user.districtcode);
-                const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
-                return {
-                    ...user,
-                    districtName: districtName
-                };
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : 'Unknown';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockname : 'Unknown';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : 'Unknown';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+
+              };
             }));
     
             return {
@@ -404,9 +455,25 @@ export class UserService {
           const userDetails = await Promise.all(users.map(async (user) => {
               const districtDetails = await this.getAllDistricts(user.districtcode);
               const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : 'Unknown';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockname : 'Unknown';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : 'Unknown';
               return {
                   ...user,
-                  districtName: districtName
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+
               };
           }));
   
@@ -445,6 +512,103 @@ export class UserService {
             };
         }
     }
+    async getDepatmentbyid(departmentNo: number) {
+      let dept; // Declare dept before the try block
     
+   
+          dept = await this.masterdepartmentREpo.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+      
+    
+     
+    
+        return { errorCode: 0, result: dept };
+  
+       
+      }
+    
+      async getDesignationbyid(designationId: number) {
+        let dept; // Declare dept before the try block
+      
+     
+            dept = await this.masterdesignation.findOne({ where: { designationId },  select: ["designationId","designation"] });
+        
+      
+          if (!dept) {
+            return { errorCode: 1, message: 'Department not found' };
+          }
+      
+          return { errorCode: 0, result: dept };
+       
+        }
+      
+      
+    
+    async getAllsub(subdivCode: string) {
+      try {
+          let districtDetails;
+  
+          if (!subdivCode || subdivCode === '0') {
+              // Handle the case when districtCode is empty or '0', if needed
+              return { errorCode: 1, message: 'Invalid districtCode' };
+          } else {
+              districtDetails = await this.subdivision.findOne({ 
+                  where: { subdivCode }, 
+                  select: ["subdivName","subdivCode"]
+              });
+          }
+
+          return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+      } catch (error) {
+          return {
+              errorCode: 1,
+              message: "Something went wrong while retrieving district details: " + error.message
+          };
+      }
+  }
+  async getAllblock(blockCode: string) {
+    try {
+        let districtDetails;
+
+        if (!blockCode || blockCode === '0') {
+            // Handle the case when districtCode is empty or '0', if needed
+            return { errorCode: 1, message: 'Invalid districtCode' };
+        } else {
+            districtDetails = await this.masterps.findOne({ 
+                where: { blockCode }, 
+                select: ["blockName","blockCode"]
+            });
+        }
+
+        return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+    } catch (error) {
+        return {
+            errorCode: 1,
+            message: "Something went wrong while retrieving district details: " + error.message
+        };
+    }
+}
+
+async getAllgp(gpCode: string) {
+  try {
+      let districtDetails;
+
+      if (!gpCode || gpCode === '0') {
+          // Handle the case when districtCode is empty or '0', if needed
+          return { errorCode: 1, message: 'Invalid districtCode' };
+      } else {
+          districtDetails = await this.grampanchayat.findOne({ 
+              where: { gpCode }, 
+              select: ["gpName","gpCode"],
+          });
+      }
+
+      return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: "Something went wrong while retrieving district details: " + error.message
+      };
+  }
+}
       
 }

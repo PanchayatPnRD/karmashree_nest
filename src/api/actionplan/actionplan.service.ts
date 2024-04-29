@@ -4,10 +4,17 @@ import { Actionplan_master,  } from 'src/entity/actionplan.entity';
 import { Repository } from 'typeorm';
 import { CreateActionPlanDto } from './dto/actionplan.dto';
 import { UpdateActionPlanDto } from './dto/actionplanupdate.dto';
+import { gram_panchayat, master_ps, master_subdivision, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
 @Injectable()
 export class ActionplanService {
     constructor(
         @InjectRepository(Actionplan_master) private actionplan: Repository<Actionplan_master>,
+        @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
+        @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
+        @InjectRepository(master_ps) private masterps: Repository<master_ps>,
+        @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
+        @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
+        @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
       ) {}
 
 
@@ -23,14 +30,51 @@ export class ActionplanService {
 
   async getActionDetails(userIndex: number) {
     try {
-      let actionplan
-         actionplan = await this.actionplan.find({where: {userIndex}});
+        // Find action plan details by user index
+        const actionplans = await this.actionplan.find({ where: { userIndex } });
 
+        if (!actionplans || actionplans.length === 0) {
+            return {
+                errorCode: 1,
+                message: 'Action plans not found for the provided user index',
+            };
+        }
 
+        // Array to store action plan details
+        const actionPlansWithDetails = [];
+
+        for (const actionplan of actionplans) {
+            // Fetch additional details for each action plan
+            const districtDetails = await this.getAllDistricts(actionplan.districtCode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+           
+            const blockDetails = await this.getAllblock(actionplan.blockCode);
+            const blockname = blockDetails.result ? blockDetails.result.blockName : 'Unknown';
+            
+            const gpDetails = await this.getAllgp(actionplan.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+     
+            const deptDetails = await this.getDepatmentbyid(actionplan.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+
+            const sectorDetails = await this.getSectorbyid(actionplan.schemeSector);
+            const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : 'Unknown';
+
+            // Push action plan with details into the array
+            actionPlansWithDetails.push({
+                ...actionplan,
+                districtName: districtName,
+                blockname: blockname,
+                gpName: gpName,
+                deptName: deptName,
+                sectorName:sectorName
+            });
+        }
+
+        // Return the array of action plans with details
         return {
             errorCode: 0,
-            result:  actionplan
-            
+            result: actionPlansWithDetails,
         };
     } catch (error) {
         return {
@@ -39,6 +83,10 @@ export class ActionplanService {
         };
     }
 }
+
+
+
+
 async updateActionPlan(actionSL: number, updateActionPlanDto: UpdateActionPlanDto) {
   try {
       const existingActionPlan = await this.actionplan.findOne({ where: { actionSL }} );
@@ -59,17 +107,169 @@ async updateActionPlan(actionSL: number, updateActionPlanDto: UpdateActionPlanDt
 }
 
 
+
+  async getDepatmentbyid(departmentNo: number) {
+    let dept; // Declare dept before the try block
+  
+ 
+        dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+    
+  
+   
+  
+      return { errorCode: 0, result: dept };
+
+     
+    }
+
+    async getSectorbyid(sectorid: number) {
+        let dept; // Declare dept before the try block
+      
+     
+            dept = await this.mastersector.findOne({ where: { sectorid },  select: ["sectorname","sectorid"] });
+        
+      
+       
+      
+          return { errorCode: 0, result: dept };
+    
+         
+        }
+
 async getActionPlanDetails(actionSL: number) {
     try {
         const existingActionPlan = await this.actionplan.findOne({ where: { actionSL }} );
 
-        return { errorCode: 0, message: 'Action successfully', existingActionPlan: existingActionPlan  };
+        const districtDetails = await this.getAllDistricts(existingActionPlan.districtCode);
+        const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+      
+        const blockDetails = await this.getAllblock(existingActionPlan.blockCode);
+        const blockname = blockDetails.result ? blockDetails.result.blockName : 'Unknown';
+        const gpDetails = await this.getAllgp(existingActionPlan.gpCode);
+        const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+
+        const deptDetails = await this.getDepatmentbyid(existingActionPlan.departmentNo);
+        const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+
+        const sectorDetails = await this.getSectorbyid(existingActionPlan.schemeSector);
+            const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : 'Unknown';
+        // Combine action plan details with additional information
+        const actionPlanWithDetails = {
+            ...existingActionPlan,
+            districtName: districtName,
+         
+            blockname: blockname,
+            gpName: gpName,
+            deptName:deptName,
+            sectorName:sectorName
+
+        };
+
+        return { 
+            errorCode: 0, 
+            message: 'Action successfully', 
+            existingActionPlan: actionPlanWithDetails
+        };
     } catch (error) {
-        return { errorCode: 1, message: 'Failed to update action plan', error: error.message };
+        return { 
+            errorCode: 1, 
+            message: 'Failed to update action plan', 
+            error: error.message 
+        };
     }
+}
+
+
+  async getAllDistricts(districtCode: string) {
+    try {
+        let districtDetails;
+
+        if (!districtCode || districtCode === '0') {
+            // Handle the case when districtCode is empty or '0', if needed
+            return { errorCode: 1, message: 'Invalid districtCode' };
+        } else {
+            districtDetails = await this.masterzp.findOne({ 
+                where: { districtCode }, 
+                select: ["districtName","districtCode"]
+            });
+        }
+
+        return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+    } catch (error) {
+        return {
+            errorCode: 1,
+            message: "Something went wrong while retrieving district details: " + error.message
+        };
+    }
+}
+
+async getAllsub(subdivCode: string) {
+  try {
+      let districtDetails;
+
+      if (!subdivCode || subdivCode === '0') {
+          // Handle the case when districtCode is empty or '0', if needed
+          return { errorCode: 1, message: 'Invalid districtCode' };
+      } else {
+          districtDetails = await this.subdivision.findOne({ 
+              where: { subdivCode }, 
+              select: ["subdivName","subdivCode"]
+          });
+      }
+
+      return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: "Something went wrong while retrieving district details: " + error.message
+      };
+  }
+}
+async getAllblock(blockCode: string) {
+try {
+    let districtDetails;
+
+    if (!blockCode || blockCode === '0') {
+        // Handle the case when districtCode is empty or '0', if needed
+        return { errorCode: 1, message: 'Invalid districtCode' };
+    } else {
+        districtDetails = await this.masterps.findOne({ 
+            where: { blockCode }, 
+            select: ["blockName","blockCode"]
+        });
+    }
+
+    return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+} catch (error) {
+    return {
+        errorCode: 1,
+        message: "Something went wrong while retrieving district details: " + error.message
+    };
+}
+}
+
+async getAllgp(gpCode: string) {
+try {
+  let districtDetails;
+
+  if (!gpCode || gpCode === '0') {
+      // Handle the case when districtCode is empty or '0', if needed
+      return { errorCode: 1, message: 'Invalid districtCode' };
+  } else {
+      districtDetails = await this.grampanchayat.findOne({ 
+          where: { gpCode }, 
+          select: ["gpName","gpCode"],
+      });
   }
 
-  
+  return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+} catch (error) {
+  return {
+      errorCode: 1,
+      message: "Something went wrong while retrieving district details: " + error.message
+  };
+}
+}
 
   
 
