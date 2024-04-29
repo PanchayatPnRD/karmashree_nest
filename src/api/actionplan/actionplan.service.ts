@@ -46,19 +46,19 @@ export class ActionplanService {
         for (const actionplan of actionplans) {
             // Fetch additional details for each action plan
             const districtDetails = await this.getAllDistricts(actionplan.districtCode);
-            const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
            
             const blockDetails = await this.getAllblock(actionplan.blockCode);
-            const blockname = blockDetails.result ? blockDetails.result.blockName : 'Unknown';
+            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
             
             const gpDetails = await this.getAllgp(actionplan.gpCode);
-            const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
      
             const deptDetails = await this.getDepatmentbyid(actionplan.departmentNo);
-            const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
 
             const sectorDetails = await this.getSectorbyid(actionplan.schemeSector);
-            const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : 'Unknown';
+            const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
 
             // Push action plan with details into the array
             actionPlansWithDetails.push({
@@ -141,18 +141,18 @@ async getActionPlanDetails(actionSL: number) {
         const existingActionPlan = await this.actionplan.findOne({ where: { actionSL }} );
 
         const districtDetails = await this.getAllDistricts(existingActionPlan.districtCode);
-        const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+        const districtName = districtDetails.result ? districtDetails.result.districtName : '';
       
         const blockDetails = await this.getAllblock(existingActionPlan.blockCode);
-        const blockname = blockDetails.result ? blockDetails.result.blockName : 'Unknown';
+        const blockname = blockDetails.result ? blockDetails.result.blockName : '';
         const gpDetails = await this.getAllgp(existingActionPlan.gpCode);
-        const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+        const gpName = gpDetails.result ? gpDetails.result.gpName : '';
 
         const deptDetails = await this.getDepatmentbyid(existingActionPlan.departmentNo);
-        const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+        const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
 
         const sectorDetails = await this.getSectorbyid(existingActionPlan.schemeSector);
-            const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : 'Unknown';
+            const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
         // Combine action plan details with additional information
         const actionPlanWithDetails = {
             ...existingActionPlan,

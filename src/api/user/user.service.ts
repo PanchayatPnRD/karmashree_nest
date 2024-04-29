@@ -302,18 +302,18 @@ async viewUserById(userIndex: number) {
       }
 
       const districtDetails = await this.getAllDistricts(user.districtcode);
-      const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+      const districtName = districtDetails.result ? districtDetails.result.districtName : '';
       const subDetails = await this.getAllsub(user.subDivision);
-      const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : 'Unknown';
+      const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : '';
       const blockDetails = await this.getAllblock(user.subDivision);
-      const blockname = blockDetails.result ? blockDetails.result.blockname : 'Unknown';
+      const blockname = blockDetails.result ? blockDetails.result.blockname : '';
       const gpDetails = await this.getAllgp(user.gpCode);
-      const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+      const gpName = gpDetails.result ? gpDetails.result.gpName : '';
       const deptDetails = await this.getDepatmentbyid(user.departmentNo);
-      const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+      const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
 
       const designationDetails = await this.getDesignationbyid(user.designationID);
-      const designationName = designationDetails.result ? designationDetails.result.designation : 'Unknown';
+      const designationName = designationDetails.result ? designationDetails.result.designation : '';
       const userDetails = {
         ...user,
         districtName: districtName,
@@ -398,9 +398,9 @@ async viewUserById(userIndex: number) {
             // Fetch districtName for each user
             const userDetails = await Promise.all(users.map(async (user) => {
               const districtDetails = await this.getAllDistricts(user.districtcode);
-              const districtName = districtDetails.result ? districtDetails.result.districtName : 'Unknown';
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
               const subDetails = await this.getAllsub(user.subDivision);
-              const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : 'Unknown';
+              const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : '';
               const blockDetails = await this.getAllblock(user.blockCode);
               const blockname = blockDetails.result ? blockDetails.result.blockname : 'Unknown';
               const gpDetails = await this.getAllgp(user.gpCode);
@@ -460,11 +460,11 @@ async viewUserById(userIndex: number) {
               const blockDetails = await this.getAllblock(user.blockCode);
               const blockname = blockDetails.result ? blockDetails.result.blockname : 'Unknown';
               const gpDetails = await this.getAllgp(user.gpCode);
-              const gpName = gpDetails.result ? gpDetails.result.gpName : 'Unknown';
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
               const deptDetails = await this.getDepatmentbyid(user.departmentNo);
-              const deptName = deptDetails.result ? deptDetails.result.departmentName : 'Unknown';
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
               const designationDetails = await this.getDesignationbyid(user.designationID);
-              const designationName = designationDetails.result ? designationDetails.result.designation : 'Unknown';
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
                   ...user,
                   districtName: districtName,
