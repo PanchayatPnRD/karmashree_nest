@@ -97,19 +97,56 @@ export class ContractorService {
     }
 
 
-    async getcontractorList(userIndex:number){
+    async getcontractorList(userIndex: number) {
         try {
-            const contractors = await this.Contractor.find({ where: {userIndex} });
-
+            const contractors = await this.Contractor.find({ where: { userIndex },  order: { cont_sl: 'DESC' }  });
+    
+            if (!contractors || contractors.length === 0) {
+                return {
+                    errorCode: 1,
+                    message: 'Contractors not found for the provided user index',
+                };
+            }
+    
+            const contractorsWithDetails = [];
+    
+            await Promise.all(contractors.map(async (contractor) => {
+                try {
+                    const districtDetails = await this.getAllDistricts(contractor.districtcode);
+                    const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+    
+                    const blockDetails = await this.getAllblock(contractor.blockcode);
+                    const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+    
+                    const gpDetails = await this.getAllgp(contractor.gpCode);
+                    const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+    
+                    const deptDetails = await this.getDepatmentbyid(contractor.DepartmentNo);
+                    const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+    
+                    contractorsWithDetails.push({
+                        ...contractor,
+                        districtName: districtName,
+                        blockname: blockname,
+                        gpName: gpName,
+                        deptName: deptName,
+                    });
+                } catch (error) {
+                    // Log the error for this contractor
+                    console.error(`Failed to fetch details for contractor`);
+                }
+            }));
+    
             return {
                 errorCode: 0,
-                result: contractors
+                result: contractorsWithDetails,
             };
-          
         } catch (error) {
+            console.error('Failed to fetch contractors from the database:', error);
             throw new Error('Failed to fetch contractors from the database.');
         }
     }
+    
 
     async getAllDistricts(districtCode: string) {
         try {
