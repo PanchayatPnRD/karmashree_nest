@@ -42,7 +42,7 @@ export class ContractorService {
             await this.Contractor.save(contractor);
             return { errorCode: 0, message: 'Contractor plan created successfully' };
         } catch (error) {
-            return { errorCode: 1, message: 'Failed to create action plan', error: error.message };
+            return { errorCode: 1, message: 'Failed to create contractor', error: error.message };
         }
     }
 
