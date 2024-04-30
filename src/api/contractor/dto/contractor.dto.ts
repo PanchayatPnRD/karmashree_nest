@@ -13,6 +13,12 @@ import { ApiProperty } from '@nestjs/swagger';
         @IsNotEmpty() 
         @IsString()
         contractorGSTIN: string;
+
+
+        @ApiProperty({ example: 'abc' })
+        @IsEmpty() 
+        @IsString()
+        area:string;
     
          @ApiProperty({ example: 'abc' })
         @IsNotEmpty() 
