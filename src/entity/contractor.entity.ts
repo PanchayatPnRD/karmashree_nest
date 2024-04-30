@@ -32,6 +32,9 @@ export class Contractor_master {
     @Column({ type: 'varchar', length: 9 })
     finYear: string;
 
+    @Column({ type: 'varchar'})
+    area: string;
+
     @Column({ type: 'varchar', length: 255, nullable: false })
     contractorName: string;
 
