@@ -205,7 +205,7 @@ export class UserService {
             };
       
             const savedUser = await this.userRepository.save(userData);
-      
+      //
             // Trigger sendSMS after saving the user
            await this.sendSMS(savedUser.userId, savedUser.contactNo, password);
       

@@ -1,92 +1,140 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class masterscheme {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
-  schemeId: number;
+export class Scheme {
+    @PrimaryGeneratedColumn()
+    scheme_sl: number;
 
-  @Index()
-  @Column({ type: 'varchar', length: 255, collation: 'utf8_unicode_ci',comment: 'K-[DEPT Short]-Scheme_id' })
-  scheme_code: string;
+    @Column()
+    schemeId: string;
 
-  @Index()
-  @Column({ type: 'varchar', length: 6, collation: 'utf8_unicode_ci' })
-  schemeArea: string;
+    @Column({ length: 5 })
+    schemeArea: string;
 
-  @Index()
-  @Column({ type: 'int', width: 11 })
-  departmentNo: number;
+    @Column()
+    departmentNo: number;
 
-  @Index()
-  @Column({ type: 'varchar', length: 250, collation: 'utf8_unicode_ci' })
-  schemeName: string;
+    @Column({ length: 2 })
+    districtcode: string;
 
-  @Column({ type: 'int', width: 11, nullable: true })
-  schemeSector: number;
+    @Column({ length: 2, nullable: true })
+    municipalityCode: string ;
 
-  @Column({ type: 'varchar', length: 255, collation: 'utf8_unicode_ci', nullable: true })
-  schemeSubsector: string;
+    @Column({ length: 4, nullable: true })
+    blockcode: string ;
 
-  @Index()
-  @Column({ type: 'varchar', length: 2, collation: 'utf8_unicode_ci' })
-  districtcode: string;
+    @Column({ length: 6, nullable: true })
+    gpCode: string ;
 
-  @Index()
-  @Column({ type: 'varchar', length: 4, collation: 'utf8_unicode_ci' })
-  blockcode: string;
+    @Column({ nullable: true })
+    sansadID: number ;
 
-  @Index()
-  @Column({ type: 'varchar', length: 6, collation: 'utf8_unicode_ci' })
-  gpCode: string;
+    @Column({ length: 9 })
+    village: string;
 
-  @Column({ type: 'date', nullable: true })
-  startedOn: Date;
+    @Column()
+    schemeSector: number;
 
-  @Column({ type: 'date', nullable: true })
-  finishedOn: Date;
+    @Column({ length: 255, nullable: true })
+    schemeSubsector: string ;
 
-  @Column({ type: 'double', precision: 19, scale: 2, nullable: true })
-  projectCost: number;
+    @Column({ length: 255 })
+    schemeName: string;
 
-  @Column({ type: 'double', precision: 19, scale: 2, default: 0 })
-  totalSpent: number;
+    @Column()
+    FundingDepttID: number;
 
-  @Column({ type: 'int', width: 11, default: 0 })
-  totalLabour: number;
+    @Column({ length: 255 })
+    FundingDeptname: string;
 
-  @Column({ type: 'varchar', length: 255, collation: 'utf8_unicode_ci', nullable: true })
-  remarks: string;
+    @Column()
+    ExecutingDepttID: number;
 
-  @Column({ type: 'int', width: 11, default: 0 })
-  currentStatus: number;
+    @Column({ length: 255 })
+    ExecutingDeptName: string;
 
-  @Column({ type: 'int', width: 11 })
-  userIndex: number;
+    @Column()
+    ImplementingAgencyID: number;
 
-  @Column({ type: 'int', width: 11, nullable: true,comment: 'Funding Deptt.' })
-  OrganizerId: number;
+    @Column({ length: 255 })
+    ImplementingAgencyName: string;
 
-  @Column({ type: 'varchar', length: 100, collation: 'utf8_unicode_ci', nullable: true,comment: 'Funding Deptt.' })
-  OrganizerName: string;
+    @Column({ length: 1 })
+    StatusOfWork: string;
 
-  @Column({ type: 'varchar', length: 10, collation: 'utf8_unicode_ci', default: '2023-2024' })
-  finYear: string;
+    @Column({ type: 'date', nullable: true })
+    tentativeStartDate: Date ;
 
-  @Column({ type: 'int', width: 11, nullable: true })
-  sansadID: number;
+    @Column({ type: 'date', nullable: true })
+    ActualtartDate: Date ;
 
-  @Column({ type: 'varchar', length: 100, collation: 'utf8_unicode_ci', default: '-' })
-  village: string;
+    @Column()
+    ExpectedCompletionDate: Date;
 
-  @Column({ type: 'int', width: 11 ,comment: '	Executing Deptt. (Auto fill)'})
-  executingDept: number;
+    @Column('double', { precision: 19, scale: 2 })
+    totalprojectCost: number;
 
-  @Column({ type: 'int', width: 11 ,comment: 'Implementing Agency under the Executing Department'})
-  implementingAgency: number;
+    @Column('double', { precision: 19, scale: 2, nullable: true })
+    totalWageCost: number ;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  submitDate: Date;
+    @Column({ nullable: true })
+    totalLabour: number ;
 
-  @Column({ type: 'timestamp', onUpdate: 'CURRENT_TIMESTAMP', nullable: true })
-  updateTIme: Date;
+    @Column({ nullable: true })
+    totalUnskilledWorkers: number;
+
+    @Column({ nullable: true })
+    totalSemiSkilledWorkers: number;
+
+    @Column({ nullable: true })
+    totalSkilledWorkers: number;
+
+    @Column({ length: 255, nullable: true })
+    workorderNo: string ;
+
+    @Column({ length: 255, nullable: true })
+    ControctorID: number ;
+
+    @Column({ type: 'date', nullable: true })
+    workOderDate: Date ;
+
+    @Column({ length: 1 })
+    schemeStatus: string;
+
+    @Column()
+    CurrentMonth: number;
+
+    @Column()
+    CurrentYear: number;
+
+    @Column({ length: 9 })
+    finYear: string;
+
+    @Column({ length: 255, nullable: true })
+    Remarks: string ;
+
+    @Column({ length: 1, nullable: true })
+    ex1: string ;
+
+    @Column({ length: 1, nullable: true })
+    ex2: string ;
+
+    @Column({ length: 1, nullable: true })
+    ex3: string ;
+
+    @Column({ length: 1, nullable: true })
+    ex4: string ;
+
+    @Column({ length: 1, nullable: true })
+    ex5: string ;
+
+    @Column()
+    userIndex: number;
+
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    SubmitTime: Date;
+
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    UpdateTime: Date;
 }
+

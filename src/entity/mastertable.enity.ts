@@ -267,3 +267,24 @@ export class masterdesignation{
   @Column({ type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci', nullable: true })
   officeName: string;
 }
+
+@Entity()
+export class padistal{
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Index()
+  @Column({ type: 'varchar', length: 5, collation: 'utf8mb4_unicode_ci', nullable: true })
+  department_id: string;
+
+  @Index()
+  @Column({ type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci', nullable: true })
+  departmentName: string;
+
+  @Index()
+  @Column({ type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci', nullable: true })
+  padistalName: string;
+
+
+}
