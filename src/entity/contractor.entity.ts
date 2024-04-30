@@ -14,7 +14,7 @@ export class Contractor_master {
     @Column({ type: 'varchar', length: 2, nullable: false,comment:'from  List or Local Storage' })
     districtcode: string;
 
-    @Column({ type: 'varchar', length: 2, nullable: true,comment:'from  List or Local Storage' })
+    @Column({ type: 'varchar', length: 10, nullable: true,comment:'from  List or Local Storage' })
     Municipality: string;
 
     @Column({ type: 'varchar', length: 4, nullable: true,comment:'from  List or Local Storage' })
