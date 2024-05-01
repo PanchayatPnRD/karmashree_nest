@@ -12,6 +12,8 @@ import { Actionplan_master,  } from './entity/actionplan.entity';
 import { ActionplanModule } from './api/actionplan/actionplan.module';
 import { Contractor_master } from './entity/contractor.entity';
 import { ContractorModule } from './api/contractor/contractor.module';
+import { MasterScheme, MasterSchemeExpenduture } from './entity/scheme.entity';
+import { SchememasterModule } from './api/schememaster/schememaster.module';
 
 @Module({
   imports: [
@@ -21,6 +23,9 @@ import { ContractorModule } from './api/contractor/contractor.module';
       username: 'wbdeptemployment_karmashreeadmin',
       password: '89lD{wBg{s!q',
       database: 'wbdeptemployment_karmashree',
+      // username: 'root',
+      // password: '',
+      // database: 'karmashree',
       //  host: 'bhowbums72vrebslxsrz-mysql.services.clever-cloud.com',
       // database: 'bhowbums72vrebslxsrz',
       // username: 'usgtbztvqrdg0vjq',
@@ -31,11 +36,11 @@ import { ContractorModule } from './api/contractor/contractor.module';
       // password: 'xQW+g~(zC!HA$8',
 
       // database: 'wbdeptemployment_karmashreeTestdb',
-      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master],
+      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master,MasterScheme,MasterSchemeExpenduture],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
-    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule
+    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule
 
   ],
 
