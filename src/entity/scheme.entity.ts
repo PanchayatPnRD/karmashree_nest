@@ -6,8 +6,8 @@ export class MasterScheme {
     scheme_sl: number;
 
     
-    @Column({type: 'int'} )
-    schemeId: number;
+    @Column({type: 'varchar'} )
+    schemeId: string;
 
     @Column({ type: 'varchar',length: 5 })
     schemeArea: string;

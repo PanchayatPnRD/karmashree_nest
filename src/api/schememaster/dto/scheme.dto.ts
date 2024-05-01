@@ -4,10 +4,7 @@ import { IsNotEmpty, IsNumber, IsString, IsDate } from 'class-validator';
 export class MasterSchemeDTO {
  
 
-    @ApiProperty({ example: 1 })
-    @IsNotEmpty()
-    @IsNumber()
-    schemeId: number;
+
 
     @ApiProperty({ example: 'area' })
     @IsNotEmpty()
