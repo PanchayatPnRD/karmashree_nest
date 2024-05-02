@@ -203,7 +203,7 @@ export class MasterSchemeExpenduture {
     @Column({ type: 'varchar',length: 255 })
     ImplementingAgencyName: string;
 
-    @Column({ type: 'varchar',length: 1 })
+    @Column({ type: 'varchar',length: 19 })
     StatusOfWork: string;
 
     @Column({ type: 'date', nullable: true })
@@ -238,7 +238,7 @@ export class MasterSchemeExpenduture {
 
    
 
-    @Column({  type: 'varchar',length: 9 }) 
+    @Column({  type: 'varchar',length: 9, nullable: true }) 
     finYear: string;
 
 
