@@ -22,7 +22,9 @@ export class SchememasterService {
         
     ) {}
 
-    async create(createMasterSchemeDto: MasterSchemeDTO): Promise<MasterScheme> {
+    async create(createMasterSchemeDto: MasterSchemeDTO) {
+
+        try{
         // Create MasterScheme entity from DTO
         const masterScheme = this.masterSchemeRepository.create(createMasterSchemeDto);
 
@@ -77,7 +79,12 @@ export class SchememasterService {
         await this.MasterSchemeExpendutureRepository.save(masterSchemeExpenditure);
     
         
-        return savedMasterScheme;
+       
+
+        return { errorCode: 0, result: savedMasterScheme };
+    } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong', error: error.message };
+    }
     }
 
     async findByUserIndex(userIndex: number) {

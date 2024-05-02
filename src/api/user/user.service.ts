@@ -344,16 +344,14 @@ async viewUserById(userIndex: number) {
           }
     
       
-          userToUpdate.category = updateUserDto.category;
-          userToUpdate.departmentNo = updateUserDto.departmentNo;
+       
           userToUpdate.deptWing = updateUserDto.deptWing;
           userToUpdate.districtcode = updateUserDto.districtcode;
           userToUpdate.subDivision = updateUserDto.subDivision;
           userToUpdate.blockCode = updateUserDto.blockCode;
           userToUpdate.gpCode = updateUserDto.gpCode;
-          userToUpdate.userType = updateUserDto.userType;
-          userToUpdate.role_type = updateUserDto.role_type;
-          userToUpdate.userId = updateUserDto.userId;
+       
+         
         
 
           userToUpdate.area = updateUserDto.area;
