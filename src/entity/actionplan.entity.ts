@@ -70,7 +70,7 @@ export class Actionplan_master {
     @Column({ type: 'varchar', nullable: true  })
     ex5: string;
 
-    @Column({ type: 'varchar',comment:'1 for delete 0 for not delete' })
+    @Column({ type: 'varchar',comment:'1 for delete 0 for not delete', nullable: true  })
     is_deleted: string;
 
 

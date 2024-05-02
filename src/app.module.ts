@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, masterdesignation, mastersector, user_role } from './entity/mastertable.enity';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, masterdesignation, mastersector, pedestalMaster, user_role } from './entity/mastertable.enity';
 import { master_users } from './entity/user.entity';
 import { MastertableModule } from './api/mastertable/mastertable.module';
 import { UserModule } from './api/user/user.module';
@@ -36,7 +36,7 @@ import { SchememasterModule } from './api/schememaster/schememaster.module';
       // password: 'xQW+g~(zC!HA$8',
 
       // database: 'wbdeptemployment_karmashreeTestdb',
-      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master,MasterScheme,MasterSchemeExpenduture],
+      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master,MasterScheme,MasterSchemeExpenduture,pedestalMaster],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
