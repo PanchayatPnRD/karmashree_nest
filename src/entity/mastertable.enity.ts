@@ -269,14 +269,14 @@ export class masterdesignation{
 }
 
 @Entity()
-export class padistal{
+export class pedestalMaster{
 
   @PrimaryGeneratedColumn()
   id: number;
 
   @Index()
   @Column({ type: 'varchar', length: 5, collation: 'utf8mb4_unicode_ci', nullable: true })
-  department_id: string;
+  departmentNo: string;
 
   @Index()
   @Column({ type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci', nullable: true })
@@ -284,7 +284,32 @@ export class padistal{
 
   @Index()
   @Column({ type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci', nullable: true })
-  padistalName: string;
+  pedestalName: string;
+
+
+  @Column({  type: 'varchar',length: 1, nullable: true })
+  ex1: string ;
+
+  @Column({  type: 'varchar',length: 1, nullable: true })
+  ex2: string ;
+
+  @Column({  type: 'varchar',length: 1, nullable: true })
+  ex3: string ;
+
+  @Column({ type: 'varchar', length: 1, nullable: true })
+  ex4: string ;
+
+  @Column({ type: 'varchar', length: 1, nullable: true })
+  ex5: string ;
+
+  @Column({ type: 'int' })
+  userIndex: number;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  SubmitTime: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  UpdateTime: Date;
 
 
 }

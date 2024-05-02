@@ -33,10 +33,10 @@ export class Actionplan_master {
     @Column({ type: 'varchar', length: 10 })
     finYear: string;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true  })
     acMonth: number;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true  })
     acYear: number;
 
     @Column({ type: 'double',  precision: 19, scale: 2 , comment: '		Tentative Total Cost of Schemes', nullable: true })
@@ -55,19 +55,19 @@ export class Actionplan_master {
     averageDays: number;
 
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar', nullable: true  })
     ex1: string;
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar', nullable: true  })
     ex2: string;
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar' , nullable: true })
     ex3: string;
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar' , nullable: true })
     ex4: string;
 
-    @Column({ type: 'varchar' })
+    @Column({ type: 'varchar', nullable: true  })
     ex5: string;
 
     @Column({ type: 'varchar',comment:'1 for delete 0 for not delete' })

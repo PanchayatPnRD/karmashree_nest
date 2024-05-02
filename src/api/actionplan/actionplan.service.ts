@@ -4,7 +4,7 @@ import { Actionplan_master,  } from 'src/entity/actionplan.entity';
 import { Repository } from 'typeorm';
 import { CreateActionPlanDto } from './dto/actionplan.dto';
 import { UpdateActionPlanDto } from './dto/actionplanupdate.dto';
-import { gram_panchayat, master_ps, master_subdivision, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
 @Injectable()
 export class ActionplanService {
     constructor(
@@ -15,6 +15,7 @@ export class ActionplanService {
         @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
+        @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
       ) {}
 
 
@@ -60,6 +61,10 @@ export class ActionplanService {
             const sectorDetails = await this.getSectorbyid(actionplan.schemeSector);
             const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
 
+            const muniDetails = await this.getmunibyid(actionplan.municipalityCode);
+            const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+
+
             // Push action plan with details into the array
             actionPlansWithDetails.push({
                 ...actionplan,
@@ -67,7 +72,8 @@ export class ActionplanService {
                 blockname: blockname,
                 gpName: gpName,
                 deptName: deptName,
-                sectorName:sectorName
+                sectorName:sectorName,
+                muniName:muniName
             });
         }
 
@@ -84,7 +90,19 @@ export class ActionplanService {
     }
 }
 
+async getmunibyid(urbanCode: string) {
+    let dept; // Declare dept before the try block
+  
+ 
+        dept = await this.masterurban.findOne({ where: { urbanCode },  select: ["urbanName","urbanCode"] });
+    
+  
+   
+  
+      return { errorCode: 0, result: dept };
 
+     
+    }
 
 
 async updateActionPlan(actionSL: number, updateActionPlanDto: UpdateActionPlanDto) {

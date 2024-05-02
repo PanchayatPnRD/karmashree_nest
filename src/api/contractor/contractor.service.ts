@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Contractor_master } from 'src/entity/contractor.entity';
 import { Repository } from 'typeorm';
 import { CreateContractorDto } from './dto/contractor.dto';
-import { gram_panchayat, master_ps, master_subdivision, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
 
 @Injectable()
 export class ContractorService {
@@ -14,6 +14,9 @@ export class ContractorService {
         @InjectRepository(master_ps) private masterps: Repository<master_ps>,
         @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
+        @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
+
+        
        
     
 
@@ -129,6 +132,11 @@ export class ContractorService {
     
                     const deptDetails = await this.getDepatmentbyid(contractor.DepartmentNo);
                     const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+
+                    const muniDetails = await this.getmunibyid(contractor.Municipality);
+                    const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+
+                    
     
                     contractorsWithDetails.push({
                         ...contractor,
@@ -136,6 +144,7 @@ export class ContractorService {
                         blockname: blockname,
                         gpName: gpName,
                         deptName: deptName,
+                        muniName: muniName,
                     });
                 } catch (error) {
                     // Log the error for this contractor
@@ -259,5 +268,21 @@ export class ContractorService {
 
      
     }
+
+    async getmunibyid(urbanCode: string) {
+        let dept; // Declare dept before the try block
+      
+     
+            dept = await this.masterurban.findOne({ where: { urbanCode },  select: ["urbanName","urbanCode"] });
+        
+      
+       
+      
+          return { errorCode: 0, result: dept };
+    
+         
+        }
+
+    
 
 }

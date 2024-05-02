@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, masterdesignation, mastersector, user_role } from 'src/entity/mastertable.enity';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, masterdesignation, mastersector, pedestalMaster, user_role } from 'src/entity/mastertable.enity';
 import { In, Repository } from 'typeorm';
-import { DeptDto, DesignationDto, RoleDto } from './dto/role.dto';
+import { DeptDto, DesignationDto, PedestalDto, RoleDto } from './dto/role.dto';
 
 @Injectable()
 export class MastertableService {
@@ -11,6 +11,8 @@ export class MastertableService {
         @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
         @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
         @InjectRepository(master_urban) private urban: Repository<master_urban>,
+        @InjectRepository(pedestalMaster) private pedestalMaster: Repository<pedestalMaster>,
+
 
         @InjectRepository(master_ps) private masterps: Repository<master_ps>,
         @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
@@ -574,5 +576,47 @@ async getpdf(id:number) {
   }
 }
 
+async createPedestal(data: PedestalDto) {
+  try {
+    if (await this.pedestalMaster.findOne({ where: { pedestalName: data.pedestalName } }) == null) {
+      const newRole = await this.pedestalMaster.create({
+        pedestalName: data.pedestalName,
+        departmentName:data.departmentName,
+        departmentNo:data.departmentNo,
+        userIndex:data.userIndex
+      });
+      const result = await this.pedestalMaster.save(newRole);
+      return {
+        errorCode: 0,
+        result: result,
+      };
+    } else {
+      return {
+        errorCode: 1,
+        message: "newRole is already created",
+      };
+    }
+  } catch (error) {
+    return {
+      errorCode: 1,
+      message: "Something went wrong",
+    };
+  }
+}
 
+
+async getAllPedestal() {
+  try {
+      const pedestalMaster = await this.pedestalMaster.find();
+      return {
+          errorCode: 0,
+          result: pedestalMaster
+      };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: "Something went wrong"
+      };
+  }
+}
 }

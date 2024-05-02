@@ -10,6 +10,7 @@ import * as os from 'os';
 import * as bcrypt from "bcrypt";
 import {  VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
 import { ForgetDto, ForgetpasswordResetDto, passwordcDto } from './dto/dto/forgot-password.dto';
+import { masterdepartment } from 'src/entity/mastertable.enity';
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = 'NODEAPI'
 @Injectable()
@@ -17,6 +18,7 @@ export class AuthService {
         constructor(
   
             @InjectRepository(master_users) private user: Repository<master_users>,
+            @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
             private jwtService: JwtService
     
           ) {}
@@ -194,6 +196,7 @@ export class AuthService {
                 email: userDetails.email,
                 category: userDetails.category,
                 departmentNo: userDetails.departmentNo,
+                
                 deptWing: userDetails.deptWing,
                 area: userDetails.area,
                 districtcode: userDetails.districtcode,
@@ -237,6 +240,15 @@ export class AuthService {
             };
         }
     }
+
+    async getDepatmentbyid(departmentNo: number) {
+      let dept; 
+
+          dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+
+        return { errorCode: 0, result: dept };
+
+      }
         async verifyToken(token: string) {
             try {
               const payload = this.jwtService.verify(token, { secret: process.env.SECRET });

@@ -62,4 +62,23 @@ import { ApiProperty } from '@nestjs/swagger';
       }
 
       
+
+      export class PedestalDto{
+
+        @ApiProperty({ example: 1 })
+        @IsNotEmpty()
+        departmentNo: string;
+      
+        @ApiProperty({ example: 'abc' })
+        @IsNotEmpty() 
+        departmentName: string;
+      
+        @ApiProperty({ example: 'abc' })
+        @IsNotEmpty() 
+        pedestalName: string;
+
+        @ApiProperty({ example: 1 })
+        @IsNotEmpty()
+        userIndex:number;
+      }
  
