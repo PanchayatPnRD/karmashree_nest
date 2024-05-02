@@ -186,6 +186,10 @@ export class MastertableController {
             return { errorCode: 1, message: 'Internal server error' };
         }
     }
-
+    
+    @Get('getAllPedestal')
+    async getAllPedestal() {
+      return await this.mastertableService.getAllPedestal();
+    }
 
 }
