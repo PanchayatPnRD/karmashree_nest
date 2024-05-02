@@ -49,13 +49,19 @@ export class ContractorService {
     
     async getAllContractors(){
         try {
-            const contractors = await this.Contractor.find({ select: ['cont_sl', 'contractorGSTIN'] });
+            const contractors = await this.Contractor.find({ select: ['cont_sl', 'contractorGSTIN', 'contractorName'] });
+
+          
+            const concatenatedContractors = contractors.map(contractor => {
+                const contractorName = contractor.contractorName ? contractor.contractorName : '';
+                const contractorNameGst = `${contractorName}-${contractor.contractorGSTIN}`;
+                return { cont_sl: contractor.cont_sl, contractorNameGst };
+            });
 
             return {
                 errorCode: 0,
-                result: contractors
+                result: concatenatedContractors,
             };
-          
         } catch (error) {
             throw new Error('Failed to fetch contractors from the database.');
         }
