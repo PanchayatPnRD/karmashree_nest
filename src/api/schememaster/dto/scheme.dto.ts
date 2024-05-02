@@ -174,7 +174,7 @@ export class MasterSchemeDTO {
 
     @ApiProperty({ example: '2023-2024' })
     @IsNotEmpty()
-    @IsString()
+   
     finYear: string;
 
     @ApiProperty({ example: 'remarks' })

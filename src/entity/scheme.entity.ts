@@ -60,7 +60,7 @@ export class MasterScheme {
     @Column({ type: 'varchar',length: 255 })
     ImplementingAgencyName: string;
 
-    @Column({ type: 'varchar',length: 1 })
+    @Column({ type: 'varchar',length: 15 })
     StatusOfWork: string;
 
     @Column({ type: 'date', nullable: true })
@@ -113,7 +113,7 @@ export class MasterScheme {
     @Column({ type: 'int' })
     CurrentYear: number;
 
-    @Column({  type: 'varchar',length: 9 }) 
+    @Column({  type: 'varchar',length: 9, nullable: true }) 
     finYear: string;
 
     @Column({  type: 'varchar',length: 255, nullable: true })
