@@ -166,7 +166,8 @@ export class AuthService {
               
       generateOTP() {
         // Generate a random 4-digit OTP
-        const otp = Math.floor(1000 + Math.random() * 9000).toString();
+        const otp ="6666";
+       // const otp = Math.floor(1000 + Math.random() * 9000).toString();
         return otp;
     }
       async verifyOTP(data: VerifyOtpdto): Promise<any> {

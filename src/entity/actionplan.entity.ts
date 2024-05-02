@@ -39,10 +39,10 @@ export class Actionplan_master {
     @Column({ type: 'int' })
     acYear: number;
 
-    @Column({ type: 'double',  comment: '		Tentative Total Cost of Schemes', nullable: true })
+    @Column({ type: 'double',  precision: 19, scale: 2 , comment: '		Tentative Total Cost of Schemes', nullable: true })
     tentativeCostOfScheme: number;
 
-    @Column({ type: 'int',  comment: '	Tentative Total Wage to be paid in the Schemes', nullable: true })
+    @Column({ type: 'double',  precision: 19, scale: 2 ,   comment: '	Tentative Total Wage to be paid in the Schemes', nullable: true })
     totWagesPaid: number;
 
     @Column({ type: 'int',  comment: '	Total Persondays to be Generated', nullable: true })
@@ -51,7 +51,7 @@ export class Actionplan_master {
     @Column({ type: 'int',  comment: '	Total no. of Job Card Holders to be engaged', nullable: true })
     totJobCard: number;
 
-    @Column({ type: 'double',  comment: '		Average Days of Employment to be provided per family', nullable: true })
+    @Column({ type: 'int',  comment: '		Average Days of Employment to be provided per family', nullable: true })
     averageDays: number;
 
 
