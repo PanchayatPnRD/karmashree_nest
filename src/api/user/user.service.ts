@@ -362,14 +362,31 @@ async viewUserById(userIndex: number) {
           
           userToUpdate.officeName_gp = updateUserDto.officeName_gp;
           userToUpdate.userName = updateUserDto.userName;
+
           userToUpdate.contactNo = updateUserDto.contactNo;
+
           userToUpdate.email = updateUserDto.email;
+
           userToUpdate.designationID = updateUserDto.designationID;
+
           userToUpdate.UserAddress = updateUserDto.UserAddress;
-          userToUpdate.entryBy = updateUserDto.entryBy;
-          userToUpdate.created_by = updateUserDto.created_by;
+
+        
           userToUpdate.currentStatus = updateUserDto.currentStatus;
-       
+
+          
+          userToUpdate.UserAddress = updateUserDto.UserAddress;
+
+
+          userToUpdate.technical_officer = updateUserDto.technical_officer;
+          userToUpdate.tech_designation_id = updateUserDto.tech_designation_id;
+
+          userToUpdate.tech_designation_id = updateUserDto.tech_designation_id;
+          userToUpdate.tech_mobile = updateUserDto.tech_mobile;
+      
+          userToUpdate.tech_email = updateUserDto.tech_email;
+
+          userToUpdate.role_type = updateUserDto.role_type;
           const updatedUser = await this.userRepository.save(userToUpdate);
     
           return { errorCode: 0, result: updatedUser };

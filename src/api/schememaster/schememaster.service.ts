@@ -77,11 +77,9 @@ export class SchememasterService {
         masterSchemeExpenditure.userIndex = createMasterSchemeDto.userIndex;
 
         await this.MasterSchemeExpendutureRepository.save(masterSchemeExpenditure);
-    
-        
-       
 
-        return { errorCode: 0, result: savedMasterScheme };
+//result: savedMasterScheme
+        return { errorCode: 0  ,message:"Scheme created successfully" };
     } catch (error) {
       return { errorCode: 1, message: 'Something went wrong', error: error.message };
     }
