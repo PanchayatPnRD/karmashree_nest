@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, masterdesignation, mastersector, pedestalMaster, user_role } from 'src/entity/mastertable.enity';
 import { In, Repository } from 'typeorm';
 import { DeptDto, DesignationDto, PedestalDto, RoleDto } from './dto/role.dto';
+import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
 
 @Injectable()
 export class MastertableService {
@@ -507,36 +508,38 @@ async getdesignationfordnogp(designationIds: number[]) {
   }
     
   
-  // async updateDesignation(designationId: number, data: DesignationDto) {
-  //   try {
-  //     const designationToUpdate = await this.masterdepartment.findOne({ where: { designationId } });
-  //     if (!designationToUpdate) {
-  //       return {
-  //         errorCode: 1,
-  //         message: "Designation not found",
-  //       };
-  //     }
+  async updateDept(departmentNo: number, data: UpdateDto) {
+    try {
+      const updateDept = await this.masterdepartment.findOne({ where: { departmentNo } });
+      if (!updateDept) {
+        return {
+          errorCode: 1,
+          message: "dept not found",
+        };
+      }
 
-  //     // Update fields
+      // Update fields
     
-  //     designationToUpdate.designationLevel = data.designationLevel;
-  //     designationToUpdate.designation = data.designation;
-  //     designationToUpdate.designationstage = data.designationstage;
-  //     designationToUpdate.userType = data.userType;
-  //     designationToUpdate.officeName = data.officeName;
+      updateDept.departmentName = data.departmentName;
+      updateDept.deptshort = data.deptshort;
+      updateDept.labourConverge = data.labourConverge;
+      updateDept.organization = data.organization;
+     
 
-  //     const updatedDesignation = await this.masterdesignation.save(designationToUpdate);
-  //     return {
-  //       errorCode: 0,
-  //       result: updatedDesignation,
-  //     };
-  //   } catch (error) {
-  //     return {
-  //       errorCode: 1,
-  //       message: "Something went wrong",
-  //     };
-  //   }
-  // }
+
+
+      const updatedDept = await this.masterdepartment.save(updateDept);
+      return {
+        errorCode: 0,
+        result: updatedDept,
+      };
+    } catch (error) {
+      return {
+        errorCode: 1,
+        message: "Something went wrong",
+      };
+    }
+  }
 
   async getMunicipality(districtCode: string) {
     try {
@@ -605,9 +608,10 @@ async createPedestal(data: PedestalDto) {
 }
 
 
-async getAllPedestal() {
+async getAllPedestal(departmentNo:string) {
   try {
-      const pedestalMaster = await this.pedestalMaster.find();
+      //const pedestalMaster = await this.pedestalMaster.find();
+      const pedestalMaster = await this.pedestalMaster.find({ where: { departmentNo }, select: ["id", "pedestalName"] });
       return {
           errorCode: 0,
           result: pedestalMaster
@@ -619,4 +623,37 @@ async getAllPedestal() {
       };
   }
 }
+
+async updatePedestal(id: number, data: UpdatePedestalDto) {
+  try {
+    const existingPedestal = await this.pedestalMaster.findOne({where:{id}});
+    
+    if (existingPedestal) {
+      
+      existingPedestal.departmentName = data.departmentName;
+      existingPedestal.departmentNo = data.departmentNo;
+      existingPedestal.pedestalName = data.pedestalName;
+      existingPedestal.userIndex = data.userIndex;
+      
+      
+      const updatedPedestal = await this.pedestalMaster.save(existingPedestal);
+      
+      return {
+        errorCode: 0,
+        result: updatedPedestal,
+      };
+    } else {
+      return {
+        errorCode: 1,
+        message: "Pedestal not found",
+      };
+    }
+  } catch (error) {
+    return {
+      errorCode: 1,
+      message: "Something went wrong",
+    };
+  }
+}
+
 }

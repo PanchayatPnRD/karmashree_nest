@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, Post, Put, Query } from '@nestjs/common';
 import { MastertableService } from './mastertable.service';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { DeptDto, DesignationDto, RoleDto } from './dto/role.dto';
+import { DeptDto, DesignationDto, PedestalDto, RoleDto } from './dto/role.dto';
+import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
 @ApiTags('Mastertables')
 
 @Controller('api/mastertable')
@@ -149,6 +150,11 @@ export class MastertableController {
       return await this.mastertableService.updateDesignation(designationId, data);
     }
 
+    @Post('UpdateDepartment/:departmentNo')
+    async updateDept(@Param('departmentNo') departmentNo: number, @Body() data: UpdateDto) {
+      return await this.mastertableService.updateDept(departmentNo, data);
+    }
+
     @Post('createDepartment')
     async createDepartment(@Body() data: DeptDto) {
       return await this.mastertableService.createDepartment(data);
@@ -187,9 +193,19 @@ export class MastertableController {
         }
     }
     
-    @Get('getAllPedestal')
-    async getAllPedestal() {
-      return await this.mastertableService.getAllPedestal();
+    @Post('createPedestal')
+    async createPedestal(@Body() data: PedestalDto) {
+      return await this.mastertableService.createPedestal(data);
+    }
+  
+    @Get('getAllPedestal/:departmentNo')
+    async getAllPedestal(@Param('departmentNo')departmentNo:string) {
+      return await this.mastertableService.getAllPedestal(departmentNo);
+    }
+
+    @Post('updatePedestal/:id')
+    async updatePedestal(@Param('id') id: number, @Body() data: UpdatePedestalDto) {
+      return await this.mastertableService.updatePedestal(id, data);
     }
 
 }
