@@ -624,6 +624,22 @@ async getAllPedestal(departmentNo:string) {
   }
 }
 
+async PedestalList() {
+  try {
+      //const pedestalMaster = await this.pedestalMaster.find();
+      const pedestalMaster = await this.pedestalMaster.find();
+      return {
+          errorCode: 0,
+          result: pedestalMaster
+      };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: "Something went wrong"
+      };
+  }
+}
+
 async updatePedestal(id: number, data: UpdatePedestalDto) {
   try {
     const existingPedestal = await this.pedestalMaster.findOne({where:{id}});

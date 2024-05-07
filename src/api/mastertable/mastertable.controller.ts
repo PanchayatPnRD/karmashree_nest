@@ -208,4 +208,12 @@ export class MastertableController {
       return await this.mastertableService.updatePedestal(id, data);
     }
 
+
+    @Get('PedestalList')
+    async PedestalList() {
+      return await this.mastertableService.PedestalList();
+    }
+
+
+
 }
