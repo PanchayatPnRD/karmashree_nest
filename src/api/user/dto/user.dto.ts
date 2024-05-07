@@ -34,6 +34,10 @@ import { ApiProperty } from '@nestjs/swagger';
         @IsNotEmpty()
         @ApiProperty({ default: '1' })
         blockCode: string;
+
+        @IsNotEmpty()
+        @ApiProperty({ default: '1' })
+        municipalityCode:string;
       
        
         @IsNotEmpty()

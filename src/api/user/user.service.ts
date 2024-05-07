@@ -169,7 +169,9 @@ export class UserService {
               departmentNo: data.departmentNo,
               deptWing: data.deptWing,
               districtcode: data.districtcode,
+              municipalityCode:data.municipalityCode,
               subDivision: data.subDivision,
+              
               blockCode: data.blockCode,
               gpCode: data.gpCode,
               userType: data.userType,
@@ -266,7 +268,7 @@ export class UserService {
       "feedid": 392809,
       "username": 9831519878,
       "password": "Sub1kar#",
-      "mobile": "8240341461", 
+      "mobile": "8240341461",
       "messages": message
     }, {
       headers: {
@@ -347,6 +349,7 @@ async viewUserById(userIndex: number) {
        
           userToUpdate.deptWing = updateUserDto.deptWing;
           userToUpdate.districtcode = updateUserDto.districtcode;
+          userToUpdate.municipalityCode= updateUserDto.municipalityCode,
           userToUpdate.subDivision = updateUserDto.subDivision;
           userToUpdate.blockCode = updateUserDto.blockCode;
           userToUpdate.gpCode = updateUserDto.gpCode;

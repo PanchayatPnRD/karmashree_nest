@@ -24,6 +24,10 @@ export class master_users{
   @Column({ type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci' })
   districtcode: string;
 
+  @Index()
+  @Column({ type: 'varchar', length: 5, collation: 'utf8mb4_unicode_ci',nullable:true })
+  municipalityCode: string;
+
   @Column({ type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci', nullable: true })
   subDivision: string;
 
