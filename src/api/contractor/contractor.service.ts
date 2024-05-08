@@ -4,6 +4,7 @@ import { Contractor_master } from 'src/entity/contractor.entity';
 import { Repository } from 'typeorm';
 import { CreateContractorDto } from './dto/contractor.dto';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
+import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/entity/workrequigition.entity';
 
 @Injectable()
 export class ContractorService {
@@ -15,8 +16,9 @@ export class ContractorService {
         @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
+    
 
-        
+    
        
     
 

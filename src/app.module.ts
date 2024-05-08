@@ -15,17 +15,20 @@ import { ContractorModule } from './api/contractor/contractor.module';
 import { MasterScheme, MasterSchemeExpenduture } from './entity/scheme.entity';
 import { SchememasterModule } from './api/schememaster/schememaster.module';
 
+import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisition.module';
+import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from './entity/workrequigition.entity';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
       port: 3306,
-      username: 'wbdeptemployment_karmashreeadmin',
-      password: '89lD{wBg{s!q',
-      database: 'wbdeptemployment_karmashree',
-      // username: 'root',
-      // password: '',
-      // database: 'karmashree',
+      // username: 'wbdeptemployment_karmashreeadmin',
+      // password: '89lD{wBg{s!q',
+      // database: 'wbdeptemployment_karmashree',
+      username: 'root',
+      password: '',
+      database: 'karmashree',
       //  host: 'bhowbums72vrebslxsrz-mysql.services.clever-cloud.com',
       // database: 'bhowbums72vrebslxsrz',
       // username: 'usgtbztvqrdg0vjq',
@@ -36,11 +39,11 @@ import { SchememasterModule } from './api/schememaster/schememaster.module';
       // password: 'xQW+g~(zC!HA$8',
 
       // database: 'wbdeptemployment_karmashreeTestdb',
-      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master,MasterScheme,MasterSchemeExpenduture,pedestalMaster],
+      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master,MasterScheme,MasterSchemeExpenduture,pedestalMaster,MasterWorkerRequirement,MasterWorkerRequirement_allotment],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
-    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule
+    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule, WorkerrequisitionModule
 
   ],
 

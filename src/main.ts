@@ -9,6 +9,7 @@ import { AuthModule } from './api/auth/auth.module';
 import { ActionplanModule } from './api/actionplan/actionplan.module';
 import { ContractorModule } from './api/contractor/contractor.module';
 import { SchememasterModule } from './api/schememaster/schememaster.module';
+import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisition.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,7 +27,7 @@ async function bootstrap() {
   
     
   const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule],
+    include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule,WorkerrequisitionModule],
   });
   
   SwaggerModule.setup('api', app, document);
