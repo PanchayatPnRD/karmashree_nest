@@ -16,9 +16,9 @@ export class WorkerrequisitionController {
 
 
     @Get('workerrequisitionlist')
-  async getAllWork(@Query('districtcode') districtcode: string, @Query('gpCode') gpCode?: string) {
+  async getAllWork(@Query('districtcode') districtcode: string, @Query('gpCode') blockcode?: string) {
     try {
-      const result = await this.workerrequisitionService.getallwork(districtcode, gpCode);
+      const result = await this.workerrequisitionService.getallwork(districtcode, blockcode);
       return result;
     } catch (error) {
       return { errorCode: 1, message: 'Something went wrong', error: error.message };

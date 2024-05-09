@@ -61,12 +61,12 @@ export class WorkerrequisitionService {
       }
 
 
-      async getallwork(districtcode: string, gpCode?: string) {
+      async getallwork(districtcode: string, blockcode?: string) {
         try {
           let work;
     
-          if (gpCode) {
-            work = await this.masterWorkerRequirement.find({ where: { districtcode, gpCode } });
+          if (blockcode) {
+            work = await this.masterWorkerRequirement.find({ where: { districtcode, blockcode } });
           } else {
             work = await this.masterWorkerRequirement.find({ where: { districtcode } });
           }
