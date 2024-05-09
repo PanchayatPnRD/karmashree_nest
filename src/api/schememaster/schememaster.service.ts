@@ -99,7 +99,29 @@ export class SchememasterService {
         }
     }
     
-
+    async getAllScheme() {
+        try {
+            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear'] });
+    
+            const concatenatedScheme = schemes.map(scheme => {
+                const Name = scheme.schemeName ? scheme.schemeName : '';
+                const schemeId = scheme.schemeId ? scheme.schemeId : '';
+                const finYear = scheme.finYear ? [scheme.finYear] : []; // Wrap finYear in []
+    
+                const schemename = `${schemeId}-${Name}-[${finYear}]`;
+    
+                return { scheme_sl: scheme.scheme_sl, schemename };
+            });
+    
+            return {
+                errorCode: 0,
+                result: concatenatedScheme,
+            };
+        } catch (error) {
+            throw new Error('Failed to fetch contractors from the database.');
+        }
+    }
+    
     async getschemeList(userIndex: number) {
         try {
             const scheme = await this.masterSchemeRepository.find({ where: { userIndex },  order: { scheme_sl: 'DESC' }  });

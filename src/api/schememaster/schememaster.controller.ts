@@ -23,4 +23,14 @@ export class SchememasterController {
             return { success: false, message: 'Failed to fetch master scheme expenditures.', error };
         }
     }
+
+    @Get('getAllScheme')
+    async getAllScheme(){
+        try{
+            const scheme = await this.masterSchemeService.getAllScheme()
+            return scheme;
+        }catch(error){
+            return{ success:false,message:'Failed to fetch master scheme expenditrure.',error};
+        }
+    }
 }
