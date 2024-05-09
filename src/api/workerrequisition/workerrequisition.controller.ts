@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { WorkerrequisitionService } from './workerrequisition.service';
 import { MasterWorkerRequirementDto } from './dto/worker.dto';
@@ -14,6 +14,16 @@ export class WorkerrequisitionController {
         return this.workerrequisitionService.create(createMasterSchemeDto);
     }
 
+
+    @Get('workerrequisitionlist')
+  async getAllWork(@Query('districtcode') districtcode: string, @Query('gpCode') gpCode?: string) {
+    try {
+      const result = await this.workerrequisitionService.getallwork(districtcode, gpCode);
+      return result;
+    } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong', error: error.message };
+    }
+  }
 }
 
 

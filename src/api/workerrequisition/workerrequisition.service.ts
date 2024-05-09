@@ -31,13 +31,11 @@ export class WorkerrequisitionService {
           // Iterate through createworkalloDto array and create MasterWorkerRequirement_allotment entities
           for (const createWorkAllotDto of createWorkerRequirementDto.createworkalloDto) {
             const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
-              workerreqID: masterWorker.workerreqID, // Use the same workerreqID as the parent entity
+              workerreqID: masterWorker.workerreqID, 
               skilledWorkers:createWorkAllotDto.skilledWorkers,
               unskilledWorkers:createWorkAllotDto.unskilledWorkers,
               semiSkilledWorkers:createWorkAllotDto.semiSkilledWorkers,
-              currentMonthWork: createWorkAllotDto.currentMonthWork,
-              currentYearWork: createWorkAllotDto.currentYearWork,
-              finYearWork: createWorkAllotDto.finYearWork,
+             
               dateofwork:createWorkAllotDto.dateofwork
 
 
@@ -60,5 +58,22 @@ export class WorkerrequisitionService {
       
       private generateRandomNumber(): number {
         return Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+      }
+
+
+      async getallwork(districtcode: string, gpCode?: string) {
+        try {
+          let work;
+    
+          if (gpCode) {
+            work = await this.masterWorkerRequirement.find({ where: { districtcode, gpCode } });
+          } else {
+            work = await this.masterWorkerRequirement.find({ where: { districtcode } });
+          }
+    
+          return { errorCode: 0, result: work };
+        } catch (error) {
+          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+        }
       }
     }
