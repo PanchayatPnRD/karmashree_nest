@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class NregaMaster {
+export class jobcardformat {
   @PrimaryGeneratedColumn()
   id: number;
 

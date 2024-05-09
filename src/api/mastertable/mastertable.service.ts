@@ -4,6 +4,7 @@ import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp,
 import { In, Repository } from 'typeorm';
 import { DeptDto, DesignationDto, PedestalDto, RoleDto } from './dto/role.dto';
 import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
+import { jobcardformat } from 'src/entity/nrgsjobcardformat.entity';
 
 @Injectable()
 export class MastertableService {
@@ -13,6 +14,9 @@ export class MastertableService {
         @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
         @InjectRepository(master_urban) private urban: Repository<master_urban>,
         @InjectRepository(pedestalMaster) private pedestalMaster: Repository<pedestalMaster>,
+        @InjectRepository(jobcardformat) private jobcardformat: Repository<jobcardformat>,
+
+        
 
 
         @InjectRepository(master_ps) private masterps: Repository<master_ps>,
@@ -669,6 +673,21 @@ async updatePedestal(id: number, data: UpdatePedestalDto) {
       errorCode: 1,
       message: "Something went wrong",
     };
+  }
+}
+
+
+async getjobcard(districtCode: string, subdivCode?: string) {
+  try {
+      let subdiv;
+
+          subdiv = await this.subdivision.find({ where: { districtCode, subdivCode }, select: ["subdivCode", "subdivName"] });
+    
+   
+
+      return { errorCode: 0, result: subdiv };
+  } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong', error: error.message };
   }
 }
 
