@@ -24,6 +24,19 @@ export class WorkerrequisitionController {
       return { errorCode: 1, message: 'Something went wrong', error: error.message };
     }
   }
+
+  @Get('getallrequztion')
+  async getallrequztion(@Query('userIndex') userIndex: number) {
+    try {
+      const result = await this.workerrequisitionService.getallrequztion(userIndex);
+      return result;
+    } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong', error: error.message };
+    }
+  }
+
+
+  
 }
 
 

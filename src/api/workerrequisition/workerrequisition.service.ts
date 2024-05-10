@@ -76,4 +76,17 @@ export class WorkerrequisitionService {
           return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
       }
+      async getallrequztion(userIndex: number) {
+        try {
+          let work;
+    
+          if (userIndex) {
+            work = await this.masterWorkerRequirement.find({ where: {userIndex } });
+          } 
+    
+          return { errorCode: 0, result: work };
+        } catch (error) {
+          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+        }
+      }
     }
