@@ -29,22 +29,19 @@ export class user_role {
 
 @Entity()
 export class master_zp{
-  @Column({ type: 'varchar', length: 30, collation: 'utf8_unicode_ci' })
-  state: string;
 
-  @Index()
-  @Column({ name: 'stateLgd', type: 'varchar', length: 2, collation: 'utf8_unicode_ci' })
-  stateLgd: string;
+  
+  @PrimaryColumn({ type: 'int', collation: 'utf8_unicode_ci' })
+  districtCode: number;
 
-  @Column({ name: 'districtLgd', type: 'varchar', length: 5, collation: 'utf8_unicode_ci' })
-  districtLgd: string;
-
-  @Column({ name: 'districtName', type: 'varchar', length: 50, collation: 'utf8_unicode_ci' })
+  @Column({  type: 'varchar', length: 50, collation: 'utf8_unicode_ci' })
   districtName: string;
 
-  @Index()
-  @PrimaryColumn({ name: 'districtCode', type: 'varchar', length: 2, collation: 'utf8_unicode_ci' })
-  districtCode: string;
+  
+  @Column({  type: 'int',  collation: 'utf8_unicode_ci' })
+  DIST_LGD_PRI: number;
+
+
 
  
 
@@ -55,65 +52,74 @@ export class master_zp{
 
 @Entity()
 export class master_urban{
-  @Index() // Index on districtCode column
-  @Column({ name: 'districtCode', type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci' })
-  districtCode: string;
+ 
+  @Column({  type: 'int', nullable: true,  collation: 'utf8mb4_unicode_ci' })
+  districtCode: number;
 
-  @Index() 
-  @Column({  name: 'districtName', type: 'varchar', length: 50, collation: 'utf8mb4_unicode_ci'  })
+ 
+  @Column({  type: 'varchar', nullable: true, length: 50, collation: 'utf8mb4_unicode_ci'  })
   districtName: string;
 
-  // Primary key and index on urbanCode column
-  @Index() 
-  @PrimaryColumn({ name: 'urbanCode', type: 'varchar', length: 5, collation: 'utf8mb4_unicode_ci' })
-  urbanCode: string;
+ 
 
-  @Index() // Index on urbanName column
-  @Column({ name: 'urbanName',  type: 'varchar',  length: 100, collation: 'utf8mb4_unicode_ci' })
+ 
+  @PrimaryColumn({  type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  urbanCode: number;
+
+
+
+
+
+  @Column({  type: 'varchar',  nullable: true, length: 50, collation: 'utf8mb4_unicode_ci' })
   urbanName: string;
 }
 
 
+
+
+
 @Entity()
 export class master_subdivision{
-  @PrimaryColumn({ name: 'districtCode', type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci' })
-  districtCode: string;
+  @Index()
+  @Column({  type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  districtCode: number;
 
-  @Column({  name: 'districtName', type: 'varchar', length: 150, collation: 'utf8mb4_unicode_ci' })
+  @Column({  name: 'districtName', type: 'varchar', length: 50, collation: 'utf8mb4_unicode_ci' })
   districtName: string;
 
-  @PrimaryColumn({  name: 'subdivCode', type: 'varchar', length: 3, collation: 'utf8mb4_unicode_ci'  })
-  subdivCode: string;
+  @PrimaryColumn({  name: 'subdivCode', type: 'int',  collation: 'utf8mb4_unicode_ci'  })
+  subdivCode: number;
 
-  @Column({  name: 'subdivName',  type: 'varchar', length: 150, collation: 'utf8mb4_unicode_ci' })
+  @Column({   type: 'varchar', nullable: true, length: 50, collation: 'utf8mb4_unicode_ci' })
   subdivName: string;
 }
 
+
+
 @Entity()
 export class master_ps{
-  @Column({ name: 'state', type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci' })
-  state: string;
+  
+  @Column({  type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  districtCode: number;
 
-  @Column({  name: 'stateLgd', type: 'varchar',length: 2, collation: 'utf8mb4_unicode_ci'})
-  stateLgd: string;
+ 
+  @PrimaryColumn({  type: 'int',  collation: 'utf8mb4_unicode_ci'  })
+  blockCode: number;
 
-  @Column({ name: 'districtLgd', type: 'varchar', length: 5, collation: 'utf8mb4_unicode_ci' })
-  districtLgd: string;
-
-  @Column({ name: 'blockLgd', type: 'varchar', length: 10, collation: 'utf8mb4_unicode_ci'  })
-  blockLgd: string;
-
-  @Column({ name: 'districtName', type: 'varchar', length: 50, collation: 'utf8mb4_unicode_ci' })
-  districtName: string;
-
-  @Column({  name: 'districtCode', type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci' })
-  districtCode: string;
-
-  @Column({  name: 'blockName', type: 'varchar', length: 100, collation: 'utf8mb4_unicode_ci' })
+  @Column({  type: 'varchar', length: 50, collation: 'utf8mb4_unicode_ci' })
   blockName: string;
 
-  @PrimaryColumn({ name: 'blockCode', type: 'varchar', length: 4,  collation: 'utf8mb4_unicode_ci' })
-  blockCode: string;
+
+
+  @Index()
+  @Column({   type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  subdivCode: number;
+
+  @Column({  type: 'varchar', length: 50, collation: 'utf8mb4_unicode_ci' })
+  subdivName: string;
+
+  
+
 }
 
 @Entity()
@@ -166,82 +172,23 @@ export class masterdepartment{
 
 @Entity()
 export class gram_panchayat{
+
   @Index()
-  @PrimaryColumn({ 
-    name: 'gpCode', 
-    type: 'varchar', 
-    length: 6, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  gpCode: string;
+  @Column({   type: 'int',    collation: 'utf8mb4_unicode_ci'  })
+  districtCode: number;
 
-  @Index() // Index on districtcode column
-  @Column({ 
-    name: 'districtcode', 
-    type: 'varchar', 
-    length: 25, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  districtcode: string;
+  @Index()
+  @Column({  type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  blockCode: number;
 
-  @Column({ 
-    name: 'districtname', 
-    type: 'varchar', 
-    length: 255, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  districtname: string;
+  @Index()
+  @PrimaryColumn({ name: 'gpCode', type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  gpCode: number;
 
-  @Column({ 
-    name: 'subdiv', 
-    type: 'varchar', 
-    length: 255, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  subdiv: string;
-
-  @Column({ 
-    name: 'subdivname', 
-    type: 'varchar', 
-    length: 255, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  subdivname: string;
-
-  @Column({ 
-    name: 'block', 
-    type: 'varchar', 
-    length: 255, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  block: string;
-
-  @Column({ 
-    name: 'blockname', 
-    type: 'varchar', 
-    length: 255, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  blockname: string;
-
-  @Index() // Index on blockcode column
-  @Column({ 
-    name: 'blockcode', 
-    type: 'varchar', 
-    length: 4, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
-  blockcode: string;
-
-  @Column({ 
-    name: 'gpName', 
-    type: 'varchar', 
-    length: 255, 
-    collation: 'utf8mb4_unicode_ci' 
-  })
+  @Column({  name: 'gpName',  type: 'varchar',  length: 50,  collation: 'utf8mb4_unicode_ci'})
   gpName: string;
-}
 
+}
 
 @Entity()
 export class masterdesignation{
@@ -308,7 +255,7 @@ export class pedestalMaster{
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   SubmitTime: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
   UpdateTime: Date;
 
 

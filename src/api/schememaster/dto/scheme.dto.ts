@@ -18,23 +18,23 @@ export class MasterSchemeDTO {
 
     @ApiProperty({ example: 'district code' })
     @IsNotEmpty()
-    @IsString()
-    districtcode: string;
+   
+    districtcode: number;
 
     @ApiProperty({ example: 'municipality code' })
     @IsNotEmpty()
-    @IsString()
-    municipalityCode: string;
+   
+    municipalityCode: number;
 
     @ApiProperty({ example: 'block code' })
     @IsNotEmpty()
-    @IsString()
-    blockcode: string;
+ 
+    blockcode: number;
 
     @ApiProperty({ example: 'gp code' })
     @IsNotEmpty()
-    @IsString()
-    gpCode: string;
+
+    gpCode: number;
 
     @ApiProperty({ example: 1 })
     @IsNotEmpty()

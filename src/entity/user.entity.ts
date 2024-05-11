@@ -21,21 +21,21 @@ export class master_users{
   deptWing: string;
 
   @Index()
-  @Column({ type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci' })
-  districtcode: string;
+  @Column({ type: 'int',  collation: 'utf8mb4_unicode_ci' })
+  districtcode: number;
 
   @Index()
-  @Column({ type: 'varchar', length: 5, collation: 'utf8mb4_unicode_ci',nullable:true })
-  municipalityCode: string;
+  @Column({ type: 'int',  collation: 'utf8mb4_unicode_ci',nullable:true })
+  municipalityCode: number;
 
-  @Column({ type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci', nullable: true })
-  subDivision: string;
+  @Column({ type: 'int',  collation: 'utf8mb4_unicode_ci', nullable: true })
+  subDivision: number;
 
-  @Column({ type: 'varchar', length: 4, collation: 'utf8mb4_unicode_ci', nullable: true })
-  blockCode: string;
+  @Column({ type: 'int',  collation: 'utf8mb4_unicode_ci', nullable: true })
+  blockCode: number;
 
-  @Column({ type: 'varchar', length: 6, collation: 'utf8mb4_unicode_ci', nullable: true })
-  gpCode: string;
+  @Column({ type: 'int',  collation: 'utf8mb4_unicode_ci', nullable: true })
+  gpCode: number;
 
   @Index()
   @Column({ type: 'int', width: 11 })
@@ -114,11 +114,7 @@ export class master_users{
   @Column({ type: 'varchar', length: 1, collation: 'utf8mb4_unicode_ci', nullable: true })
   currentStatus: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  submitTime: Date;
-
-  @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
-  updateTime: Date;
+ 
 
   @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true })
   otp: string;
@@ -128,4 +124,10 @@ export class master_users{
 
   @Column({ type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci', nullable: true })
   is_passwordreset: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  submitTime: Date;
+
+    @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
+    UpdateTime: Date;
 }

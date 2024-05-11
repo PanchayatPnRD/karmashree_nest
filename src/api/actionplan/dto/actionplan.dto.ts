@@ -19,19 +19,19 @@ import { ApiProperty } from '@nestjs/swagger';
     
         @ApiProperty({ example: '1' })
         @IsNotEmpty()
-        districtCode: string;
+        districtCode: number;
 
         @ApiProperty({ example: '1' })
         @IsNotEmpty()
-        municipalityCode:string;
+        municipalityCode:number;
     
         @ApiProperty({ example: '1' })
         @IsNotEmpty()
-        blockCode: string;
+        blockCode: number;
     
         @ApiProperty({ example: '1' })
         @IsNotEmpty()
-        gpCode: string;
+        gpCode: number;
     
         @ApiProperty({ example: '1' })
         @IsNotEmpty()

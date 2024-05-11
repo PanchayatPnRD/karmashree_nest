@@ -16,7 +16,7 @@ export class WorkerrequisitionController {
 
 
     @Get('workerrequisitionlist')
-  async getAllWork(@Query('districtcode') districtcode: string, @Query('blockcode') blockcode?: string) {
+  async getAllWork(@Query('districtcode') districtcode: number, @Query('blockcode') blockcode?: number) {
     try {
       const result = await this.workerrequisitionService.getallwork(districtcode, blockcode);
       return result;

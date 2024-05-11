@@ -11,17 +11,17 @@ export class Contractor_master {
     @Column({ type: 'int' ,comment:"from Dept List or Local Storage"})
     DepartmentNo: number;
 
-    @Column({ type: 'varchar', length: 2, nullable: false,comment:'from  List or Local Storage' })
-    districtcode: string;
+    @Column({ type: 'int',  nullable: false,comment:'from  List or Local Storage' })
+    districtcode: number;
 
-    @Column({ type: 'varchar', length: 10, nullable: true,comment:'from  List or Local Storage' })
-    Municipality: string;
+    @Column({ type: 'int',  nullable: true,comment:'from  List or Local Storage' })
+    Municipality: number;
 
-    @Column({ type: 'varchar', length: 4, nullable: true,comment:'from  List or Local Storage' })
-    blockcode: string;
+    @Column({ type: 'int',  nullable: true,comment:'from  List or Local Storage' })
+    blockcode: number;
 
-    @Column({ type: 'varchar', length: 6, nullable: true,comment:'from  List or Local Storage' })
-    gpCode: string;
+    @Column({ type: 'int',  nullable: true,comment:'from  List or Local Storage' })
+    gpCode: number;
 
     @Column({ type: 'int' })
     c_month: number;
@@ -75,5 +75,5 @@ export class Contractor_master {
     submitTime: Date;
   
     @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
-    updateTime: Date;
+    UpdateTime: Date;
 }

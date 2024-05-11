@@ -124,7 +124,7 @@ export class MastertableService {
       // async getSubdivison(districtCode: string) {
       //   try {
       //     let subdiv;
-      //     if (districtCode == '0' || districtCode == null) {
+      //     if (districtCode == 0 || districtCode == null) {
       //       subdiv = await this.subdivision.find({ select: ["subdivCode", "subdivName"] });
       //     } else {
       //       subdiv = await this.subdivision.find({ where: { districtCode }, select: ["subdivCode", "subdivName"] });
@@ -141,13 +141,13 @@ export class MastertableService {
       // }
       
 
-      async getSubdivison(districtCode: string, subdivCode?: string) {
+      async getSubdivison(districtCode: number, subdivCode?: number) {
         try {
             let subdiv;
     
-            if (districtCode && (subdivCode == '0' || subdivCode == null)) {
+            if (districtCode && (subdivCode == 0 || subdivCode == null)) {
                 subdiv = await this.subdivision.find({ where: { districtCode }, select: ["subdivCode", "subdivName"] });
-            } else if (subdivCode && subdivCode != '0') {
+            } else if (subdivCode && subdivCode != 0) {
                 subdiv = await this.subdivision.find({ where: { districtCode, subdivCode }, select: ["subdivCode", "subdivName"] });
             } else {
                 return { errorCode: 1, message: 'Invalid parameters provided' };
@@ -166,10 +166,10 @@ export class MastertableService {
     
 
 
-      async getBlockaction(districtCode: string) {
+      async getBlockaction(districtCode: number) {
         try {
           let blocks;
-          if (districtCode == '0' || districtCode == null) {
+          if (districtCode == 0 || districtCode == null) {
             blocks = await this.masterps.find({ select: ["blockCode", "blockName"] });
           } else {
             blocks = await this.masterps.find({ where: { districtCode }, select: ["blockCode", "blockName"] });
@@ -186,13 +186,13 @@ export class MastertableService {
       }
       
 
-      async getBlock(districtCode: string, blockCode?: string) {
+      async getBlock(districtCode: number, blockCode?: number) {
         try {
             let blocks;
     
-            if (districtCode && (blockCode == '0' || blockCode == null)) {
+            if (districtCode && (blockCode == 0 || blockCode == null)) {
                 blocks = await this.masterps.find({ where: { districtCode }, select: ["blockCode", "blockName"] });
-            } else if (blockCode && blockCode != '0') {
+            } else if (blockCode && blockCode != 0) {
                 blocks = await this.masterps.find({ where: { districtCode, blockCode }, select: ["blockCode", "blockName"] });
             } else {
                 return { errorCode: 1, message: 'Invalid parameters provided' };
@@ -209,13 +209,13 @@ export class MastertableService {
     }
     
 
-      async getGpaction(districtcode: string, blockcode: string) {
+      async getGpaction(districtCode: number, blockCode: number) {
         try {
           let gps;
-          if ((districtcode == '0' || districtcode == null) && (blockcode == '0' || blockcode == null)) {
+          if ((districtCode == 0 || districtCode == null) && (blockCode == 0 || blockCode == null)) {
             gps = await this.grampanchayat.find({ select: ["gpCode", "gpName"] });
           } else {
-            gps = await this.grampanchayat.find({ where: { districtcode, blockcode }, select: ["gpCode", "gpName"] });
+            gps = await this.grampanchayat.find({ where: { districtCode, blockCode }, select: ["gpCode", "gpName"] });
           }
       
           if (!gps || gps.length === 0) {
@@ -228,16 +228,16 @@ export class MastertableService {
         }
       }
       
-      async getGp(districtcode: string, blockcode: string, gpCode?: string) {
+      async getGp(districtCode: number, blockCode: number, gpCode?: number) {
         try {
             let gps;
     
-            if (districtcode && (blockcode == '0' || blockcode == null) && (!gpCode || gpCode == '0')) {
-                gps = await this.grampanchayat.find({ where: { districtcode }, select: ["gpCode", "gpName"] });
-            } else if (blockcode && blockcode != '0' && (!gpCode || gpCode == '0')) {
-                gps = await this.grampanchayat.find({ where: { districtcode, blockcode }, select: ["gpCode", "gpName"] });
-            } else if (gpCode && gpCode != '0') {
-                gps = await this.grampanchayat.find({ where: { districtcode, blockcode, gpCode }, select: ["gpCode", "gpName"] });
+            if (districtCode && (blockCode == 0 || blockCode == null) && (!gpCode || gpCode == 0)) {
+                gps = await this.grampanchayat.find({ where: { districtCode }, select: ["gpCode", "gpName"] });
+            } else if (blockCode && blockCode != 0 && (!gpCode || gpCode == 0)) {
+                gps = await this.grampanchayat.find({ where: { districtCode, blockCode }, select: ["gpCode", "gpName"] });
+            } else if (gpCode && gpCode != 0) {
+                gps = await this.grampanchayat.find({ where: { districtCode, blockCode, gpCode }, select: ["gpCode", "gpName"] });
             } else {
                 return { errorCode: 1, message: 'Invalid parameters provided' };
             }
@@ -252,7 +252,7 @@ export class MastertableService {
         }
     }
 
-    async getonlyGp(gpCode: string) {
+    async getonlyGp(gpCode: number) {
       try {
           let gps;
   
@@ -545,7 +545,7 @@ async getdesignationfordnogp(designationIds: number[]) {
     }
   }
 
-  async getMunicipality(districtCode: string) {
+  async getMunicipality(districtCode: number) {
     try {
         let municipalities;
 
@@ -677,7 +677,7 @@ async updatePedestal(id: number, data: UpdatePedestalDto) {
 }
 
 
-async getjobcard(districtCode: string, subdivCode?: string) {
+async getjobcard(districtCode: number, subdivCode?: number) {
   try {
       let subdiv;
 

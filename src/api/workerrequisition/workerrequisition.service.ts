@@ -61,7 +61,7 @@ export class WorkerrequisitionService {
       }
 
 
-      async getallwork(districtcode: string, blockcode?: string) {
+      async getallwork(districtcode: number, blockcode?: number) {
         try {
           let work;
     

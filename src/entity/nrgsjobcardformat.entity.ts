@@ -56,10 +56,7 @@ export class jobcardformat {
   @Column({  nullable: true  })
   is_deleted:boolean;
 
-  
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  submitTime: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  updateTime: Date;
+  
+
 }

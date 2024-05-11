@@ -24,25 +24,25 @@ import { ApiProperty } from '@nestjs/swagger';
       
         @IsNotEmpty()
         @ApiProperty({ default: '1' })
-        districtcode: string;
+        districtcode: number;
       
       
         @IsNotEmpty()
         @ApiProperty({ default: '1' })
-        subDivision: string;
+        subDivision: number;
       
         @IsNotEmpty()
         @ApiProperty({ default: '1' })
-        blockCode: string;
+        blockCode: number;
 
         @IsNotEmpty()
         @ApiProperty({ default: '1' })
-        municipalityCode:string;
+        municipalityCode:number;
       
        
         @IsNotEmpty()
         @ApiProperty({ default: '1' })
-        gpCode: string;
+        gpCode: number;
 
        
         @IsNotEmpty()

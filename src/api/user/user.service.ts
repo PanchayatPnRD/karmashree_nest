@@ -508,11 +508,11 @@ async viewUserById(userIndex: number) {
           };
       }
   }
-    async getAllDistricts(districtCode: string) {
+    async getAllDistricts(districtCode: number) {
         try {
             let districtDetails;
     
-            if (!districtCode || districtCode === '0') {
+            if (!districtCode || districtCode === 0) {
                 // Handle the case when districtCode is empty or '0', if needed
                 return { errorCode: 1, message: 'Invalid districtCode' };
             } else {
@@ -561,11 +561,11 @@ async viewUserById(userIndex: number) {
       
       
     
-    async getAllsub(subdivCode: string) {
+    async getAllsub(subdivCode: number) {
       try {
           let districtDetails;
   
-          if (!subdivCode || subdivCode === '0') {
+          if (!subdivCode || subdivCode === 0) {
               // Handle the case when districtCode is empty or '0', if needed
               return { errorCode: 1, message: 'Invalid districtCode' };
           } else {
@@ -583,11 +583,11 @@ async viewUserById(userIndex: number) {
           };
       }
   }
-  async getAllblock(blockCode: string) {
+  async getAllblock(blockCode: number) {
     try {
         let districtDetails;
 
-        if (!blockCode || blockCode === '0') {
+        if (!blockCode || blockCode === 0) {
             // Handle the case when districtCode is empty or '0', if needed
             return { errorCode: 1, message: 'Invalid districtCode' };
         } else {
@@ -606,11 +606,11 @@ async viewUserById(userIndex: number) {
     }
 }
 
-async getAllgp(gpCode: string) {
+async getAllgp(gpCode: number) {
   try {
       let districtDetails;
 
-      if (!gpCode || gpCode === '0') {
+      if (!gpCode || gpCode === 0) {
           // Handle the case when districtCode is empty or '0', if needed
           return { errorCode: 1, message: 'Invalid districtCode' };
       } else {

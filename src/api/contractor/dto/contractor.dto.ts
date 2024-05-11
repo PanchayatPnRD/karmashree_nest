@@ -67,20 +67,20 @@ import { ApiProperty } from '@nestjs/swagger';
     
          @ApiProperty({ example: '3' })
         @IsNotEmpty() 
-        @IsString()
-        districtcode: string;
+      
+        districtcode: number;
     
         @ApiProperty({ example: '1' })
-        @IsString()
-        Municipality: string;
+       
+        Municipality: number;
     
         @ApiProperty({ example: '1' })
-        @IsString()
-        blockcode: string;
+    
+        blockcode: number;
     
         @ApiProperty({ example: '1' })
-        @IsString()
-        gpCode: string;
+  
+        gpCode: number;
 
         contractor_uniqueNo:string
     

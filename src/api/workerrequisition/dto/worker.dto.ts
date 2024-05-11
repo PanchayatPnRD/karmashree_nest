@@ -18,23 +18,23 @@ export class MasterWorkerRequirementDto {
 
   @ApiProperty({ example: 'District Code' })
   @IsNotEmpty()
-  @IsString()
-  districtcode: string;
+  
+  districtcode: number;
 
   @ApiProperty({ example: 'Municipality Code', required: false })
   @IsOptional()
-  @IsString()
-  municipalityCode: string;
+
+  municipalityCode: number;
 
   @ApiProperty({ example: 'Block Code', required: false })
   @IsOptional()
-  @IsString()
-  blockcode: string;
+
+  blockcode: number;
 
   @ApiProperty({ example: 'GP Code', required: false })
   @IsOptional()
-  @IsString()
-  gpCode: string;
+
+  gpCode: number;
 
   @ApiProperty({ example: 1, required: false })
   @IsOptional()

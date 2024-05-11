@@ -14,17 +14,17 @@ export class DemandMaster {
     @Column({ nullable: false })
     departmentNo: number;
 
-    @Column({ length: 2, nullable: false })
-    districtcode: string;
+    @Column({ type: 'int', nullable: true  })
+    districtcode: number;
 
-    @Column({ length: 5, nullable: true })
-    municipalityCode: string;
+    @Column({ type: 'int', nullable: true  })
+    municipalityCode: number;
 
-    @Column({ length: 4, nullable: true })
-    blockcode: string;
+    @Column({ type: 'int', nullable: true  })
+    blockcode: number;
 
-    @Column({ length: 6, nullable: true })
-    gpCode: string;
+    @Column({ type: 'int', nullable: true  })
+    gpCode: number;
 
     @Column({ length: 100, nullable: false })
     workerJobCardNo: string;
@@ -92,7 +92,7 @@ export class DemandMaster {
     submitTime: Date;
   
     @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
-    updateTime: Date;
+    UpdateTime: Date;
 
 }
 
@@ -181,7 +181,7 @@ export class MasterWorkerDemand_allotment {
     
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     submitTime: Date;
-  
+
     @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
-    updateTime: Date;
+    UpdateTime: Date;
 }

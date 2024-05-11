@@ -15,17 +15,17 @@ export class MasterScheme {
     @Column({type: 'int'} )
     departmentNo: number;
 
-    @Column({ type: 'varchar',length: 2 })
-    districtcode: string;
+    @Column({ type: 'int', nullable: true  })
+    districtcode: number;
 
-    @Column({ type: 'varchar',length: 2, nullable: true })
-    municipalityCode: string ;
+    @Column({ type: 'int', nullable: true })
+    municipalityCode: number ;
 
-    @Column({ type: 'varchar',length: 4, nullable: true })
-    blockcode: string ;
+    @Column({ type: 'int', nullable: true })
+    blockcode: number ;
 
-    @Column({ type: 'varchar',length: 6, nullable: true })
-    gpCode: string ;
+    @Column({ type: 'int', nullable: true })
+    gpCode: number ;
 
     @Column({ nullable: true })
     sansadID: number ;
@@ -33,7 +33,7 @@ export class MasterScheme {
     @Column({ type: 'varchar',length: 9 })
     village: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true } )
     schemeSector: number;
 
     @Column({ type: 'varchar',length: 255, nullable: true })
@@ -140,7 +140,7 @@ export class MasterScheme {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     SubmitTime: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
     UpdateTime: Date;
 }
 
@@ -158,17 +158,17 @@ export class MasterSchemeExpenduture {
     @Column({type: 'int'} )
     departmentNo: number;
 
-    @Column({ type: 'varchar',length: 2 })
-    districtcode: string;
+    @Column({ type: 'int' })
+    districtcode: number;
 
-    @Column({ type: 'varchar',length: 2, nullable: true })
-    municipalityCode: string ;
+    @Column({ type: 'int', nullable: true })
+    municipalityCode: number ;
 
-    @Column({ type: 'varchar',length: 4, nullable: true })
-    blockcode: string ;
+    @Column({ type: 'int', nullable: true })
+    blockcode: number ;
 
-    @Column({ type: 'varchar',length: 6, nullable: true })
-    gpCode: string ;
+    @Column({ type: 'int', nullable: true })
+    gpCode: number ;
 
     @Column({ nullable: true })
     sansadID: number ;
@@ -263,7 +263,7 @@ export class MasterSchemeExpenduture {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     SubmitTime: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
     UpdateTime: Date;
 }
 

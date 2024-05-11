@@ -40,8 +40,8 @@ export class MastertableController {
 
     @Get('getSubdivison/:districtCode/:subdivCode')
     async getSubdivison(
-      @Param('districtCode') districtCode: string,
-      @Param('subdivCode') subdivCode: string
+      @Param('districtCode') districtCode: number,
+      @Param('subdivCode') subdivCode: number
     ) {
       return this.mastertableService.getSubdivison(districtCode, subdivCode);
     }
@@ -49,18 +49,18 @@ export class MastertableController {
   
 
     @Get('getBlock/:districtCode/:blockCode') 
-    async getBlock(@Param('districtCode') districtCode: string,
-      @Param('blockCode') blockCode: string) {
+    async getBlock(@Param('districtCode') districtCode: number,
+      @Param('blockCode') blockCode: number) {
       return this.mastertableService.getBlock(districtCode,blockCode); 
     }
 
     @Get('getBlockaction/:districtCode') 
-    async getBlockaction(@Param('districtCode') districtCode: string) {
+    async getBlockaction(@Param('districtCode') districtCode: number) {
       return this.mastertableService.getBlockaction(districtCode); 
     }
 
     @Get('getGp/:districtCode/:blockCode/:gpCode')
-    async getGp(@Param('districtCode') districtCode: string, @Param('blockCode') blockCode: string,@Param('gpCode') gpCode: string) {
+    async getGp(@Param('districtCode') districtCode: number, @Param('blockCode') blockCode: number,@Param('gpCode') gpCode: number) {
       try {
         const result = await this.mastertableService.getGp(districtCode, blockCode,gpCode);
         return result;
@@ -69,7 +69,7 @@ export class MastertableController {
       }
     }
     @Get('getGpaction/:districtCode/:blockCode')
-    async getGpaction(@Param('districtCode') districtCode: string, @Param('blockCode') blockCode: string) {
+    async getGpaction(@Param('districtCode') districtCode: number, @Param('blockCode') blockCode: number) {
       try {
         const result = await this.mastertableService.getGpaction(districtCode, blockCode);
         return result;
@@ -88,7 +88,7 @@ export class MastertableController {
       return await this.mastertableService.getSector();
     }
  @Get('getMunicipality/:districtCode')
-    async getMunicipality(@Param('districtCode') districtCode: string) {
+    async getMunicipality(@Param('districtCode') districtCode: number) {
         try {
             const result = await this.mastertableService.getMunicipality(districtCode);
             return result;
@@ -172,7 +172,7 @@ export class MastertableController {
     }
 
     @Get('getonlyGp/:gpCode')
-    async getonlyGp(@Param('gpCode') gpCode: string) {
+    async getonlyGp(@Param('gpCode') gpCode: number) {
       return await this.mastertableService.getonlyGp(gpCode);
 
   }

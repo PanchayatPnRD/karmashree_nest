@@ -16,21 +16,22 @@ export class Actionplan_master {
     @Column({ type: 'varchar', length: 6,comment:'RURAL=>R,URBEN=>U	', nullable: true  })
     schemeArea: string;
 
-    @Column({ type: 'varchar', length: 2 })
-    districtCode: string;
+    @Column({ type: 'int', nullable: true  })
+    districtCode: number;
 
-    @Column({ type: 'varchar', length: 4 })
-    blockCode: string;
+    
+    @Column({ type: 'int', nullable: true  })
+    blockCode: number;
 
-    @Column({ type: 'varchar', length: 6 })
-    gpCode: string;
+    @Column({ type: 'int', nullable: true  })
+    gpCode: number;
 
-    @Column({ type: 'varchar', length: 6 })
-    municipalityCode: string;
+    @Column({ type: 'int', nullable: true  })
+    municipalityCode: number;
 
 
 
-    @Column({ type: 'varchar', length: 10 })
+    @Column({ type: 'varchar', length: 10, nullable: true  })
     finYear: string;
 
     @Column({ type: 'int', nullable: true  })
@@ -74,7 +75,7 @@ export class Actionplan_master {
     is_deleted: string;
 
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int' , nullable: true })
     schemeProposed:number;
     
     @Column({ type: 'int' })
@@ -83,7 +84,7 @@ export class Actionplan_master {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     submitTime: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updateTime: Date;
+    @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
+    UpdateTime: Date;
 }
 

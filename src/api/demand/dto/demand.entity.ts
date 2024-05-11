@@ -16,25 +16,23 @@ export class DemandMasterDto {
   @IsNumber()
   departmentNo: number;
 
-@ApiProperty({ example: 'Nearest Landmark' })
+@ApiProperty({ example: '2' })
   @IsNotEmpty()
-  @IsString()
-  districtcode: string;
+ 
+  districtcode: number;
 
-@ApiProperty({ example: 'Nearest Landmark' })
-  @IsOptional()
-  @IsString()
-  municipalityCode: string;
+@ApiProperty({ example: '2' })
+  
+ 
+  municipalityCode: number;
 
-@ApiProperty({ example: 'Nearest Landmark' })
-  @IsOptional()
-  @IsString()
-  blockcode: string;
+@ApiProperty({ example: '1' })
 
-@ApiProperty({ example: 'Nearest Landmark' })
-  @IsOptional()
-  @IsString()
-  gpCode: string;
+  blockcode: number;
+
+@ApiProperty({ example: '1' })
+ 
+  gpCode: number;
 
 @ApiProperty({ example: 'Nearest Landmark' })
   @IsNotEmpty()
@@ -127,13 +125,13 @@ export class CreateDemandMasterDto {
 
                 departmentNo: 1,
 
-                districtcode: "11",
+                districtcode: 11,
 
-                municipalityCode: "11",
+                municipalityCode: 11,
 
-                blockcode: "11",
+                blockcode: 11,
 
-                gpCode: "11111",
+                gpCode: 11111,
 
                 workerJobCardNo: "9849219466214",
 

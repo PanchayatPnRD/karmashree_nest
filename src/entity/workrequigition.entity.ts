@@ -15,16 +15,16 @@ export class MasterWorkerRequirement {
   departmentNo: number;
 
   @Column({ nullable: false })
-  districtcode: string;
+  districtcode: number;
 
   @Column({ nullable: true })
-  municipalityCode: string;
+  municipalityCode: number;
 
   @Column({ nullable: true })
-  blockcode: string;
+  blockcode: number;
 
   @Column({ nullable: true })
-  gpCode: string;
+  gpCode: number;
 
   @Column({ nullable: true })
   sansadID: number;
@@ -50,7 +50,7 @@ export class MasterWorkerRequirement {
   @Column({ nullable: false })
   nearestLandMark: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false ,type: 'date'})
   fromDate: Date;
 
   @Column({ nullable: false })
@@ -195,6 +195,6 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'timestamp', nullable: true })
   submitTime: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
-  updateTime: Date;
+  @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
+  UpdateTime: Date;
 }
