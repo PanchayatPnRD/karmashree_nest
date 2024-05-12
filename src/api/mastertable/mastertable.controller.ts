@@ -215,5 +215,15 @@ export class MastertableController {
     }
 
 
+    @Get('NrgsCode/:gpCode')
+    async getJobCard(@Param('gpCode') gpCode: number) {
+      try {
+        const subdiv = await this.mastertableService.getjobcard(gpCode);
+
+         return subdiv;
+      } catch (error) {
+        return { errorCode: 1, message: 'Something went wrong', error: error.message };
+      }
+    }
 
 }

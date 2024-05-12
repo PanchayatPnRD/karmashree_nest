@@ -1,57 +1,67 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class jobcardformat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int',nullable: true   })
+  
+  @Column({ type: 'bigint' })
   nregaStateCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   nregaStateName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   nregaDistrictCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   nregaDistrictName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   nregaBlockCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   nregaBlockName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   nregaPanchCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   nregaPanchayatName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   lgdStateCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   lgdStateName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   lgdDistrictCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   lgdDistrictName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   lgdBlockCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   lgdBlockName: string;
 
-  @Column({ type: 'int',nullable: true   })
+  @Column({ type: 'bigint' })
   lgdPanchCode: number;
 
-  @Column({ type: 'varchar', nullable: true  })
+  @Column({ length: 255, collation: 'utf8mb4_unicode_ci' })
   lgdPanchName: string;
+
+  @Column({ type: 'bigint' })
+  districtCode: number;
+
+  @Column({ type: 'bigint' })
+  blockCode: number;
+
+  @PrimaryColumn()
+  gpCode: number;
 
   @Column({  nullable: true  })
   is_deleted:boolean;

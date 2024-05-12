@@ -677,18 +677,20 @@ async updatePedestal(id: number, data: UpdatePedestalDto) {
 }
 
 
-async getjobcard(districtCode: number, subdivCode?: number) {
+async getjobcard(gpCode: number) {
   try {
-      let subdiv;
+    let subdiv;
 
-          subdiv = await this.subdivision.find({ where: { districtCode, subdivCode }, select: ["subdivCode", "subdivName"] });
-    
-   
+    subdiv = await this.jobcardformat.find({ where: { gpCode }, select: ["gpCode", "nregaPanchCode"] });
 
-      return { errorCode: 0, result: subdiv };
+    // Add "WB-" to each nregaPanchCode
+    subdiv = subdiv.map(item => ({ ...item, nregaPanchCode: `WB-${item.nregaPanchCode}` }));
+
+    return { errorCode: 0, result: subdiv };
   } catch (error) {
-      return { errorCode: 1, message: 'Something went wrong', error: error.message };
+    return { errorCode: 1, message: 'Something went wrong', error: error.message };
   }
 }
+
 
 }
