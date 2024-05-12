@@ -1,6 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { DemandService } from './demand.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateDemandMasterDto } from './dto/demand.entity';
 
 @ApiTags("demand")
@@ -11,6 +11,17 @@ export class DemandController {
     @Post('createDemand')
     async createDemand(@Body() createDto: CreateDemandMasterDto) {
         return await this.demandService.createDemand(createDto);
+    }
+
+    @Get('getDemandforAllocation')
+    @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
+    async getdemandforallocation(@Query('blockcode') blockcode: number, @Query('gpCode') gpCode?: number) {
+      try {
+        const result = await this.demandService.getdemandforallocation(blockcode, gpCode);
+        return result;
+      } catch (error) {
+        return { errorCode: 1, message: 'Something went wrong', error: error.message };
+      }
     }
 
 }

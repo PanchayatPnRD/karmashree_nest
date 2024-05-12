@@ -45,8 +45,7 @@ export class MastertableController {
     ) {
       return this.mastertableService.getSubdivison(districtCode, subdivCode);
     }
-  
-  
+
 
     @Get('getBlock/:districtCode/:blockCode') 
     async getBlock(@Param('districtCode') districtCode: number,

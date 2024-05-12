@@ -297,4 +297,20 @@ export class SchememasterService {
     
          
         }
+
+        async getschmeforallocation(blockcode: number, gpCode?: number) {
+            try {
+              let work;
+        
+              if (blockcode) {
+                work = await this.masterSchemeRepository.find({ where: { blockcode, gpCode } });
+              } else {
+                work = await this.masterSchemeRepository.find({ where: { blockcode } });
+              }
+        
+              return { errorCode: 0, result: work };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            }
+          }
 }

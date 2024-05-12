@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { SchememasterService } from './schememaster.service';
 import { MasterSchemeDTO } from './dto/scheme.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('schememaster')
@@ -32,5 +32,15 @@ export class SchememasterController {
         }catch(error){
             return{ success:false,message:'Failed to fetch master scheme expenditrure.',error};
         }
+    }
+    @Get('getschmeforallocation')
+    @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
+    async getschmeforallocation(@Query('blockcode') blockcode: number, @Query('gpCode') gpCode?: number) {
+      try {
+        const result = await this.masterSchemeService.getschmeforallocation(blockcode, gpCode);
+        return result;
+      } catch (error) {
+        return { errorCode: 1, message: 'Something went wrong', error: error.message };
+      }
     }
 }
