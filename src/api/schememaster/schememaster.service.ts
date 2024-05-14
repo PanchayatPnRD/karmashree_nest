@@ -289,13 +289,9 @@ export class SchememasterService {
       
      
             dept = await this.masterurban.findOne({ where: { urbanCode },  select: ["urbanName","urbanCode"] });
-        
-      
-       
-      
+
           return { errorCode: 0, result: dept };
-    
-         
+
         }
 
         async getschmeforallocation(blockcode: number, gpCode?: number) {

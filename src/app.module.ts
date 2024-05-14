@@ -19,7 +19,9 @@ import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisiti
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from './entity/workrequigition.entity';
 import { jobcardformat } from './entity/nrgsjobcardformat.entity';
 import { DemandModule } from './api/demand/demand.module';
-import { DemandMaster } from './entity/demandmaster.entity';
+import { DemandMaster, MasterWorkerDemand_allotment } from './entity/demandmaster.entity';
+import { WorkAllocation } from './entity/workallocation.entity';
+import { AllocationModule } from './api/allocation/allocation.module';
 
 @Module({
   imports: [
@@ -42,11 +44,14 @@ import { DemandMaster } from './entity/demandmaster.entity';
       // password: 'xQW+g~(zC!HA$8',
 
       // database: 'wbdeptemployment_karmashreeTestdb',
-      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,masterdesignation,Actionplan_master,Contractor_master,MasterScheme,MasterSchemeExpenduture,pedestalMaster,MasterWorkerRequirement,MasterWorkerRequirement_allotment,jobcardformat,DemandMaster],
+      entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,
+        masterdesignation,Actionplan_master,Contractor_master,MasterScheme,
+        MasterSchemeExpenduture,pedestalMaster,MasterWorkerRequirement,MasterWorkerRequirement_allotment,
+        jobcardformat,DemandMaster,MasterWorkerDemand_allotment,WorkAllocation],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
-    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule, WorkerrequisitionModule,DemandModule
+    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule, WorkerrequisitionModule,DemandModule,AllocationModule
 
   ],
 

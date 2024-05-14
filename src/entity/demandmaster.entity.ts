@@ -111,17 +111,17 @@ export class MasterWorkerDemand_allotment {
     @Column({ nullable: false })
     departmentNo: number;
 
-    @Column({ length: 2, nullable: false })
-    districtcode: string;
+    @Column({ nullable: false })
+    districtcode: number;
 
-    @Column({ length: 5, nullable: true })
-    municipalityCode: string;
+    @Column({ nullable: false })
+    municipalityCode: number;
 
-    @Column({ length: 4, nullable: true })
-    blockcode: string;
+    @Column({ nullable: false })
+    blockcode: number;
 
-    @Column({ length: 6, nullable: true })
-    gpCode: string;
+    @Column({ nullable: false })
+    gpCode: number;
 
     @Column({ length: 100, nullable: true })
     workerJobCardNo: string;
