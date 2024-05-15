@@ -5,16 +5,18 @@ import { master_users } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 import { emit } from 'process';
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import * as os from 'os';
 import * as bcrypt from "bcrypt";
 import {  VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
 import { ForgetDto, ForgetpasswordResetDto, passwordcDto } from './dto/dto/forgot-password.dto';
 import { masterdepartment } from 'src/entity/mastertable.enity';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = 'NODEAPI'
 @Injectable()
 export class AuthService {
+ 
         constructor(
   
             @InjectRepository(master_users) private user: Repository<master_users>,
@@ -202,6 +204,7 @@ export class AuthService {
                 districtcode: userDetails.districtcode,
                 subDivision: userDetails.subDivision,
                 blockCode: userDetails.blockCode,
+                municipalityCode:userDetails.municipalityCode,
                 gpCode: userDetails.gpCode,
                 userIndex: userDetails.userIndex,
                 dno_status: userDetails.dno_status,
@@ -506,4 +509,35 @@ async verifyResetOtp(data: ForgetDto) {
             return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
       }
-    }
+      async sendMediaMessage() {
+        const data = JSON.stringify({
+          "userid": "2000239790",
+          "password": "Zp7K!CZe",
+          "send_to": "8001073023",
+          "v": "1.1",
+          "format": "json",
+          "msg_type": "TEXT",
+          "method": "SENDMESSAGE",
+          "msg":"Dear Hasan, OTP to login Karmashree Portal is 456321 & valid for 2 minutes. Don't share OTP&isTemplate=true&header=Karmashree Login OTP&footer=State Karmashree Team"
+        });
+    
+        const config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'https://media.smsgupshup.com/GatewayAPI/rest',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+          },
+          data: data
+        };
+    
+        try {
+          const response = await axios.request(config);
+          console.log(JSON.stringify(response.data));
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      }
+    
