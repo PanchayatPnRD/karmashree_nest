@@ -8,10 +8,10 @@ export class DemandMaster {
     @Column()
     demanduniqueID: string;
 
-    @Column({ length: 5, nullable: false })
+    @Column({ length: 5, nullable: true })
     schemeArea: string;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     departmentNo: number;
 
     @Column({ type: 'int', nullable: true  })
@@ -26,13 +26,13 @@ export class DemandMaster {
     @Column({ type: 'int', nullable: true  })
     gpCode: number;
 
-    @Column({ length: 100, nullable: false })
+    @Column({ length: 100, nullable: true })
     workerJobCardNo: string;
 
-    @Column({ length: 255, nullable: false })
+    @Column({ length: 255, nullable: true })
     workerName: string;
 
-    @Column({ length: 5, nullable: false })
+    @Column({ length: 5, nullable: true })
     gender: string;
 
     @Column({ length: 6, nullable: true })
@@ -50,22 +50,22 @@ export class DemandMaster {
     @Column({ length: 16, nullable: true })
     aadhaarNo: string;
 
-    @Column({ length: 15, nullable: false })
+    @Column({ length: 15, nullable: true })
     typeOfWorkers: string;
 
-    @Column({ type: 'date', nullable: false })
+    @Column({ type: 'date', nullable: true })
     dateOfApplicationForWork: Date;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     noOfDaysWorkDemanded: number;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     currentMonth: number;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     currentYear: number;
 
-    @Column({ length: 9, nullable: false })
+    @Column({ length: 9, nullable: true })
     finYear: string;
 
     @Column({ length: 1, nullable: true })
@@ -126,19 +126,19 @@ export class MasterWorkerDemand_allotment {
     @Column({ length: 100, nullable: true })
     workerJobCardNo: string;
 
-    @Column({ type: 'date', nullable: false })
+    @Column({ type: 'date', nullable: true })
     dateofwork: Date;
 
-    @Column({ length: 1, nullable: false })
+    @Column({ length: 1, nullable: true })
     workAllotedstatus: string;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     CurrentMonth_work: number;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     CurrentYear_work: number;
 
-    @Column({ length: 9, nullable: false })
+    @Column({ length: 9, nullable: true })
     finYear_work: string;
 
     @Column({ nullable: true })
@@ -174,7 +174,7 @@ export class MasterWorkerDemand_allotment {
     @Column({ length: 1, nullable: true })
     ex5: string;
 
-    @Column({ nullable: false })
+    @Column({ nullable: true })
     userIndex: number;
 
      
