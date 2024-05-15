@@ -572,19 +572,14 @@ async getdesignationfordnogp(designationIds: number[]) {
         let urban;
 
         // Check if districtCode is provided
-        if (districtCode) {
-            if (!urbanCode || urbanCode === 0) {
+       
+          if (districtCode && (urbanCode == 0 || urbanCode == null)) {
                 urban = await this.urban.find({ where: { districtCode }, select: ["urbanCode", "urbanName"] });
             } else {
                 urban = await this.urban.find({ where: { districtCode, urbanCode }, select: ["urbanCode", "urbanName"] });
             }
-        } else {
-            return { errorCode: 1, message: 'Invalid parameters provided' };
-        }
-
-        if (!urban || urban.length === 0) {
-            return { errorCode: 1, message: 'Blocks not found' };
-        }
+        
+       
     
         return { errorCode: 0, result: urban };
     } catch (error) {
