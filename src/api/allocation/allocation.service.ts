@@ -29,7 +29,6 @@ export class AllocationService {
     @InjectRepository(MasterWorkerRequirement_allotment) private masterWorkerRequirementallotment: Repository<MasterWorkerRequirement_allotment>,
 
 
-    
 ) {}
 
 async create(createWorkAllocationDto: CreateWorkAllocationDto): Promise<{ errorCode: number, result: WorkAllocation[] }> {
@@ -60,6 +59,17 @@ async create(createWorkAllocationDto: CreateWorkAllocationDto): Promise<{ errorC
 
     const result = await this.workallocation.save(newWorkAllocations);
 
+    for (const workAllocationDto of createWorkAllocationDto.workAllocations) {
+        const workerDemandAllotment = await this.MasterWorkerDemandallotment.findOne({
+          where: { workerJobCardNo: workAllocationDto.workerJobCardNo },
+        });
+  
+        if (workerDemandAllotment) {
+          workerDemandAllotment.allotmentuserIndex = workAllocationDto.userIndex;
+  
+          await this.MasterWorkerDemandallotment.save(workerDemandAllotment);
+        }
+      }
     return {
       errorCode: 0,
       result: result

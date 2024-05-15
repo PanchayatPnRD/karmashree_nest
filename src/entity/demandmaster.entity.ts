@@ -6,7 +6,7 @@ export class DemandMaster {
     demandsl: number;
 
     @Column()
-    demanduniqueID: number;
+    demanduniqueID: string;
 
     @Column({ length: 5, nullable: false })
     schemeArea: string;
@@ -103,7 +103,7 @@ export class MasterWorkerDemand_allotment {
     demandsl: number;
 
     @Column()
-    demanduniqueID: number;
+    demanduniqueID: string;
 
     @Column({ length: 5, nullable: false })
     schemeArea: string;
