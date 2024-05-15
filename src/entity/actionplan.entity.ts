@@ -19,6 +19,9 @@ export class Actionplan_master {
     @Column({ type: 'int', nullable: true  })
     districtCode: number;
 
+
+    @Column({  nullable: true  })
+    pedastal: string;
     
     @Column({ type: 'int', nullable: true  })
     blockCode: number;

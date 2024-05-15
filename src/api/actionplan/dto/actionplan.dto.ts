@@ -21,6 +21,11 @@ import { ApiProperty } from '@nestjs/swagger';
         @IsNotEmpty()
         districtCode: number;
 
+
+        @ApiProperty({ example: 'R' })
+        @IsNotEmpty()
+        pedastal:string;
+
         @ApiProperty({ example: '1' })
         @IsNotEmpty()
         municipalityCode:number;
