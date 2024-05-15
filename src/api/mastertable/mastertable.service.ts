@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, masterdesignation, mastersector, pedestalMaster, user_role } from 'src/entity/mastertable.enity';
 import { In, Repository } from 'typeorm';
-import { DeptDto, DesignationDto, PedestalDto, RoleDto } from './dto/role.dto';
+import { DeptDto, DesignationDto, PedestalDto, RoleDto, SectorDto } from './dto/role.dto';
 import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
 import { jobcardformat } from 'src/entity/nrgsjobcardformat.entity';
 
@@ -294,7 +294,29 @@ export class MastertableService {
         }
       }
 
-
+      async createSector(data: SectorDto) {
+        try {
+          const existingDesignation = await this.mastersector.findOne({ where: { sectorname: data.sectorname } });
+          if (!existingDesignation) {
+            const newDesignation = this.mastersector.create(data);
+            const result = await this.mastersector.save(newDesignation);
+            return {
+              errorCode: 0,
+              result: result,
+            };
+          } else {
+            return {
+              errorCode: 1,
+              message: "Sector already exists",
+            };
+          }
+        } catch (error) {
+          return {
+            errorCode: 1,
+            message: "Something went wrong",
+          };
+        }
+      }
       async getDepatmentbyid(departmentNo: number) {
         let dept; // Declare dept before the try block
       
@@ -545,28 +567,31 @@ async getdesignationfordnogp(designationIds: number[]) {
     }
   }
 
-  async getMunicipality(districtCode: number) {
+  async getMunicipality(districtCode: number, urbanCode?: number) {
     try {
-        let municipalities;
+        let urban;
 
         // Check if districtCode is provided
         if (districtCode) {
-          
-            municipalities = await this.urban.find({ where: { districtCode }, select: ["urbanCode", "urbanName"] });
+            if (!urbanCode || urbanCode === 0) {
+                urban = await this.urban.find({ where: { districtCode }, select: ["urbanCode", "urbanName"] });
+            } else {
+                urban = await this.urban.find({ where: { districtCode, urbanCode }, select: ["urbanCode", "urbanName"] });
+            }
         } else {
             return { errorCode: 1, message: 'Invalid parameters provided' };
         }
 
-        // Check if municipalities are found
-        if (!municipalities || municipalities.length === 0) {
-            return { errorCode: 1, message: 'Municipalities not found for the given districtCode' };
+        if (!urban || urban.length === 0) {
+            return { errorCode: 1, message: 'Blocks not found' };
         }
-
-        return { errorCode: 0, result: municipalities };
+    
+        return { errorCode: 0, result: urban };
     } catch (error) {
         return { errorCode: 1, message: 'Something went wrong', error: error.message };
     }
 }
+
 
 async getpdf(id:number) {
   try {
@@ -612,14 +637,24 @@ async createPedestal(data: PedestalDto) {
 }
 
 
-async getAllPedestal(departmentNo:string) {
+async getAllPedestal(departmentNo:string,id?:number) {
   try {
+    let pedestalMaster;
       //const pedestalMaster = await this.pedestalMaster.find();
-      const pedestalMaster = await this.pedestalMaster.find({ where: { departmentNo }, select: ["id", "pedestalName"] });
-      return {
-          errorCode: 0,
-          result: pedestalMaster
-      };
+     // const pedestalMaster = await this.pedestalMaster.find({ where: { departmentNo }, select: ["id", "pedestalName"] });
+      if (departmentNo && (id == 0 || id == null)) {
+        pedestalMaster = await this.pedestalMaster.find({ where: { departmentNo }, select: ["id", "pedestalName"] });
+    } else if (id && id != 0) {
+      pedestalMaster = await this.pedestalMaster.find({ where: { departmentNo, id }, select: ["id", "pedestalName"] });
+    } else {
+        return { errorCode: 1, message: 'Invalid parameters provided' };
+    }
+
+    if (!pedestalMaster || pedestalMaster.length === 0) {
+        return { errorCode: 1, message: 'Blocks not found' };
+    }
+
+    return { errorCode: 0, result: pedestalMaster };
   } catch (error) {
       return {
           errorCode: 1,

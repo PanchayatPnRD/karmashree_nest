@@ -124,12 +124,14 @@ export class master_ps{
 
 @Entity()
 export class mastersector{
-  @PrimaryColumn({  name: 'sectorname', type: 'varchar',  length: 150,  collation: 'utf8mb4_unicode_ci' })
-  sectorname: string;
 
-  @Index() // Index on sectorid column
-  @Column({  name: 'sectorid',  type: 'int',  width: 11 })
+
+  // Index on sectorid column
+  @PrimaryGeneratedColumn()
   sectorid: number;
+
+  @Column({  name: 'sectorname', type: 'varchar',  length: 150,  collation: 'utf8mb4_unicode_ci' })
+  sectorname: string;
 }
 
 @Entity()

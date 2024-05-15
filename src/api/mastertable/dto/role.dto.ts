@@ -81,4 +81,13 @@ import { ApiProperty } from '@nestjs/swagger';
         @IsNotEmpty()
         userIndex:number;
       }
+
+      export class  SectorDto{
+
+     
+      
+        @ApiProperty({ example: 'abc' })
+        @IsNotEmpty() 
+        sectorname: string;
+      }
  

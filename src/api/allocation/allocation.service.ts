@@ -6,11 +6,11 @@ import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp,
 import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/entity/workrequigition.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateWorkAllocationDto, WorkAllocationDto } from './dto/allocation.dto';
 
 @Injectable()
-export class AllocationService {  
+export class AllocationService {
  constructor(
     @InjectRepository(MasterScheme)
     private  masterSchemeRepository: Repository<MasterScheme>,
@@ -32,49 +32,56 @@ export class AllocationService {
 ) {}
 
 async create(createWorkAllocationDto: CreateWorkAllocationDto): Promise<{ errorCode: number, result: WorkAllocation[] }> {
-    const newWorkAllocations = createWorkAllocationDto.workAllocations.map(workAllocationDto => {
-      return this.workallocation.create({
-        schemeArea: workAllocationDto.schemeArea,
-        departmentNo: workAllocationDto.departmentNo,
-        districtcode: workAllocationDto.districtcode,
-        municipalityCode: workAllocationDto.municipalityCode,
-        blockcode: workAllocationDto.blockcode,
-        gpCode: workAllocationDto.gpCode,
-        schemeId: workAllocationDto.schemeId,
-        schemeName: workAllocationDto.schemeName,
-        contractorID: workAllocationDto.contractorID,
-        workerJobCardNo: workAllocationDto.workerJobCardNo,
-        workerName: workAllocationDto.workerName,
-        dateOfApplicationForWork: workAllocationDto.dateOfApplicationForWork,
-        noOfDaysWorkDemanded: workAllocationDto.noOfDaysWorkDemanded,
-        workAllocationFromDate: workAllocationDto.workAllocationFromDate,
-        workAllocationToDate: workAllocationDto.workAllocationToDate,
-        noOfDaysWorkAlloted: workAllocationDto.noOfDaysWorkAlloted,
-        currentMonth: workAllocationDto.currentMonth,
-        currentYear: workAllocationDto.currentYear,
-        finYear: workAllocationDto.finYear,
-        userIndex: workAllocationDto.userIndex,
-      });
+  const newWorkAllocations = createWorkAllocationDto.workAllocations.map(workAllocationDto => {
+    return this.workallocation.create({
+      schemeArea: workAllocationDto.schemeArea,
+      departmentNo: workAllocationDto.departmentNo,
+      districtcode: workAllocationDto.districtcode,
+      municipalityCode: workAllocationDto.municipalityCode,
+      blockcode: workAllocationDto.blockcode,
+      gpCode: workAllocationDto.gpCode,
+      schemeId: workAllocationDto.schemeId,
+      schemeName: workAllocationDto.schemeName,
+      contractorID: workAllocationDto.contractorID,
+      workerJobCardNo: workAllocationDto.workerJobCardNo,
+      workerName: workAllocationDto.workerName,
+      dateOfApplicationForWork: workAllocationDto.dateOfApplicationForWork,
+      noOfDaysWorkDemanded: workAllocationDto.noOfDaysWorkDemanded,
+      workAllocationFromDate: workAllocationDto.workAllocationFromDate,
+      workAllocationToDate: workAllocationDto.workAllocationToDate,
+      noOfDaysWorkAlloted: workAllocationDto.noOfDaysWorkAlloted,
+      currentMonth: workAllocationDto.currentMonth,
+      currentYear: workAllocationDto.currentYear,
+      finYear: workAllocationDto.finYear,
+      userIndex: workAllocationDto.userIndex,
     });
+  });
 
-    const result = await this.workallocation.save(newWorkAllocations);
+  const result = await this.workallocation.save(newWorkAllocations);
+  
+  // Assuming workallocationsl is some unique identifier associated with the new work allocations
+  const workallocationsl = newWorkAllocations.map(allocation => allocation.workallocationsl);
 
-    for (const workAllocationDto of createWorkAllocationDto.workAllocations) {
-        const workerDemandAllotment = await this.MasterWorkerDemandallotment.findOne({
-          where: { workerJobCardNo: workAllocationDto.workerJobCardNo },
-        });
+  const workerJobCardNos = createWorkAllocationDto.workAllocations.map(dto => dto.workerJobCardNo);
+  const workerDemandAllotments = await this.MasterWorkerDemandallotment.find({
+    where: { workerJobCardNo: In(workerJobCardNos) },
+  });
   
-        if (workerDemandAllotment) {
-          workerDemandAllotment.allotmentuserIndex = workAllocationDto.userIndex;
-  
-          await this.MasterWorkerDemandallotment.save(workerDemandAllotment);
-        }
-      }
-    return {
-      errorCode: 0,
-      result: result
-    };
+  for (let i = 0; i < newWorkAllocations.length; i++) {
+    const workAllocationDto = createWorkAllocationDto.workAllocations[i];
+    const matchingAllotment = workerDemandAllotments.find(allotment => allotment.workerJobCardNo === workAllocationDto.workerJobCardNo);
+    if (matchingAllotment) {
+      matchingAllotment.allotmentuserIndex = workAllocationDto.userIndex;
+      matchingAllotment.allocationID = workallocationsl[i];
+      await this.MasterWorkerDemandallotment.save(matchingAllotment); // Save the updated allotment
+    }
   }
+
+  return {
+    errorCode: 0,
+    result: result
+  };
+}
 
 
 }

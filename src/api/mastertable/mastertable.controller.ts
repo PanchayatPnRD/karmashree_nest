@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, Post, Put, Query } from '@nestjs/common';
 import { MastertableService } from './mastertable.service';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { DeptDto, DesignationDto, PedestalDto, RoleDto } from './dto/role.dto';
+import { DeptDto, DesignationDto, PedestalDto, RoleDto, SectorDto } from './dto/role.dto';
 import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
 @ApiTags('Mastertables')
 
@@ -86,10 +86,15 @@ export class MastertableController {
     async getSector() {
       return await this.mastertableService.getSector();
     }
- @Get('getMunicipality/:districtCode')
-    async getMunicipality(@Param('districtCode') districtCode: number) {
+    @Post('createSector')
+    async createSector(@Body() data: SectorDto) {
+      return await this.mastertableService.createSector(data);
+    }
+  
+ @Get('getMunicipality/:districtCode/:urbanCode')
+    async getMunicipality(@Param('districtCode') districtCode: number,@Param('urbanCode') urbanCode:number ) {
         try {
-            const result = await this.mastertableService.getMunicipality(districtCode);
+            const result = await this.mastertableService.getMunicipality(districtCode,urbanCode);
             return result;
         } catch (error) {
             return { errorCode: 1, message: 'Something went wrong', error: error.message };
@@ -197,10 +202,14 @@ export class MastertableController {
       return await this.mastertableService.createPedestal(data);
     }
   
-    @Get('getAllPedestal/:departmentNo')
-    async getAllPedestal(@Param('departmentNo')departmentNo:string) {
-      return await this.mastertableService.getAllPedestal(departmentNo);
+    @Get('getAllPedestal/:departmentNo/:id')
+    async getAllPedestal(
+      @Param('departmentNo') departmentNo: string,
+      @Param('id') id: number
+    ) {
+      return await this.mastertableService.getAllPedestal(departmentNo, id);
     }
+    
 
     @Post('updatePedestal/:id')
     async updatePedestal(@Param('id') id: number, @Body() data: UpdatePedestalDto) {
