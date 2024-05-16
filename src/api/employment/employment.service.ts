@@ -3,12 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employment } from 'src/entity/employment.entity';
 import { Repository } from 'typeorm';
 import { CreateEmploymentDto, EmploymentDto } from './dto/employment.dto';
+import { WorkAllocation } from 'src/entity/workallocation.entity';
 
 @Injectable()
 export class EmploymentService {
     constructor(
         @InjectRepository(Employment)private  employment: Repository<Employment>,
-
+        @InjectRepository(WorkAllocation) private workallocation: Repository<WorkAllocation>,
 
     ) {}
 
@@ -52,4 +53,29 @@ export class EmploymentService {
             result: result
         };
     }
-}
+
+    async listWorkAllocations(blockcode: number, gpCode?: number, schemeId?: number){
+        try {
+          const queryBuilder = this.workallocation.createQueryBuilder('workAllocation');
+    
+          if (blockcode) {
+            queryBuilder.andWhere('workAllocation.blockcode = :blockcode', { blockcode });
+          }
+    
+          if (gpCode) {
+            queryBuilder.andWhere('workAllocation.gpCode = :gpCode', { gpCode });
+          }
+    
+          if (schemeId) {
+            queryBuilder.andWhere('workAllocation.schemeId = :schemeId', { schemeId });
+          }
+    
+          const result = await queryBuilder.getMany();
+    
+          return { errorCode: 0, result };
+        } catch (error) {
+          return { errorCode: 1,  message: 'Something went wrong', error: error.message };
+        }
+      }
+    }
+

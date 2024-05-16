@@ -4,13 +4,14 @@ import { EmploymentService } from './employment.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Contractor_master } from 'src/entity/contractor.entity';
 import { Employment } from 'src/entity/employment.entity';
+import { WorkAllocation } from 'src/entity/workallocation.entity';
 
 @Module({
   imports: [
 
   
   
-    TypeOrmModule.forFeature([Contractor_master,Employment]),
+    TypeOrmModule.forFeature([Contractor_master,Employment,WorkAllocation]),
    
   ],
   controllers: [EmploymentController],

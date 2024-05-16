@@ -23,6 +23,8 @@ import { DemandMaster, MasterWorkerDemand_allotment } from './entity/demandmaste
 import { WorkAllocation } from './entity/workallocation.entity';
 import { AllocationModule } from './api/allocation/allocation.module';
 import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.middleware';
+import { Employment } from './entity/employment.entity';
+import { EmploymentModule } from './api/employment/employment.module';
 
 @Module({
   imports: [
@@ -48,11 +50,11 @@ import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.midd
       entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,
         masterdesignation,Actionplan_master,Contractor_master,MasterScheme,
         MasterSchemeExpenduture,pedestalMaster,MasterWorkerRequirement,MasterWorkerRequirement_allotment,
-        jobcardformat,DemandMaster,MasterWorkerDemand_allotment,WorkAllocation],
+        jobcardformat,DemandMaster,MasterWorkerDemand_allotment,WorkAllocation,Employment],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
-    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule, WorkerrequisitionModule,DemandModule,AllocationModule
+    AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule, WorkerrequisitionModule,DemandModule,AllocationModule,EmploymentModule
 
   ],
 
@@ -64,7 +66,8 @@ export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
 
     consumer.apply(ApiTokenCheckMiddleware).forRoutes(
-      'api/Actionplan' ,'api/allocation'
+      'api/Actionplan' ,'api/allocation','api/contractor','api/demand',
+      'api/mastertable','api/schememaster','api/user','api/workerrequisition'
 
 
           )

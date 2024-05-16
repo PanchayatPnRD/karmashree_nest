@@ -14,6 +14,7 @@ import { DemandModule } from './api/demand/demand.module';
 import { AllocationModule } from './api/allocation/allocation.module';
 import * as fs from 'fs';
 import * as path from 'path';
+import { EmploymentModule } from './api/employment/employment.module';
 
 
 
@@ -43,7 +44,7 @@ async function bootstrap() {
   
     
   const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule,WorkerrequisitionModule,DemandModule,AllocationModule],
+    include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule,WorkerrequisitionModule,DemandModule,AllocationModule,EmploymentModule],
   });
   
   SwaggerModule.setup('api', app, document);
