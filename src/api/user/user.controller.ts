@@ -1,10 +1,13 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto, SendSMSDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/useredit.dto';
 
 @ApiTags("User")
+@ApiHeader({
+  name: 'token',
+})
 @Controller('api/user')
 export class UserController {
 

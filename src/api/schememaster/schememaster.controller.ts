@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { SchememasterService } from './schememaster.service';
 import { MasterSchemeDTO } from './dto/scheme.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('schememaster')
-
+@ApiHeader({
+    name: 'token',
+  })
 @Controller('api/schememaster')
 export class SchememasterController {
     constructor(private readonly masterSchemeService: SchememasterService) {}

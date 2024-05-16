@@ -1,9 +1,12 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { DemandService } from './demand.service';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateDemandMasterDto } from './dto/demand.entity';
 
 @ApiTags("demand")
+@ApiHeader({
+  name: 'token',
+})
 @Controller('api/demand')
 export class DemandController {
     constructor(private readonly demandService: DemandService) {}

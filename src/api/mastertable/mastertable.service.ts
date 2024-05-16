@@ -6,6 +6,7 @@ import { DeptDto, DesignationDto, PedestalDto, RoleDto, SectorDto } from './dto/
 import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
 import { jobcardformat } from 'src/entity/nrgsjobcardformat.entity';
 
+
 @Injectable()
 export class MastertableService {
     constructor(
@@ -15,8 +16,6 @@ export class MastertableService {
         @InjectRepository(master_urban) private urban: Repository<master_urban>,
         @InjectRepository(pedestalMaster) private pedestalMaster: Repository<pedestalMaster>,
         @InjectRepository(jobcardformat) private jobcardformat: Repository<jobcardformat>,
-
-        
 
 
         @InjectRepository(master_ps) private masterps: Repository<master_ps>,
@@ -107,6 +106,8 @@ export class MastertableService {
         };
       }
     }
+    
+
     
     // async getSubdivison(districtCode: string) {
     //     try {
@@ -279,6 +280,7 @@ export class MastertableService {
           return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
       }
+
 
       async getSector() {
         try {

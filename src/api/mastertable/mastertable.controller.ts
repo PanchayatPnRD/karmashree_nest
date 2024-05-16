@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Param, ParseArrayPipe, Post, Put, Query } from '@nestjs/common';
 import { MastertableService } from './mastertable.service';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { DeptDto, DesignationDto, PedestalDto, RoleDto, SectorDto } from './dto/role.dto';
 import { UpdateDto, UpdatePedestalDto } from './dto/updatemaster.dto';
 @ApiTags('Mastertables')
-
+@ApiHeader({
+  name: 'token',
+})
 @Controller('api/mastertable')
 
 

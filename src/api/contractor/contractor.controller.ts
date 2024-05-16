@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { ContractorService } from './contractor.service';
 import { CreateContractorDto } from './dto/contractor.dto';
 
 
 @ApiTags('contractor')
-
+@ApiHeader({
+        name: 'token',
+      })
 @Controller('api/contractor')
 export class ContractorController {
 

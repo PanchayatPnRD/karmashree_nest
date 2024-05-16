@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
@@ -47,6 +47,13 @@ export class AuthController {
                 @Put('userId/:userId')
 async updateUser(@Body() updateUserDto: passwordcDto, @Param('userId') userId: string) {
   return await this.authService.updateUser(userId, updateUserDto);
+}
+
+@Post('send-media-message')
+async sendMediaMessage() {
+  const result = await this.authService.sendMediaMessage();
+
+  return result;
 }
 }
 

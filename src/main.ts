@@ -12,9 +12,23 @@ import { SchememasterModule } from './api/schememaster/schememaster.module';
 import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisition.module';
 import { DemandModule } from './api/demand/demand.module';
 import { AllocationModule } from './api/allocation/allocation.module';
+import * as fs from 'fs';
+import * as path from 'path';
+
+
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // const basePath = process.cwd(); // This points to the root directory of your project
+  // const httpsOptions = {
+  //   key: fs.readFileSync(path.join(basePath, 'keys', 'key.pem')),
+  //   cert: fs.readFileSync(path.join(basePath, 'keys', 'cert.pem')),
+  // };
+  
+  const app = await NestFactory.create(AppModule, {
+    // httpsOptions,
+  });
+
+
 
   app.enableCors();
 

@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { ActionplanService } from './actionplan.service';
 import { CreateActionPlanDto } from './dto/actionplan.dto';
 import { UpdateActionPlanDto } from './dto/actionplanupdate.dto';
 
 @ApiTags("Actionplan")
-
+@ApiHeader({
+  name: 'token',
+})
 @Controller('api/actionplan')
 export class ActionplanController {
 

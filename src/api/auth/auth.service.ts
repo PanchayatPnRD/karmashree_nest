@@ -222,7 +222,7 @@ export class AuthService {
             };
     
             // Assuming process.env.SECRET is defined and valid
-            const token = jwt.sign(payload, process.env.SECRET);
+            const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '10m' });
             const newPayload = {
               ...payload,
               token: token,

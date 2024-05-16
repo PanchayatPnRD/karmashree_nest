@@ -22,6 +22,7 @@ import { DemandModule } from './api/demand/demand.module';
 import { DemandMaster, MasterWorkerDemand_allotment } from './entity/demandmaster.entity';
 import { WorkAllocation } from './entity/workallocation.entity';
 import { AllocationModule } from './api/allocation/allocation.module';
+import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.middleware';
 
 @Module({
   imports: [
@@ -62,11 +63,11 @@ import { AllocationModule } from './api/allocation/allocation.module';
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
 
-    // consumer.apply(ApiTokenCheckMiddleware).forRoutes(
-      // 'api/agency' ,
+    consumer.apply(ApiTokenCheckMiddleware).forRoutes(
+      'api/Actionplan' ,'api/allocation'
 
 
-          // )
+          )
         }
       }
 
