@@ -66,8 +66,8 @@ export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
 
     consumer.apply(ApiTokenCheckMiddleware).forRoutes(
-      'api/Actionplan' ,'api/allocation','api/contractor','api/demand',
-      'api/mastertable','api/schememaster','api/user','api/workerrequisition'
+      // 'api/Actionplan' ,'api/allocation','api/contractor','api/demand',
+      // 'api/mastertable','api/schememaster','api/user','api/workerrequisition'
 
 
           )
