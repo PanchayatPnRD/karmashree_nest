@@ -81,6 +81,68 @@ async create(createWorkAllocationDto: CreateWorkAllocationDto) {
 }
 
 
+
+async getAllscheme(scheme_sl: number) {
+  try {
+      const dist = await this.masterSchemeRepository.find({
+          where: { scheme_sl },
+          select: ["scheme_sl", "districtcode", "blockcode"]
+      });
+      
+      return {
+          errorCode: 0,
+          result: dist
+      };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: "Something went wrong: " + error.message
+      };
+  }
+}
+
+async getdemandforallocation(blockcode: number, gpCode?: number) {
+  try {
+      let work;
+
+      if (gpCode !== undefined) {
+          work = await this.demandMaster.find({ where: { blockcode, gpCode } });
+      } else {
+          work = await this.demandMaster.find({ where: { blockcode } });
+      }
+
+      return { errorCode: 0, result: work };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: 'Something went wrong: ' + error.message
+      };
+  }
+}
+
+async getDemandByScheme(scheme_sl: number) {
+  try {
+      const schemeResponse = await this.getAllscheme(scheme_sl);
+
+      if (schemeResponse.errorCode !== 0 || schemeResponse.result.length === 0) {
+          return { errorCode: 1, message: 'No schemes found or   schemes' };
+      }
+
+      const { districtcode, blockcode } = schemeResponse.result[0];
+      const demandResponse = await this.getdemandforallocation(blockcode);
+
+      return {
+          errorCode: 0,
+          result: demandResponse.result
+      };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: 'Something went wrong: ' + error.message
+      };
+  }
+}
+
 async getallocationList(userIndex: number) {
   try {
       const allocations = await this.workallocation.find({ where: { userIndex },  order: { workallocationsl: 'DESC' }  });
