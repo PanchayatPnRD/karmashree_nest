@@ -78,5 +78,63 @@ export class EmploymentService {
           return { errorCode: 1,  message: 'Something went wrong', error: error.message };
         }
       }
+
+
+      async getemploymentList(userIndex: number) {
+        try {
+            const employments = await this.employment.find({ where: { userIndex },  order: { employmentsl: 'DESC' }  });
+    
+            if (!employments || employments.length === 0) {
+                return {
+                    errorCode: 1,
+                    message: 'employments not found for the provided user index',
+                };
+            }
+    
+            const employmentsWithDetails = [];
+    
+            await Promise.all(employments.map(async (employment) => {
+                try {
+                    // const districtDetails = await this.getAllDistricts(contractor.districtcode);
+                    // const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+    
+                    // const blockDetails = await this.getAllblock(contractor.blockcode);
+                    // const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+    
+                    // const gpDetails = await this.getAllgp(contractor.gpCode);
+                    // const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+    
+                    // const deptDetails = await this.getDepatmentbyid(contractor.DepartmentNo);
+                    // const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+
+                    // const muniDetails = await this.getmunibyid(contractor.Municipality);
+                    // const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+
+                    
+    
+                    employmentsWithDetails.push({
+                        ...employment,
+                        // districtName: districtName,
+                        // blockname: blockname,
+                        // gpName: gpName,
+                        // deptName: deptName,
+                        // muniName: muniName,
+                    });
+                } catch (error) {
+                    // Log the error for this contractor
+                    console.error(`Failed to fetch details for contractor`);
+                }
+            }));
+    
+            return {
+                errorCode: 0,
+                result: employmentsWithDetails,
+            };
+        } catch (error) {
+            console.error('Failed to fetch employments from the database:', error);
+            throw new Error('Failed to fetch employments from the database.');
+        }
+    }
+    
     }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { EmploymentDto } from './dto/employment.dto';
 import { EmploymentService } from './employment.service';
@@ -24,6 +24,14 @@ export class EmploymentController {
         @Query('schemeId') schemeId?: number,
       ){
         return await this.employmentService.listWorkAllocations(blockcode, gpCode, schemeId);
+      }
+
+      @Get('getemploymentList/:userIndex')
+      async getemploymentList(@Param('userIndex') userIndex: number) {
+      
+              const employments = await this.employmentService.getemploymentList(userIndex);
+              return  employments 
+         
       }
 
 }
