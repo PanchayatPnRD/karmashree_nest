@@ -34,10 +34,10 @@ export class WorkAllocationDto {
   @IsString()
   schemeId: string;
 
-  @ApiProperty({ example: '2024-05-14', type: Date })
+  @ApiProperty({ example: '2024-05-14' })
   @IsNotEmpty()
-  @IsDate()
-  schemeName: Date;
+ 
+  schemeName: string;
 
   @ApiProperty({ example: 'Contractor ID' })
   @IsNotEmpty()

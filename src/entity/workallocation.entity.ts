@@ -25,10 +25,10 @@ export class WorkAllocation {
   municipalityCode: number; // Changed type to number
 
   @Column({ name: 'blockcode',  nullable: true })
-  blockcode: number; // Changed type to number
+  blockcode: number; 
 
   @Column({ name: 'gpCode',  nullable: true })
-  gpCode: number; // Changed type to number
+  gpCode: number; 
 
   @Column({ name: 'schemeId', length: 255 })
   schemeId: string;
