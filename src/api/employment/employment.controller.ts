@@ -19,12 +19,13 @@ export class EmploymentController {
 
       @Get('listofallocationinemplyment')
       async listWorkAllocations(
-        @Query('blockcode') blockcode: number,
+        @Query('districtcode') districtcode?: number,
+        @Query('blockcode') blockcode?: number,
         @Query('gpCode') gpCode?: number,
         @Query('municipalityCode') municipalityCode?: number,
         @Query('schemeId') schemeId?: number,
       ){
-        return await this.employmentService.listWorkAllocations(blockcode, gpCode,municipalityCode, schemeId,);
+        return await this.employmentService.listWorkAllocations(districtcode,blockcode, gpCode,municipalityCode, schemeId,);
       }
 
       @Get('getemploymentList/:userIndex')

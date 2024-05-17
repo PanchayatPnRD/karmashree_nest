@@ -4,13 +4,17 @@ import { Employment } from 'src/entity/employment.entity';
 import { Repository } from 'typeorm';
 import { CreateEmploymentDto, EmploymentDto } from './dto/employment.dto';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
+import { Contractor_master } from 'src/entity/contractor.entity';
+import { MasterScheme } from 'src/entity/scheme.entity';
 
 @Injectable()
 export class EmploymentService {
     constructor(
         @InjectRepository(Employment)private  employment: Repository<Employment>,
         @InjectRepository(WorkAllocation) private workallocation: Repository<WorkAllocation>,
-
+        @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
+        @InjectRepository(MasterScheme)
+        private  masterSchemeRepository: Repository<MasterScheme>,
     ) {}
 
     async create(createDto: EmploymentDto) {
@@ -55,9 +59,13 @@ export class EmploymentService {
         };
     }
 
-    async listWorkAllocations(blockcode: number, gpCode?: number,municipalityCode?: number, schemeId?: number){
+    async listWorkAllocations(districtcode?: number,blockcode?: number, gpCode?: number,municipalityCode?: number, schemeId?: number){
         try {
           const queryBuilder = this.workallocation.createQueryBuilder('workAllocation');
+    
+          if (districtcode) {
+            queryBuilder.andWhere('workAllocation.districtcode = :districtcode', { districtcode });
+          }
     
           if (blockcode) {
             queryBuilder.andWhere('workAllocation.blockcode = :blockcode', { blockcode });
@@ -138,6 +146,51 @@ export class EmploymentService {
             throw new Error('Failed to fetch employments from the database.');
         }
     }
+
+async getContractor(cont_sl: number) {
+  try {
+    // Use `findOne` to retrieve a single record
+    const contractor = await this.Contractor.findOne({ where: { cont_sl } });
+
+    if (!contractor) {
+      return {
+        errorCode: 1,
+        message: 'Contractor not found',
+      };
+    }
+
+
+
+    return {
+      errorCode: 0,
+      result: contractor,
+    };
+  } catch (error) {
+    throw new Error('Failed to fetch contractor from the database.');
+  }
+}
     
+async getScheme(scheme_sl: number) {
+  try {
+    // Use `findOne` to retrieve a single record
+    const contractor = await this.masterSchemeRepository.findOne({ where: { scheme_sl } });
+
+    if (!contractor) {
+      return {
+        errorCode: 1,
+        message: 'Contractor not found',
+      };
+    }
+
+
+
+    return {
+      errorCode: 0,
+      result: contractor,
+    };
+  } catch (error) {
+    throw new Error('Failed to fetch contractor from the database.');
+  }
+}
     }
 
