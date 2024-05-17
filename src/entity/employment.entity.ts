@@ -5,7 +5,7 @@ export class Employment {
     @PrimaryGeneratedColumn()
     employmentsl: number;
 
-    @Column({ type: 'varchar', length: 10, unique: true })
+    @Column({ type: 'varchar', length: 10})
     employmentID: string; // Assuming you'll generate this value in your code
 
     @Column({ type: 'varchar', length: 5 })
