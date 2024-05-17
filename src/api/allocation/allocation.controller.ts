@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateWorkAllocationDto } from './dto/allocation.dto';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AllocationService } from './allocation.service';
@@ -18,5 +18,13 @@ export class AllocationController {
     @Post('allocation')
     async create(@Body() createWorkAllocationDto: CreateWorkAllocationDto) {
         return this.allocationService.create(createWorkAllocationDto);
+      }
+
+      @Get('getallocationList/:userIndex')
+      async getallocationList(@Param('userIndex') userIndex: number) {
+      
+              const allo = await this.allocationService.getallocationList(userIndex);
+              return  allo 
+         
       }
 }
