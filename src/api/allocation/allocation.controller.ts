@@ -16,7 +16,7 @@ export class AllocationController {
     constructor(private readonly allocationService: AllocationService) {}
 
     @Post('allocation')
-    async create(@Body() createWorkAllocationDto: CreateWorkAllocationDto): Promise<{ errorCode: number, result: WorkAllocation[] }> {
+    async create(@Body() createWorkAllocationDto: CreateWorkAllocationDto) {
         return this.allocationService.create(createWorkAllocationDto);
       }
 }

@@ -56,6 +56,7 @@ export class DemandService {
   
         return {
           errorCode: 0,
+          message:"Demand Created Successfully",
           result: created
         };
       } catch (error) {

@@ -31,7 +31,7 @@ export class AllocationService {
 
 ) {}
 
-async create(createWorkAllocationDto: CreateWorkAllocationDto): Promise<{ errorCode: number, result: WorkAllocation[] }> {
+async create(createWorkAllocationDto: CreateWorkAllocationDto) {
   const newWorkAllocations = createWorkAllocationDto.workAllocations.map(workAllocationDto => {
     return this.workallocation.create({
       schemeArea: workAllocationDto.schemeArea,
@@ -77,10 +77,7 @@ async create(createWorkAllocationDto: CreateWorkAllocationDto): Promise<{ errorC
     }
   }
 
-  return {
-    errorCode: 0,
-    result: result
-  };
+  return {errorCode: 0, message:"Allocation Created Successfully"};
 }
 
 
