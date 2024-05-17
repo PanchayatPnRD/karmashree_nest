@@ -55,7 +55,7 @@ export class EmploymentService {
         };
     }
 
-    async listWorkAllocations(blockcode: number, gpCode?: number, schemeId?: number){
+    async listWorkAllocations(blockcode: number, gpCode?: number,municipalityCode?: number, schemeId?: number){
         try {
           const queryBuilder = this.workallocation.createQueryBuilder('workAllocation');
     
@@ -67,6 +67,9 @@ export class EmploymentService {
             queryBuilder.andWhere('workAllocation.gpCode = :gpCode', { gpCode });
           }
     
+          if (gpCode) {
+            queryBuilder.andWhere('workAllocation.municipalityCode = :municipalityCode', { municipalityCode });
+          }
           if (schemeId) {
             queryBuilder.andWhere('workAllocation.schemeId = :schemeId', { schemeId });
           }

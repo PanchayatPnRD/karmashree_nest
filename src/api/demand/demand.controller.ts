@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { DemandService } from './demand.service';
 import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateDemandMasterDto } from './dto/demand.entity';
@@ -27,4 +27,11 @@ export class DemandController {
       }
     }
 
+    @Get('getdemandList/:userIndex')
+    async getdemandList(@Param('userIndex') userIndex: number) {
+    
+            const demands = await this.demandService.getdemandList(userIndex);
+            return  demands 
+       
+    }
 }
