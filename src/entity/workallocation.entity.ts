@@ -33,8 +33,8 @@ export class WorkAllocation {
   @Column({ name: 'schemeId', length: 255 })
   schemeId: string;
 
-  @Column({ name: 'SchemeName', type: 'date' })
-  schemeName: Date;
+  @Column({ name: 'SchemeName'})
+  schemeName: string;
 
   @Column({ name: 'ContractorID', length: 1 })
   contractorID: string;
