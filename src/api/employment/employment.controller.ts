@@ -21,7 +21,7 @@ export class EmploymentController {
       async listWorkAllocations(
         @Query('blockcode') blockcode: number,
         @Query('gpCode') gpCode?: number,
-        @Query('gpCode') municipalityCode?: number,
+        @Query('municipalityCode') municipalityCode?: number,
         @Query('schemeId') schemeId?: number,
       ){
         return await this.employmentService.listWorkAllocations(blockcode, gpCode,municipalityCode, schemeId,);
