@@ -226,12 +226,14 @@ async getallocationListforemp(userIndex: number) {
                   districtcode: 0,
                   blockcode: 0,
                   noOfDaysWorkAlloted: 0,
+                  workAllocationID:0
               };
           }
           groups[submitDate].noOfDaysWorkDemanded += allocation.noOfDaysWorkDemanded;
           groups[submitDate].districtcode = allocation.districtcode; // Assuming one districtcode per group
           groups[submitDate].noOfDaysWorkAlloted += allocation.noOfDaysWorkAlloted;
           groups[submitDate].blockcode = allocation.blockcode; // Assuming one blockcode per group
+          groups[submitDate].workAllocationID = allocation.workAllocationID;
 
           return groups;
       }, {});
