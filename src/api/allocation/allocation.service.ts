@@ -30,11 +30,17 @@ export class AllocationService {
 
 
 ) {}
+private generateWorkAllocationID(): string {
+  const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
+  return `AL${random6Digits}`;
+}
 
 async create(createWorkAllocationDto: CreateWorkAllocationDto) {
+  const workAllocationID = this.generateWorkAllocationID();
   const newWorkAllocations = createWorkAllocationDto.workAllocations.map(workAllocationDto => {
     return this.workallocation.create({
       schemeArea: workAllocationDto.schemeArea,
+      workAllocationID:workAllocationID,
       departmentNo: workAllocationDto.departmentNo,
       districtcode: workAllocationDto.districtcode,
       municipalityCode: workAllocationDto.municipalityCode,
@@ -198,4 +204,83 @@ async getallocationList(userIndex: number) {
       throw new Error('Failed to fetch allocations from the database.');
   }
 }
+
+async getallocationListforemp(userIndex: number) {
+  try {
+      const allocations = await this.workallocation.find({ where: { userIndex }, order: { workallocationsl: 'DESC' } });
+
+      if (!allocations || allocations.length === 0) {
+          return {
+              errorCode: 1,
+              message: 'allocations not found for the provided user index',
+          };
+      }
+
+      const allocationGroups = allocations.reduce((groups, allocation) => {
+          const submitDate = allocation.submitTime.toISOString().split('T')[0]; // Get date part of submitTime
+          if (!groups[submitDate]) {
+              groups[submitDate] = {
+                  submitTime: submitDate,
+                  noOfDaysWorkDemanded: 0,
+                  districtcode: 0,
+                  blockcode: 0,
+                  noOfDaysWorkAlloted: 0,
+              };
+          }
+          groups[submitDate].noOfDaysWorkDemanded += allocation.noOfDaysWorkDemanded;
+          groups[submitDate].districtcode = allocation.districtcode; // Assuming one districtcode per group
+          groups[submitDate].noOfDaysWorkAlloted += allocation.noOfDaysWorkAlloted;
+          groups[submitDate].blockcode = allocation.blockcode; // Assuming one blockcode per group
+
+          return groups;
+      }, {});
+
+      const allocationsWithDetails = [];
+      await Promise.all(Object.values(allocationGroups).map(async (group: any) => {
+          try {
+              // Fetch additional details for each group if needed
+              // const districtDetails = await this.getAllDistricts(group.districtcode);
+              // const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              
+              // const blockDetails = await this.getAllblock(group.blockcode);
+              // const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+              
+              // const gpDetails = await this.getAllgp(group.gpCode);
+              // const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              
+              // const deptDetails = await this.getDepatmentbyid(group.DepartmentNo);
+              // const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              
+              // const muniDetails = await this.getmunibyid(group.Municipality);
+              // const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+
+              allocationsWithDetails.push({
+                  submitTime: group.submitTime,
+                  noOfDaysWorkDemanded: group.noOfDaysWorkDemanded,
+                  noOfDaysWorkAlloted: group.noOfDaysWorkAlloted,
+                  districtcode: group.districtcode,
+                  blockcode: group.blockcode,
+                  // districtName: districtName,
+                  // blockName: blockName,
+                  // gpName: gpName,
+                  // deptName: deptName,
+                  // muniName: muniName,
+              });
+          } catch (error) {
+              console.error(`Failed to fetch details for group with submitTime ${group.submitTime}`);
+          }
+      }));
+
+      return {
+          errorCode: 0,
+          result: allocationsWithDetails,
+      };
+  } catch (error) {
+      console.error('Failed to fetch allocations from the database:', error);
+      throw new Error('Failed to fetch allocations from the database.');
+  }
+}
+
+
+
 }

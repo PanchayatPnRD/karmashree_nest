@@ -8,7 +8,7 @@ export class WorkAllocation {
 
 
   @Column({ name: 'workAllocationID',nullable: true })
-  workAllocationID: number;
+  workAllocationID: string;
 
 
 
