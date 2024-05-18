@@ -221,6 +221,7 @@ async getallocationListforemp(userIndex: number) {
           if (!groups[submitDate]) {
               groups[submitDate] = {
                   submitTime: submitDate,
+                  schemeId: allocation.schemeId,
                   noOfDaysWorkDemanded: 0,
                   districtcode: 0,
                   blockcode: 0,
@@ -238,21 +239,10 @@ async getallocationListforemp(userIndex: number) {
       const allocationsWithDetails = [];
       await Promise.all(Object.values(allocationGroups).map(async (group: any) => {
           try {
-              // Fetch additional details for each group if needed
-              // const districtDetails = await this.getAllDistricts(group.districtcode);
-              // const districtName = districtDetails.result ? districtDetails.result.districtName : '';
-              
-              // const blockDetails = await this.getAllblock(group.blockcode);
-              // const blockName = blockDetails.result ? blockDetails.result.blockName : '';
-              
-              // const gpDetails = await this.getAllgp(group.gpCode);
-              // const gpName = gpDetails.result ? gpDetails.result.gpName : '';
-              
-              // const deptDetails = await this.getDepatmentbyid(group.DepartmentNo);
-              // const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
-              
-              // const muniDetails = await this.getmunibyid(group.Municipality);
-              // const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+              const schemeDetails = await this.masterSchemeRepository.findOne({ where: { scheme_sl: group.schemeId } });
+              if (!schemeDetails) {
+                  throw new Error(`Scheme details not found for schemeId ${group.schemeId}`);
+              }
 
               allocationsWithDetails.push({
                   submitTime: group.submitTime,
@@ -260,14 +250,38 @@ async getallocationListforemp(userIndex: number) {
                   noOfDaysWorkAlloted: group.noOfDaysWorkAlloted,
                   districtcode: group.districtcode,
                   blockcode: group.blockcode,
-                  // districtName: districtName,
-                  // blockName: blockName,
-                  // gpName: gpName,
-                  // deptName: deptName,
-                  // muniName: muniName,
+                  schemeId: group.schemeId,
+                  workAllocationID: group.workAllocationID,
+                  schemeName: schemeDetails.schemeName,
+              
+                  FundingDepttID: schemeDetails.FundingDepttID,
+                  FundingDeptname: schemeDetails.FundingDeptname,
+                  ExecutingDepttID: schemeDetails.ExecutingDepttID,
+                  ExecutingDeptName: schemeDetails.ExecutingDeptName,
+                  ImplementingAgencyID: schemeDetails.ImplementingAgencyID,
+                  ImplementingAgencyName: schemeDetails.ImplementingAgencyName,
+                  StatusOfWork: schemeDetails.StatusOfWork,
+                  tentativeStartDate: schemeDetails.tentativeStartDate,
+                  ActualtartDate: schemeDetails.ActualtartDate,
+                  ExpectedCompletionDate: schemeDetails.ExpectedCompletionDate,
+                  totalprojectCost: schemeDetails.totalprojectCost,
+                  totalWageCost: schemeDetails.totalWageCost,
+                  totalLabour: schemeDetails.totalLabour,
+                  personDaysGenerated: schemeDetails.personDaysGenerated,
+                  totalUnskilledWorkers: schemeDetails.totalUnskilledWorkers,
+                  totalSemiSkilledWorkers: schemeDetails.totalSemiSkilledWorkers,
+                  totalSkilledWorkers: schemeDetails.totalSkilledWorkers,
+                  workorderNo: schemeDetails.workorderNo,
+                  workOderDate: schemeDetails.workOderDate,
+                  ControctorID: schemeDetails.ControctorID,
+              
+              
+              
+                  // Assuming schemeName is a field in your MasterScheme entity
+                  // Include other scheme details as needed
               });
           } catch (error) {
-              console.error(`Failed to fetch details for group with submitTime ${group.submitTime}`);
+              console.error(`Failed to fetch details for group with submitTime ${group.submitTime}:`, error);
           }
       }));
 
@@ -280,6 +294,7 @@ async getallocationListforemp(userIndex: number) {
       throw new Error('Failed to fetch allocations from the database.');
   }
 }
+
 
 
 
