@@ -298,6 +298,53 @@ async getallocationListforemp(userIndex: number) {
 }
 
 
+async allocationempfinalliat(workAllocationID: string) {
+  try {
+      const allocations = await this.workallocation.find({ where: { workAllocationID }, order: { workallocationsl: 'DESC' } });
+
+      if (!allocations || allocations.length === 0) {
+          return {
+              errorCode: 1,
+              message: 'allocations not found for the provided workAllocationID',
+          };
+      }
+
+      const allocationsWithDetails = [];
+
+      await Promise.all(allocations.map(async (allocation) => {
+          try {
+              // Fetch additional details if needed. For example:
+              // const districtDetails = await this.getAllDistricts(allocation.districtcode);
+              // const districtName = districtDetails ? districtDetails.districtName : '';
+
+              // const blockDetails = await this.getAllblock(allocation.blockcode);
+              // const blockName = blockDetails ? blockDetails.blockName : '';
+
+              // Include additional fetched details in the allocation object
+              allocationsWithDetails.push({
+                  ...allocation,
+                  // districtName: districtName,
+                  // blockName: blockName,
+                  // Add other details as required
+              });
+          } catch (error) {
+              // Log the error for this allocation
+              console.error(`Failed to fetch details for allocation with ID ${allocation.workallocationsl}`);
+          }
+      }));
+
+      return {
+          errorCode: 0,
+          result: allocationsWithDetails,
+      };
+  } catch (error) {
+      console.error('Failed to fetch allocations from the database:', error);
+      return {
+          errorCode: 1,
+          message: 'Something went wrong: ' + error.message,
+      };
+  }
+}
 
 
 }

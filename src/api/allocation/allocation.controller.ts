@@ -34,10 +34,19 @@ export class AllocationController {
               return  allo 
          
       }
-
+   
+      
       
       @Get('demandslistforallocation/:scheme_sl')
       async getDemandsByScheme(@Param('scheme_sl') scheme_sl: number) {
           return this.allocationService.getDemandByScheme(scheme_sl);
+      }
+
+      @Get('allocationempfinallist/:workAllocationID')
+      async allocationempfinalliat(@Param('workAllocationID') workAllocationID: string) {
+      
+              const allo = await this.allocationService.allocationempfinalliat(workAllocationID);
+              return  allo 
+         
       }
 }
