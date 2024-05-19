@@ -36,7 +36,7 @@ export class WorkAllocation {
   @Column({ name: 'SchemeName'})
   schemeName: string;
 
-  @Column({ name: 'ContractorID' })
+  @Column({ name: 'ContractorID',  nullable: true })
   contractorID: string;
 
   @Column({ name: 'WorkerJobCardNo', length: 255 })
