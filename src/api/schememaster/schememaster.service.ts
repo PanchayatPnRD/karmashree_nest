@@ -105,12 +105,14 @@ export class SchememasterService {
     
             const concatenatedScheme = schemes.map(scheme => {
                 const Name = scheme.schemeName ? scheme.schemeName : '';
+                const village = scheme.village ? scheme.village : '';
+                
                 const schemeId = scheme.schemeId ? scheme.schemeId : '';
                 const finYear = scheme.finYear ? [scheme.finYear] : []; // Wrap finYear in []
     
                 const schemename = `${schemeId}-${Name}-[${finYear}]`;
     
-                return { scheme_sl: scheme.scheme_sl, schemename };
+                return { scheme_sl: scheme.scheme_sl, schemename,village };
             });
     
             return {
