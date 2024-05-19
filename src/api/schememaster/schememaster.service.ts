@@ -155,7 +155,7 @@ export class SchememasterService {
                     const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
 
                     const muniDetails = await this.getmunibyid(scheme.municipalityCode);
-                    const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+                    const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
 
 
 

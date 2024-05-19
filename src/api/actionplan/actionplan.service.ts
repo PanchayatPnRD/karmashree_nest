@@ -4,7 +4,7 @@ import { Actionplan_master,  } from 'src/entity/actionplan.entity';
 import { Repository } from 'typeorm';
 import { CreateActionPlanDto } from './dto/actionplan.dto';
 import { UpdateActionPlanDto } from './dto/actionplanupdate.dto';
-import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
 @Injectable()
 export class ActionplanService {
     constructor(
@@ -16,6 +16,7 @@ export class ActionplanService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
+        @InjectRepository(pedestalMaster) private pedestalMaster: Repository<pedestalMaster>,
       ) {}
 
 
@@ -62,9 +63,19 @@ export class ActionplanService {
             const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
 
             const muniDetails = await this.getmunibyid(actionplan.municipalityCode);
-            const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+            const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+           
+            const pedastalId = parseInt(actionplan.pedastal, 10);
+
+            // Pass the converted integer to the getpedabyid function if it's a valid number
+            let pedaName = '';
+            if (!isNaN(pedastalId)) {
+                const pedaDetails = await this.getpedabyid(pedastalId);
+                pedaName = pedaDetails.result ? pedaDetails.result.pedestalName : '';
+            }
 
 
+            
             // Push action plan with details into the array
             actionPlansWithDetails.push({
                 ...actionplan,
@@ -73,7 +84,8 @@ export class ActionplanService {
                 gpName: gpName,
                 deptName: deptName,
                 sectorName:sectorName,
-                muniName:muniName
+                muniName:muniName,
+                pedaName:pedaName
             });
         }
 
@@ -104,6 +116,19 @@ async getmunibyid(urbanCode: number) {
      
     }
 
+    async getpedabyid(id: number) {
+        let dept; // Declare dept before the try block
+      
+     
+            dept = await this.pedestalMaster.findOne({ where: { id },  select: ["pedestalName","id"] });
+        
+      
+       
+      
+          return { errorCode: 0, result: dept };
+    
+         
+        }
 
 async updateActionPlan(actionSL: number, updateActionPlanDto: UpdateActionPlanDto) {
   try {

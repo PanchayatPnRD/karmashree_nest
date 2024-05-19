@@ -30,11 +30,17 @@ export class WorkAllocation {
   @Column({ name: 'gpCode',  nullable: true })
   gpCode: number; 
 
+  
+
   @Column({ name: 'schemeId', length: 255 })
   schemeId: string;
 
   @Column({ name: 'SchemeName'})
   schemeName: string;
+
+
+  @Column({ name: 'workallocstatus',  nullable: true })
+  workallocstatus: string;
 
   @Column({ name: 'ContractorID',  nullable: true })
   contractorID: string;

@@ -6,13 +6,16 @@ import { Contractor_master } from 'src/entity/contractor.entity';
 import { Employment } from 'src/entity/employment.entity';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { MasterScheme } from 'src/entity/scheme.entity';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
 
 @Module({
   imports: [
 
   
   
-    TypeOrmModule.forFeature([Contractor_master,Employment,WorkAllocation,MasterScheme]),
+    TypeOrmModule.forFeature([Contractor_master,Employment,WorkAllocation,MasterScheme,master_zp,masterdepartment,
+      master_subdivision,master_ps,gram_panchayat,masterdepartment,
+      master_urban,mastersector]),
    
   ],
   controllers: [EmploymentController],

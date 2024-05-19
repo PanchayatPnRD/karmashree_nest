@@ -19,7 +19,7 @@ export class SchememasterController {
     @Get('schemelist/:userIndex')
     async getMasterSchemeExpendituresByUserIndex(@Param('userIndex') userIndex: number) {
         try {
-            const masterSchemeExpenditures = await this.masterSchemeService.findByUserIndex(userIndex);
+            const masterSchemeExpenditures = await this.masterSchemeService.getschemeList(userIndex);
             return masterSchemeExpenditures ;
         } catch (error) {
             return { success: false, message: 'Failed to fetch master scheme expenditures.', error };

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/entity/workrequigition.entity';
 import { Repository } from 'typeorm';
+import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
+
 import { random } from 'lodash'; // Import the random function from lodash
 import { MasterWorkerRequirementDto } from './dto/worker.dto';
 @Injectable()
@@ -9,7 +11,13 @@ export class WorkerrequisitionService {
     constructor(
         @InjectRepository(MasterWorkerRequirement) private masterWorkerRequirement: Repository<MasterWorkerRequirement>,
         @InjectRepository(MasterWorkerRequirement_allotment) private masterWorkerRequirementallotment: Repository<MasterWorkerRequirement_allotment>,
-
+        @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
+        @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
+        @InjectRepository(master_ps) private masterps: Repository<master_ps>,
+        @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
+        @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
+       
+        @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
         
     ) {}
 
@@ -76,17 +84,187 @@ export class WorkerrequisitionService {
           return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
       }
-      async getallrequztion(userIndex: number) {
+      async getallrequztion(userIndex) {
         try {
-          let work;
+            // Find worker requirements by user index
+            const workRequirements = await this.masterWorkerRequirement.find({ where: { userIndex } });
     
-          if (userIndex) {
-            work = await this.masterWorkerRequirement.find({ where: {userIndex } });
-          } 
+            if (!workRequirements || workRequirements.length === 0) {
+                return {
+                    errorCode: 1,
+                    message: 'Worker requirements not found for the provided user index',
+                };
+            }
     
-          return { errorCode: 0, result: work };
+            // Array to store worker requirements with additional details
+            const workRequirementsWithDetails = [];
+    
+            for (const workRequirement of workRequirements) {
+                // Fetch additional details for each worker requirement
+                const districtDetails = await this.getAllDistricts(workRequirement.districtcode);
+                const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+               
+                const blockDetails = await this.getAllblock(workRequirement.blockcode);
+                const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+                
+                const gpDetails = await this.getAllgp(workRequirement.gpCode);
+                const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+         
+                const deptDetails = await this.getDepatmentbyid(workRequirement.departmentNo);
+                const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+    
+                // const sectorDetails = await this.getSectorbyid(workRequirement.schemeSector);
+                // const sectorName = sectorDetails.result ? sectorDetails.result.sectorName : '';
+    
+                const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
+                const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+               
+                // Convert workRequirement.pedastal to an integer
+          
+    
+                // Push worker requirement with details into the array
+                workRequirementsWithDetails.push({
+                    ...workRequirement,
+                    districtName: districtName,
+                    blockName: blockName,
+                    gpName: gpName,
+                    deptName: deptName,
+                    // sectorName: sectorName,
+                    muniName: muniName,
+                   
+                });
+            }
+    
+            // Return the array of worker requirements with details
+            return {
+                errorCode: 0,
+                result: workRequirementsWithDetails,
+            };
         } catch (error) {
-          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            return {
+                errorCode: 1,
+                message: 'Failed to retrieve worker requirements: ' + error.message,
+            };
         }
+    }
+    
+   
+async getAllDistricts(districtCode: number) {
+  try {
+      let districtDetails;
+
+      if (!districtCode || districtCode === 0) {
+          // Handle the case when districtCode is empty or '0', if needed
+          return { errorCode: 1, message: 'Invalid districtCode' };
+      } else {
+          districtDetails = await this.masterzp.findOne({ 
+              where: { districtCode }, 
+              select: ["districtName","districtCode"]
+          });
       }
+
+      return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: "Something went wrong while retrieving district details: " + error.message
+      };
+  }
+}
+
+async getAllsub(subdivCode: number) {
+try {
+    let districtDetails;
+
+    if (!subdivCode || subdivCode === 0) {
+        // Handle the case when districtCode is empty or '0', if needed
+        return { errorCode: 1, message: 'Invalid districtCode' };
+    } else {
+        districtDetails = await this.subdivision.findOne({ 
+            where: { subdivCode }, 
+            select: ["subdivName","subdivCode"]
+        });
+    }
+
+    return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+} catch (error) {
+    return {
+        errorCode: 1,
+        message: "Something went wrong while retrieving district details: " + error.message
+    };
+}
+}
+async getAllblock(blockCode: number) {
+try {
+  let districtDetails;
+
+  if (!blockCode || blockCode === 0) {
+      // Handle the case when districtCode is empty or '0', if needed
+      return { errorCode: 1, message: 'Invalid districtCode' };
+  } else {
+      districtDetails = await this.masterps.findOne({ 
+          where: { blockCode }, 
+          select: ["blockName","blockCode"]
+      });
+  }
+
+  return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+} catch (error) {
+  return {
+      errorCode: 1,
+      message: "Something went wrong while retrieving district details: " + error.message
+  };
+}
+}
+
+async getAllgp(gpCode: number) {
+try {
+let districtDetails;
+
+if (!gpCode || gpCode === 0) {
+    // Handle the case when districtCode is empty or '0', if needed
+    return { errorCode: 1, message: 'Invalid districtCode' };
+} else {
+    districtDetails = await this.grampanchayat.findOne({ 
+        where: { gpCode }, 
+        select: ["gpName","gpCode"],
+    });
+}
+
+return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
+} catch (error) {
+return {
+    errorCode: 1,
+    message: "Something went wrong while retrieving district details: " + error.message
+};
+}
+}
+
+async getDepatmentbyid(departmentNo: number) {
+  let dept; // Declare dept before the try block
+
+
+      dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+  
+
+ 
+
+    return { errorCode: 0, result: dept };
+
+   
+  }
+
+  async getmunibyid(urbanCode: number) {
+      let dept; // Declare dept before the try block
+    
+   
+          dept = await this.masterurban.findOne({ where: { urbanCode },  select: ["urbanName","urbanCode"] });
+
+        return { errorCode: 0, result: dept };
+  
+       
+      }
+
+
+        
     }

@@ -53,6 +53,9 @@ export class DemandMaster {
     @Column({ length: 15, nullable: true })
     typeOfWorkers: string;
 
+    @Column({ length: 15, nullable: true })
+    workerdemandstatus: string;
+
     @Column({ type: 'date', nullable: true })
     dateOfApplicationForWork: Date;
 

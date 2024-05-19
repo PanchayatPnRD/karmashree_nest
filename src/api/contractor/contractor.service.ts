@@ -136,7 +136,7 @@ export class ContractorService {
                     const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
 
                     const muniDetails = await this.getmunibyid(contractor.Municipality);
-                    const muniName = muniDetails.result ? muniDetails.result.urbanCode : '';
+                    const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
 
                     
     
