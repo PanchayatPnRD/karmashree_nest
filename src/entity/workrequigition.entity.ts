@@ -189,7 +189,7 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'varchar', length: 1, nullable: true})
   ex5: string;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   userIndex: number;
 
   @Column({ type: 'timestamp', nullable: true })
