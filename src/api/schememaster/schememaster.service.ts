@@ -101,7 +101,7 @@ export class SchememasterService {
     
     async getAllScheme() {
         try {
-            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear'] });
+            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear','village'] });
     
             const concatenatedScheme = schemes.map(scheme => {
                 const Name = scheme.schemeName ? scheme.schemeName : '';
@@ -115,6 +115,7 @@ export class SchememasterService {
                 return { scheme_sl: scheme.scheme_sl, schemename,village };
             });
     
+
             return {
                 errorCode: 0,
                 result: concatenatedScheme,
