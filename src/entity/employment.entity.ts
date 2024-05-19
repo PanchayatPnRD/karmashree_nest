@@ -50,8 +50,8 @@ export class Employment {
     @Column({ type: 'varchar', length: 255 })
     ImplementingAgencyName: string;
 
-    @Column({ type: 'int' })
-    workAllocationID: number;
+    @Column({ type: 'varchar', length: 255 })
+    workAllocationID: string;
 
     @Column({ type: 'varchar', length: 255 })
     workerJobCardNo: string;
@@ -67,6 +67,9 @@ export class Employment {
 
     @Column({ type: 'int' })
     noOfDaysWorkAlloted: number;
+
+    @Column({ type: 'int' })
+    noOfDaysWorProvided: number;
 
     @Column({ type: 'double', precision: 19, scale: 2 })
     totalWagePaid: number;

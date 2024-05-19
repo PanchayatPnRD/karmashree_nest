@@ -133,9 +133,10 @@ export class CreateEmploymentDto {
         description: 'Work allocation ID from Allocation Master',
         example: 110
     })
-    @IsInt()
+    @IsString()
+    @Length(1, 255)
     @IsNotEmpty()
-    workAllocationID: number;
+    workAllocationID: string;
 
     @ApiProperty({
         description: 'Worker job card number from Allocation Master',
@@ -178,6 +179,15 @@ export class CreateEmploymentDto {
     @IsInt()
     @IsNotEmpty()
     noOfDaysWorkAlloted: number;
+
+
+    @ApiProperty({
+        description: 'Number of days work allotted from Allocation Master',
+        example: 10
+    })
+    @IsInt()
+    @IsNotEmpty()
+    noOfDaysWorProvided:number
 
     @ApiProperty({
         description: 'Total wage paid',
@@ -260,6 +270,7 @@ export class EmploymentDto {
           workAllocationFromDate: "2024-05-20",
           workAllocationToDate: "2024-05-20",
           noOfDaysWorkAlloted: 11,
+          noOfDaysWorProvided:11,
           totalWagePaid: 11,
           dateOfPayment:  "2024-05-20",
 
