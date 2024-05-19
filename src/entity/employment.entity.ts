@@ -68,7 +68,7 @@ export class Employment {
     @Column({ type: 'int' })
     noOfDaysWorkAlloted: number;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     noOfDaysWorProvided: number;
 
     @Column({ type: 'double', precision: 19, scale: 2 })
