@@ -8,10 +8,10 @@ export class Employment {
     @Column({ type: 'varchar', length: 10})
     employmentID: string; // Assuming you'll generate this value in your code
 
-    @Column({ type: 'varchar', length: 5 })
+    @Column({ type: 'varchar', length: 5, nullable: true })
     schemeArea: string;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     departmentNo: number;
 
     @Column({ type: 'int' })
@@ -77,10 +77,10 @@ export class Employment {
     @Column({ type: 'date' })
     dateOfPayment: Date;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     currentMonth: number;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     currentYear: number;
 
     @Column({ type: 'varchar', length: 9 })

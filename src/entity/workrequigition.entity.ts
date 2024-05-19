@@ -8,13 +8,13 @@ export class MasterWorkerRequirement {
   @Column({ unique: true })
   workerreqID: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   schemeArea: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   departmentNo: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   districtcode: number;
 
   @Column({ nullable: true })
@@ -29,7 +29,7 @@ export class MasterWorkerRequirement {
   @Column({ nullable: true })
   sansadID: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   village: string;
 
   @Column({ nullable: false })
@@ -38,19 +38,19 @@ export class MasterWorkerRequirement {
   @Column({ nullable: true }) // Hiding this column
   ContractorID: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   contactPersonName: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   contactPersonPhoneNumber: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   reportingPlace: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   nearestLandMark: string;
 
-  @Column({ nullable: false ,type: 'date'})
+  @Column({ nullable: true ,type: 'date'})
   fromDate: Date;
 
   @Column({ nullable: false })
@@ -102,13 +102,13 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int' })
   workerreqID: number;
 
-  @Column({ type: 'varchar', length: 5, nullable: false })
+  @Column({ type: 'varchar', length: 11, nullable: true})
   schemeArea: string;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   departmentNo: number;
 
-  @Column({ type: 'varchar', length: 2, nullable: false })
+  @Column({ type: 'varchar', length: 2, nullable: true })
   districtcode: string;
 
   @Column({ type: 'varchar', length: 5, nullable: true })
@@ -123,10 +123,10 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   workCodeSchemeID: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   contractorID: string;
 
-  @Column({ type: 'date', nullable: false })
+  @Column({ type: 'date', nullable: true })
   dateofwork: Date;
 
   @Column({ type: 'int', nullable: true })
@@ -138,19 +138,19 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   skilledWorkers: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   currentMonthWork: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   currentYearWork: number;
 
-  @Column({ type: 'varchar', length: 9, nullable: false })
+  @Column({ type: 'varchar', length: 9, nullable: true })
   finYearWork: string;
 
-  @Column({ type: 'int', nullable: false})
+  @Column({ type: 'int', nullable: true})
   allocationID: number;
 
-  @Column({ type: 'date', nullable: false })
+  @Column({ type: 'date', nullable: true })
   dateofallotment: Date;
 
   @Column({ type: 'int', nullable: true })
@@ -162,13 +162,13 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   noSkilledWorkers: number;
 
-  @Column({ type: 'int', nullable: false })
+  @Column({ type: 'int', nullable: true })
   currentMonthAllot: number;
 
-  @Column({ type: 'int', nullable: false})
+  @Column({ type: 'int', nullable: true})
   currentYearAllot: number;
 
-  @Column({ type: 'varchar', length: 9, nullable: false })
+  @Column({ type: 'varchar', length: 9, nullable: true })
   finYearAllot: string;
 
   @Column({ type: 'int', nullable: true })

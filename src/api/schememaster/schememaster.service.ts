@@ -101,10 +101,12 @@ export class SchememasterService {
     
     async getAllScheme() {
         try {
-            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear','village'] });
+            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear','village','ControctorID'] });
     
             const concatenatedScheme = schemes.map(scheme => {
                 const Name = scheme.schemeName ? scheme.schemeName : '';
+                const ControctorID = scheme.ControctorID ? scheme.ControctorID : '';
+                
                 const village = scheme.village ? scheme.village : '';
                 
                 const schemeId = scheme.schemeId ? scheme.schemeId : '';
@@ -112,7 +114,7 @@ export class SchememasterService {
     
                 const schemename = `${schemeId}-${Name}-[${finYear}]`;
     
-                return { scheme_sl: scheme.scheme_sl, schemename,village };
+                return { scheme_sl: scheme.scheme_sl, schemename,village,ControctorID };
             });
     
 
