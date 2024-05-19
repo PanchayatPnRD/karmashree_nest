@@ -16,10 +16,15 @@ export class EmploymentService {
         @InjectRepository(MasterScheme)
         private  masterSchemeRepository: Repository<MasterScheme>,
     ) {}
-
+    private generateEMPID(): string {
+      const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
+      return `EMP${random6Digits}`;
+    }
     async create(createDto: EmploymentDto) {
+      const employmentID = this.generateEMPID();
         const newWorkAllocations = createDto.CreateEmploymentDtos.map(CreateEmploymentDto => {
             return this.employment.create({
+              employmentID: employmentID,
                 schemeArea: CreateEmploymentDto.schemeArea,
                 departmentNo: CreateEmploymentDto.departmentNo,
                 districtcode: CreateEmploymentDto.districtcode,
