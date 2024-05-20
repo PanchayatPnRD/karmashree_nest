@@ -6,6 +6,8 @@ import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp,
 
 import { random } from 'lodash'; // Import the random function from lodash
 import { MasterWorkerRequirementDto } from './dto/worker.dto';
+import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
+import { Contractor_master } from 'src/entity/contractor.entity';
 @Injectable()
 export class WorkerrequisitionService {
     constructor(
@@ -18,6 +20,10 @@ export class WorkerrequisitionService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
        
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
+        @InjectRepository(MasterScheme)
+        private  masterSchemeRepository: Repository<MasterScheme>,
+        @InjectRepository(MasterSchemeExpenduture) private  MasterSchemeExpendutureRepository: Repository<MasterSchemeExpenduture>,
+        @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
         
     ) {}
 
@@ -39,13 +45,21 @@ export class WorkerrequisitionService {
           // Iterate through createworkalloDto array and create MasterWorkerRequirement_allotment entities
           for (const createWorkAllotDto of createWorkerRequirementDto.createworkalloDto) {
             const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
-              workerreqID: masterWorker.workerreqID, 
-              skilledWorkers:createWorkAllotDto.skilledWorkers,
-              unskilledWorkers:createWorkAllotDto.unskilledWorkers,
-              semiSkilledWorkers:createWorkAllotDto.semiSkilledWorkers,
-             
-              dateofwork:createWorkAllotDto.dateofwork
-
+              workerreqID: masterWorker.workerreqID,
+              skilledWorkers: createWorkAllotDto.skilledWorkers,
+              unskilledWorkers: createWorkAllotDto.unskilledWorkers,
+              semiSkilledWorkers: createWorkAllotDto.semiSkilledWorkers,
+              dateofwork: createWorkAllotDto.dateofwork,
+              // departmentNo: MasterWorkerRequirementDto.departmentno,
+              // districtcode: MasterWorkerRequirementDto.districtcode,
+              // municipalityCode: MasterWorkerRequirementDto.municipalityCode,
+              // blockcode: MasterWorkerRequirementDto.blockcode,
+              // gpCode: MasterWorkerRequirementDto.gpCode,
+              // workCodeSchemeID: MasterWorkerRequirementDto.workCodeSchemeID,
+              // contractorID: MasterWorkerRequirementDto.contractorID,
+              // currentMonthWork: MasterWorkerRequirementDto.currentMonthWork,
+              // currentYearWork: MasterWorkerRequirementDto.currentYearWork,
+              // finYearWork: MasterWorkerRequirementDto.finYearWork
 
             });
       
@@ -84,7 +98,7 @@ export class WorkerrequisitionService {
           return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
       }
-      async getallrequztion(userIndex) {
+      async getallrequztion(userIndex:number) {
         try {
             // Find worker requirements by user index
             const workRequirements = await this.masterWorkerRequirement.find({ where: { userIndex } });
@@ -119,8 +133,14 @@ export class WorkerrequisitionService {
                 const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
                 const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
                
+              
                 // Convert workRequirement.pedastal to an integer
-          
+                const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
+                const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+                
+                // Fetch block details
+                const conDetails = await this.getsconid(workRequirement.ContractorID);
+                const conName = conDetails.result ? conDetails.result.contractorName : '';
     
                 // Push worker requirement with details into the array
                 workRequirementsWithDetails.push({
@@ -131,6 +151,8 @@ export class WorkerrequisitionService {
                     deptName: deptName,
                     // sectorName: sectorName,
                     muniName: muniName,
+                    schName:schName,
+                    conName:conName
                    
                 });
             }
@@ -264,7 +286,32 @@ async getDepatmentbyid(departmentNo: number) {
   
        
       }
-
+      async getschemeid(scheme_sl: number) {
+        let dept; // Declare dept before the try block
+      
+      
+            dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl"] });
+        
+      
+       
+      
+          return { errorCode: 0, result: dept };
+      
+         
+        }
+        async getsconid(cont_sl: number) {
+          let dept; // Declare dept before the try block
+        
+        
+              dept = await this.Contractor.findOne({ where: { cont_sl },  select: ["contractorName","cont_sl"] });
+          
+        
+         
+        
+            return { errorCode: 0, result: dept };
+        
+           
+          }
 
         
     }
