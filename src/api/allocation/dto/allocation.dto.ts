@@ -96,37 +96,47 @@ export class WorkAllocationDto {
 
   @ApiProperty({ example: 1 })
   userIndex: number;
+
+
 }
 
 export class CreateWorkAllocationDto {
-  @IsArray()
   @ApiProperty({
-    type: WorkAllocationDto,
+    type: [WorkAllocationDto],
     isArray: true,
-    example: [
-      {
-        schemeArea: "Rural",
-        departmentNo: 1,
-        districtcode: 12345,
-        municipalityCode: 67890,
-        blockcode: 123,
-        gpCode: 456,
-        schemeId: "Scheme ID",
-        schemeName: "2024-05-14",
-        contractorID: "Contractor ID",
-        workerJobCardNo: "Worker Job Card No",
-        workerName: "Worker Name",
-        dateOfApplicationForWork: "2024-05-14",
-        noOfDaysWorkDemanded: 5,
-        workAllocationFromDate: "2024-05-14",
-        workAllocationToDate: "2024-05-20",
-        noOfDaysWorkAlloted: 3,
-        currentMonth: 5,
-        currentYear: 2024,
-        finYear: "2023-2024",
-        userIndex: 5,
-      }
-    ]
+    example: [{
+      schemeArea: 'Rural',
+      departmentNo: 1,
+      districtcode: 12345,
+      municipalityCode: 67890,
+      blockcode: 123,
+      gpCode: 456,
+      schemeId: 'Scheme ID',
+      schemeName: 'Scheme Name',
+      contractorID: 'Contractor ID',
+      workerJobCardNo: 'Worker Job Card No',
+      workerName: 'Worker Name',
+      dateOfApplicationForWork: '2024-05-14',
+      noOfDaysWorkDemanded: 5,
+      workAllocationFromDate: '2024-05-14',
+      workAllocationToDate: '2024-05-20',
+      noOfDaysWorkAlloted: 3,
+      currentMonth: 5,
+      currentYear: 2024,
+      finYear: '2023-2024',
+      userIndex: 1
+    }],
+    required: true
   })
   workAllocations: WorkAllocationDto[];
+
+  @ApiProperty({ example: 'yourReqId' })
+  @IsString()
+  @IsNotEmpty()
+  reqId: string;
+
+  @ApiProperty({ example: '2024-05-25T12:00:00.000Z', type: Date })
+  
+  @IsNotEmpty()
+  reqDate: Date;
 }

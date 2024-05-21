@@ -5,10 +5,10 @@ export class Employment {
     @PrimaryGeneratedColumn()
     employmentsl: number;
 
-    @Column({ type: 'varchar', length: 10})
+    @Column({ type: 'varchar'})
     employmentID: string; // Assuming you'll generate this value in your code
 
-    @Column({ type: 'varchar', length: 5, nullable: true })
+    @Column({ type: 'varchar', nullable: true })
     schemeArea: string;
 
     @Column({ type: 'int', nullable: true })
@@ -32,7 +32,7 @@ export class Employment {
     @Column({ type: 'int' })
     schemeSector: number;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int' , nullable: true })
     FundingDepttID: number;
 
     @Column({ type: 'varchar', length: 255 })
@@ -65,8 +65,14 @@ export class Employment {
     @Column({ type: 'date' })
     workAllocationToDate: Date;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true  })
     noOfDaysWorkAlloted: number;
+
+    @Column({ type: 'date', nullable: true  })
+    empProvidedfrom: Date;
+
+    @Column({ type: 'date' , nullable: true })
+    empProvidedto: Date;
 
     @Column({ type: 'int', nullable: true })
     noOfDaysWorProvided: number;

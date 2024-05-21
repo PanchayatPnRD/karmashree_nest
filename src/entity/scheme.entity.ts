@@ -9,7 +9,7 @@ export class MasterScheme {
     @Column({type: 'varchar'} )
     schemeId: string;
 
-    @Column({ type: 'varchar',length: 5 })
+    @Column({ type: 'varchar'})
     schemeArea: string;
 
     @Column({type: 'int'} )
@@ -30,7 +30,7 @@ export class MasterScheme {
     @Column({ nullable: true })
     sansadID: number ;
 
-    @Column({ type: 'varchar',length: 9 })
+    @Column({ type: 'varchar',length: 255 })
     village: string;
 
     @Column({type: 'int', nullable: true } )

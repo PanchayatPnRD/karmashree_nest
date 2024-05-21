@@ -21,59 +21,64 @@ export class DemandService {
         
     ) {}
 
-    private generateRandomNumber(): string {
-      const range = { min: 1111, max: 9999 };
-      const delta = range.max - range.min;
-      const rand = Math.round(range.min + Math.random() * delta);
-      return rand.toString();
+    private generateEMPID(): string {
+      const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
+      return `DEMD${random6Digits}`;
     }
+  async createDemand(createDto: CreateDemandMasterDto) {
+  try {
+    const created: DemandMaster[] = [];
+    const masterAllotment: MasterWorkerDemand_allotment[] = [];
 
-    async createDemand(createDto: CreateDemandMasterDto){
-      try {
-        const created: DemandMaster[] = [];
-        const masterAllotment: MasterWorkerDemand_allotment[] = [];
-  
-        for (const actionDto of createDto.DemandMasterDto) {
-          const demanduniqueID = this.generateRandomNumber();
-  
-          const createdTreatment = this.demandMaster.create({
-            ...actionDto,
-            demanduniqueID
-          });
-          await this.demandMaster.save(createdTreatment);
-          created.push(createdTreatment);
-  
-          const newMasterAllotment = this.MasterWorkerDemandallotment.create({
-            demanduniqueID,
-            schemeArea: actionDto.schemeArea,
-            departmentNo: actionDto.departmentNo,
-            districtcode: actionDto.districtcode,
-            municipalityCode: actionDto.municipalityCode,
-            blockcode: actionDto.blockcode,
-            gpCode: actionDto.gpCode,
-            workerJobCardNo: actionDto.workerJobCardNo,
-            dateofwork: actionDto.dateOfApplicationForWork,
-            CurrentMonth_work: actionDto.currentMonth,
-            CurrentYear_work: actionDto.currentYear,
-           
-          });
-  
-          const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
-          masterAllotment.push(createdMasterWorkerAllotment);
-        }
-  
-        return {
-          errorCode: 0,
-          message:"Demand Created Successfully",
-          result: created
-        };
-      } catch (error) {
-        return {
-          errorCode: 1,
-          message: "Something went wrong: " + error.message,
-        };
+    for (const actionDto of createDto.DemandMasterDto) {
+      const demanduniqueID = this.generateEMPID();
+
+      const createdTreatment = this.demandMaster.create({
+        ...actionDto,
+        demanduniqueID
+      });
+      await this.demandMaster.save(createdTreatment);
+      created.push(createdTreatment);
+
+      const startDate = new Date(actionDto.dateOfApplicationForWork);
+      
+      for (let i = 0; i < actionDto.noOfDaysWorkDemanded; i++) {
+        const currentWorkDate = new Date(startDate);
+        currentWorkDate.setDate(startDate.getDate() + i);
+
+        const newMasterAllotment = this.MasterWorkerDemandallotment.create({
+          demanduniqueID,
+          schemeArea: actionDto.schemeArea,
+          departmentNo: actionDto.departmentNo,
+          districtcode: actionDto.districtcode,
+          municipalityCode: actionDto.municipalityCode,
+          blockcode: actionDto.blockcode,
+          gpCode: actionDto.gpCode,
+          workerJobCardNo: actionDto.workerJobCardNo,
+          dateofwork: currentWorkDate,
+          CurrentMonth_work: actionDto.currentMonth,
+          CurrentYear_work: actionDto.currentYear,
+        });
+
+        const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
+        masterAllotment.push(createdMasterWorkerAllotment);
       }
     }
+
+    return {
+      errorCode: 0,
+      message: "Demand Created Successfully",
+      result: created
+    };
+  } catch (error) {
+    return {
+      errorCode: 1,
+      message: "Something went wrong: " + error.message,
+    };
+  }
+}
+
+    
 
 
     async getdemandforallocation(blockcode: number, gpCode?: number) {

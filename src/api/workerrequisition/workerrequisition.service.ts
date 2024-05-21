@@ -28,60 +28,77 @@ export class WorkerrequisitionService {
     ) {}
 
     async create(createWorkerRequirementDto: MasterWorkerRequirementDto) {
-        try {
-          // Create a new MasterWorkerRequirement entity
-          const masterWorker = this.masterWorkerRequirement.create(createWorkerRequirementDto);
-      
-          // Generate a random workerreqID
-          const randomNum = this.generateRandomNumber();
-          masterWorker.workerreqID = randomNum;
-      
-          // Save the MasterWorkerRequirement entity
-          const savedMasterScheme = await this.masterWorkerRequirement.save(masterWorker);
-      
-          // Create an array to store MasterWorkerRequirement_allotment entities
-          const masterAllotment: MasterWorkerRequirement_allotment[] = [];
-      
-          // Iterate through createworkalloDto array and create MasterWorkerRequirement_allotment entities
-          for (const createWorkAllotDto of createWorkerRequirementDto.createworkalloDto) {
-            const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
-              workerreqID: masterWorker.workerreqID,
-              skilledWorkers: createWorkAllotDto.skilledWorkers,
-              unskilledWorkers: createWorkAllotDto.unskilledWorkers,
-              semiSkilledWorkers: createWorkAllotDto.semiSkilledWorkers,
-              dateofwork: createWorkAllotDto.dateofwork,
-              // departmentNo: MasterWorkerRequirementDto.departmentno,
-              // districtcode: MasterWorkerRequirementDto.districtcode,
-              // municipalityCode: MasterWorkerRequirementDto.municipalityCode,
-              // blockcode: MasterWorkerRequirementDto.blockcode,
-              // gpCode: MasterWorkerRequirementDto.gpCode,
-              // workCodeSchemeID: MasterWorkerRequirementDto.workCodeSchemeID,
-              // contractorID: MasterWorkerRequirementDto.contractorID,
-              // currentMonthWork: MasterWorkerRequirementDto.currentMonthWork,
-              // currentYearWork: MasterWorkerRequirementDto.currentYearWork,
-              // finYearWork: MasterWorkerRequirementDto.finYearWork
+      try {
+        // Create a new MasterWorkerRequirement entity
+        const masterWorker = this.masterWorkerRequirement.create(createWorkerRequirementDto);
+    
+        // Generate a random workerreqID
+        const randomNum = this.generateEMPID();
+        masterWorker.workerreqID = randomNum;
+    
+        // Save the MasterWorkerRequirement entity
+        const savedMasterScheme = await this.masterWorkerRequirement.save(masterWorker);
+    
+        // Create an array to store MasterWorkerRequirement_allotment entities
+        const masterAllotment: MasterWorkerRequirement_allotment[] = [];
+    
+        // Extract gpCode from masterWorker
+        const gpCode = masterWorker.gpCode;
 
-            });
-      
-            // Save the MasterWorkerRequirement_allotment entity
-            const createdMasterWorkerAllotment = await this.masterWorkerRequirementallotment.save(newMasterWorkerAllotment);
-      
-            // Push the saved entity to the masterAllotment array
-            masterAllotment.push(createdMasterWorkerAllotment);
-          }
-      
-          // Return success response with created MasterWorkerRequirement_allotment entities
-          return { errorCode: 0, message: "Worker Requisition created successfully", masterAllotment };
-        } catch (error) {
-          // Return error response if any error occurs
-          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+        const workCodeSchemeID= masterWorker.workCodeSchemeID;
+        const contractorID= masterWorker.ContractorID;
+       const  currentMonthWork= masterWorker.currentMonth;
+       
+      //  const currentYear = masteDrWorker.currentYear;
+    
+        // Iterate through createworkalloDto array and create MasterWorkerRequirement_allotment entities
+        for (const createWorkAllotDto of createWorkerRequirementDto.createworkalloDto) {
+          const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
+            workerreqID: savedMasterScheme.workerreqID,
+            skilledWorkers: createWorkAllotDto.skilledWorkers,
+            unskilledWorkers: createWorkAllotDto.unskilledWorkers,
+            semiSkilledWorkers: createWorkAllotDto.semiSkilledWorkers,
+            dateofwork: createWorkAllotDto.dateofwork,
+            FundingDeptname:masterWorker.FundingDeptname,
+            gpCode: gpCode, 
+            workCodeSchemeID: workCodeSchemeID,
+            contractorID: contractorID,
+            currentMonthWork: currentMonthWork,
+            departmentNo: masterWorker.departmentNo,
+            districtcode: masterWorker.districtcode,
+            municipalityCode: masterWorker.municipalityCode,
+            blockcode: masterWorker.blockcode,
+            currentYearWork: masterWorker.currentYear,
+            userIndex:masterWorker.userIndex,
+            schemeArea:masterWorker.schemeArea,
+            finYearWork:masterWorker.finYear
+           // finYearWork: masterWorker.finYearWork
+
+          });
+    
+          // Save the MasterWorkerRequirement_allotment entity
+          await this.masterWorkerRequirementallotment.save(newMasterWorkerAllotment); // Saving single entity
+    
+          // Push the saved entity to the masterAllotment array
+          masterAllotment.push(newMasterWorkerAllotment); // Pushing single entity
         }
+    
+        // Return success response with created MasterWorkerRequirement_allotment entities
+        return { errorCode: 0, message: "Worker Requisition created successfully", masterAllotment };
+      } catch (error) {
+        // Return error response if any error occurs
+        return { errorCode: 1, message: 'Something went wrong', error: error.message };
       }
-      
-      private generateRandomNumber(): number {
-        return Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-      }
-
+    }
+    
+    
+    
+    
+    private generateEMPID(): string {
+      const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
+      return `REQ${random6Digits}`;
+    }
+    
 
       async getallwork(districtcode: number, blockcode?: number) {
         try {
@@ -101,7 +118,7 @@ export class WorkerrequisitionService {
       async getallrequztion(userIndex:number) {
         try {
             // Find worker requirements by user index
-            const workRequirements = await this.masterWorkerRequirement.find({ where: { userIndex } });
+            const workRequirements = await this.masterWorkerRequirementallotment.find({ where: { userIndex } });
     
             if (!workRequirements || workRequirements.length === 0) {
                 return {
@@ -139,7 +156,7 @@ export class WorkerrequisitionService {
                 const schName = sechDetails.result ? sechDetails.result.schemeName : '';
                 
                 // Fetch block details
-                const conDetails = await this.getsconid(workRequirement.ContractorID);
+                const conDetails = await this.getsconid(workRequirement.contractorID);
                 const conName = conDetails.result ? conDetails.result.contractorName : '';
     
                 // Push worker requirement with details into the array

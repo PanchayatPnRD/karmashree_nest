@@ -8,7 +8,7 @@ export class DemandMaster {
     @Column()
     demanduniqueID: string;
 
-    @Column({ length: 5, nullable: true })
+    @Column({  nullable: true })
     schemeArea: string;
 
     @Column({ nullable: true })
@@ -108,7 +108,7 @@ export class MasterWorkerDemand_allotment {
     @Column()
     demanduniqueID: string;
 
-    @Column({ length: 5, nullable: false })
+    @Column({  nullable: false })
     schemeArea: string;
 
     @Column({ nullable: false })

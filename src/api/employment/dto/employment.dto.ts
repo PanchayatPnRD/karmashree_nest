@@ -240,6 +240,24 @@ export class CreateEmploymentDto {
   
     @IsNotEmpty()
     userIndex: number;
+
+    
+
+    @ApiProperty({
+        description: 'Date of payment',
+        example: '2023-05-15'
+    })
+    @IsDate()
+    @IsNotEmpty()
+    empProvidedfrom: Date;
+
+    @ApiProperty({
+        description: 'Date of payment',
+        example: '2023-05-15'
+    })
+    @IsDate()
+    @IsNotEmpty()
+    empProvidedto: Date;
 }
 
 export class EmploymentDto {
@@ -273,7 +291,9 @@ export class EmploymentDto {
           noOfDaysWorProvided:11,
           totalWagePaid: 11,
           dateOfPayment:  "2024-05-20",
-
+          empProvidedfrom:"2024-05-20",
+          empProvidedto: "2024-05-20",
+          
           currentMonth: 5,
           currentYear: 2024,
           finYear: "2023-2024",

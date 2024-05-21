@@ -6,7 +6,7 @@ export class MasterWorkerRequirement {
   workersl: number;
 
   @Column({ unique: true })
-  workerreqID: number;
+  workerreqID: string;
 
   @Column({ nullable: true })
   schemeArea: string;
@@ -56,6 +56,10 @@ export class MasterWorkerRequirement {
   @Column({ nullable: false })
   noOfDays: number;
 
+  
+  @Column({ type: 'varchar',  nullable: true })
+  FundingDeptname:string;
+
   @Column({ nullable: false })
   currentMonth: number;
 
@@ -99,8 +103,8 @@ export class MasterWorkerRequirement_allotment {
   @PrimaryGeneratedColumn()
   workersl: number;
 
-  @Column({ type: 'int' })
-  workerreqID: number;
+  @Column({  nullable: true })
+  workerreqID: string;
 
   @Column({ type: 'varchar', length: 11, nullable: true})
   schemeArea: string;
@@ -108,23 +112,24 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   departmentNo: number;
 
-  @Column({ type: 'varchar', length: 2, nullable: true })
-  districtcode: string;
+  @Column({  nullable: true })
+  districtcode: number;
 
-  @Column({ type: 'varchar', length: 5, nullable: true })
-  municipalityCode: string;
 
-  @Column({ type: 'varchar', length: 4, nullable: true })
-  blockcode: string;
+  @Column({  nullable: true })
+  municipalityCode: number;
 
-  @Column({ type: 'varchar', length: 6, nullable: true })
-  gpCode: string;
+  @Column({  nullable: true })
+  blockcode: number;
+
+  @Column({  nullable: true })
+  gpCode: number;
 
   @Column({ type: 'int', nullable: true })
   workCodeSchemeID: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  contractorID: string;
+  @Column({  nullable: true })
+  contractorID: number;
 
   @Column({ type: 'date', nullable: true })
   dateofwork: Date;
@@ -138,6 +143,9 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   skilledWorkers: number;
 
+  @Column({ type: 'varchar',  nullable: true })
+  FundingDeptname:string;
+
   @Column({ type: 'int', nullable: true })
   currentMonthWork: number;
 
@@ -147,8 +155,8 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'varchar', length: 9, nullable: true })
   finYearWork: string;
 
-  @Column({ type: 'int', nullable: true})
-  allocationID: number;
+  @Column({  nullable: true})
+  allocationID: string;
 
   @Column({ type: 'date', nullable: true })
   dateofallotment: Date;

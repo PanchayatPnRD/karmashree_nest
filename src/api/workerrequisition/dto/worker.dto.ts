@@ -101,6 +101,11 @@ export class MasterWorkerRequirementDto {
   @IsString()
   finYear: string;
 
+  @ApiProperty({ example: 'Nearest Landmark' })
+  @IsNotEmpty()
+  @IsString()
+  FundingDeptname:string;
+
 
 
   @ApiProperty({ example: 1 })
@@ -134,6 +139,7 @@ export class MasterWorkerRequirementDto {
   })
   @IsArray()
   createworkalloDto: CreateworkalloDto[];
+  finYearWork: string;
   
 
     

@@ -27,16 +27,17 @@ export class AllocationService {
     @InjectRepository(MasterWorkerDemand_allotment) private MasterWorkerDemandallotment: Repository<MasterWorkerDemand_allotment>,
     @InjectRepository(MasterWorkerRequirement) private masterWorkerRequirement: Repository<MasterWorkerRequirement>,
     @InjectRepository(MasterWorkerRequirement_allotment) private masterWorkerRequirementallotment: Repository<MasterWorkerRequirement_allotment>,
-  
-   
+
 
 ) {}
 private generateWorkAllocationID(): string {
-  const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
+    const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
   return `AL${random6Digits}`;
 }
 
 async create(createWorkAllocationDto: CreateWorkAllocationDto) {
+        const reqId = createWorkAllocationDto.reqId;
+        const reqDate = createWorkAllocationDto.reqDate;
   const workAllocationID = this.generateWorkAllocationID();
   const newWorkAllocations = createWorkAllocationDto.workAllocations.map(workAllocationDto => {
     return this.workallocation.create({
@@ -84,6 +85,26 @@ async create(createWorkAllocationDto: CreateWorkAllocationDto) {
     }
   }
 
+  // Check if there is a matching record
+const existingRecord = await this.masterWorkerRequirementallotment.findOne({
+    where: { workerreqID: reqId, dateofwork: reqDate }
+  });
+  
+  const totalUnskilledWorkers = createWorkAllocationDto.workAllocations.length;
+  const submitTime = new Date(); 
+  if (existingRecord) {
+    await this.masterWorkerRequirementallotment.update(
+      { workerreqID: reqId, dateofwork: reqDate }, 
+      { allocationID: workAllocationID, allotmentuserIndex: createWorkAllocationDto.workAllocations[0].userIndex,
+        dateofallotment:submitTime,
+        noUnskilledWorkers:totalUnskilledWorkers,
+        currentMonthAllot:createWorkAllocationDto.workAllocations[0].currentMonth,
+      currentYearAllot:createWorkAllocationDto.workAllocations[0].currentYear,
+       	finYearAllot:createWorkAllocationDto.workAllocations[0].finYear,
+    } // Pass the userIndex from the first work allocation
+    );
+  
+}
   return {errorCode: 0, message:"Allocation Created Successfully"};
 }
 

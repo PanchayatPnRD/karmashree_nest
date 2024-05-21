@@ -26,7 +26,7 @@ export class EmploymentService {
         
     ) {}
     private generateEMPID(): string {
-      const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
+      const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
       return `EMP${random6Digits}`;
     }
     async create(createDto: EmploymentDto) {

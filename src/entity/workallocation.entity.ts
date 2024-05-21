@@ -12,7 +12,7 @@ export class WorkAllocation {
 
 
 
-  @Column({ name: 'schemeArea', length: 5 })
+  @Column({ name: 'schemeArea' })
   schemeArea: string;
 
   @Column({ name: 'departmentNo' })
