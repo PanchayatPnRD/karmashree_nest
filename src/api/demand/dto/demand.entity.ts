@@ -111,6 +111,18 @@ export class DemandMasterDto {
   @IsNumber()
   userIndex: number;
 
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty()
+  @IsNumber()
+  age: number;
+
+  
+  @ApiProperty({ example: 'Nearest Landmark' })
+  @IsNotEmpty()
+  @IsString()
+  remark: string;
+
+
 }
 
 export class CreateDemandMasterDto {
@@ -150,6 +162,8 @@ export class CreateDemandMasterDto {
                 aadhaarNo: "223333",
 
                 typeOfWorkers: "gdgdgdg",
+                remark:"dguwegd",
+                age:7,
 
                 dateOfApplicationForWork: "12-02-2024",
 

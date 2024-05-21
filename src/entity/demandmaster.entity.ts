@@ -68,6 +68,13 @@ export class DemandMaster {
     @Column({ nullable: true })
     currentYear: number;
 
+    @Column({ nullable: true })
+    age: number;
+
+    
+    @Column({  nullable: true })
+    remark: string;
+
     @Column({ length: 9, nullable: true })
     finYear: string;
 
@@ -140,6 +147,14 @@ export class MasterWorkerDemand_allotment {
 
     @Column({ nullable: true })
     CurrentYear_work: number;
+
+    @Column({ nullable: true })
+    age: number;
+
+    
+    @Column({  nullable: true })
+    remark: string;
+
 
     @Column({ length: 9, nullable: true })
     finYear_work: string;

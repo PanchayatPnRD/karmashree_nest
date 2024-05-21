@@ -58,6 +58,9 @@ export class DemandService {
           dateofwork: currentWorkDate,
           CurrentMonth_work: actionDto.currentMonth,
           CurrentYear_work: actionDto.currentYear,
+          remark:actionDto.remark,
+          age:actionDto.age,
+
         });
 
         const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
