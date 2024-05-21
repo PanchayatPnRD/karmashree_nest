@@ -57,7 +57,7 @@ export class ActionplanService {
             const gpName = gpDetails.result ? gpDetails.result.gpName : '';
      
             const deptDetails = await this.getDepatmentbyid(actionplan.departmentNo);
-            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+            const deptName = deptDetails.result ? deptDetails.result.deptshort : '';
 
             const sectorDetails = await this.getSectorbyid(actionplan.schemeSector);
             const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
