@@ -71,7 +71,14 @@ export class WorkerrequisitionService {
             currentYearWork: masterWorker.currentYear,
             userIndex:masterWorker.userIndex,
             schemeArea:masterWorker.schemeArea,
-            finYearWork:masterWorker.finYear
+            finYearWork:masterWorker.finYear,
+         
+  contactPersonName: masterWorker.contactPersonName,
+
+
+ 
+  contactPersonPhoneNumber:masterWorker.contactPersonPhoneNumber
+
            // finYearWork: masterWorker.finYearWork
 
           });

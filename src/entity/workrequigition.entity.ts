@@ -143,6 +143,13 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   skilledWorkers: number;
 
+  @Column({ nullable: true })
+  contactPersonName: string;
+
+  @Column({ nullable: true })
+  contactPersonPhoneNumber: string;
+
+
   @Column({ type: 'varchar',  nullable: true })
   FundingDeptname:string;
 
