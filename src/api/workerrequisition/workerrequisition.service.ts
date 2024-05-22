@@ -89,9 +89,9 @@ export class WorkerrequisitionService {
           // Push the saved entity to the masterAllotment array
           masterAllotment.push(newMasterWorkerAllotment); // Pushing single entity
         }
-    
+    const requireid =  masterWorker.workerreqID;
         // Return success response with created MasterWorkerRequirement_allotment entities
-        return { errorCode: 0, message: "Worker Requisition created successfully", masterAllotment };
+        return { errorCode: 0, message: "Worker Requisition created successfully", requireid };
       } catch (error) {
         // Return error response if any error occurs
         return { errorCode: 1, message: 'Something went wrong', error: error.message };

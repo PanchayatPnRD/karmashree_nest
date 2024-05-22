@@ -89,7 +89,7 @@ async create(createWorkAllocationDto: CreateWorkAllocationDto) {
 const existingRecord = await this.masterWorkerRequirementallotment.findOne({
     where: { workerreqID: reqId, dateofwork: reqDate }
   });
-  
+
   const totalUnskilledWorkers = createWorkAllocationDto.workAllocations.length;
   const submitTime = new Date(); 
   if (existingRecord) {

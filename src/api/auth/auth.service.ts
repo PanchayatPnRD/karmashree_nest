@@ -84,7 +84,7 @@ export class AuthService {
 
         async sendSMS(userId: string, contactNo: string, otp: string): Promise<any> {
           try {
-            const message = `Dear User, Your OTP for mobile verification in PNRD is ${otp} valid upto 1 Minute. Please do not share it with anyone. WBPNRD `;
+            const message = `Dear  ${userId}, OTP to login Karmashree Portal is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
         
          const response1 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
             "feedid": 392809,

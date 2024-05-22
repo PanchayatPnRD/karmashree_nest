@@ -39,19 +39,19 @@ export class MasterScheme {
     @Column({ type: 'varchar',length: 255, nullable: true })
     schemeSubsector: string ;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255, nullable: true  })
     schemeName: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true } )
     FundingDepttID: number;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255, nullable: true  })
     FundingDeptname: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true } )
     ExecutingDepttID: number;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255, nullable: true  })
     ExecutingDeptName: string;
 
     @Column({type: 'int'} )
