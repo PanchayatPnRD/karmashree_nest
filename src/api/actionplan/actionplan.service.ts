@@ -155,7 +155,7 @@ async updateActionPlan(actionSL: number, updateActionPlanDto: UpdateActionPlanDt
     let dept; // Declare dept before the try block
   
  
-        dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+        dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo","deptshort"] });
     
   
    
