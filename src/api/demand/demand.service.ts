@@ -29,7 +29,7 @@ export class DemandService {
   try {
     const created: DemandMaster[] = [];
     const masterAllotment: MasterWorkerDemand_allotment[] = [];
-
+    let demand: string;
     for (const actionDto of createDto.DemandMasterDto) {
       const demanduniqueID = this.generateEMPID();
 
@@ -39,7 +39,7 @@ export class DemandService {
       });
       await this.demandMaster.save(createdTreatment);
       created.push(createdTreatment);
-
+       demand =  demanduniqueID;
       const startDate = new Date(actionDto.dateOfApplicationForWork);
       
       for (let i = 0; i < actionDto.noOfDaysWorkDemanded; i++) {
@@ -67,11 +67,12 @@ export class DemandService {
         masterAllotment.push(createdMasterWorkerAllotment);
       }
     }
-
+    
     return {
       errorCode: 0,
       message: "Demand Created Successfully",
-      result: created
+      result: created,
+      demand
     };
   } catch (error) {
     return {

@@ -122,78 +122,174 @@ export class WorkerrequisitionService {
           return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
       }
-      async getallrequztion(userIndex:number) {
-        try {
-            // Find worker requirements by user index
-            const workRequirements = await this.masterWorkerRequirementallotment.find({ where: { userIndex } });
+    //   async getallrequztion(userIndex:number) {
+    //     try {
+    //         // Find worker requirements by user index
+    //         const workRequirements = await this.masterWorkerRequirement.find({ where: { userIndex },order: { workersl: 'DESC' }  });
     
-            if (!workRequirements || workRequirements.length === 0) {
-                return {
-                    errorCode: 1,
-                    message: 'Worker requirements not found for the provided user index',
-                };
-            }
+    //         if (!workRequirements || workRequirements.length === 0) {
+    //             return {
+    //                 errorCode: 1,
+    //                 message: 'Worker requirements not found for the provided user index',
+    //             };
+    //         }
     
-            // Array to store worker requirements with additional details
-            const workRequirementsWithDetails = [];
+    //         // Array to store worker requirements with additional details
+    //         const workRequirementsWithDetails = [];
     
-            for (const workRequirement of workRequirements) {
-                // Fetch additional details for each worker requirement
-                const districtDetails = await this.getAllDistricts(workRequirement.districtcode);
-                const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+    //         for (const workRequirement of workRequirements) {
+    //             // Fetch additional details for each worker requirement
+    //             const districtDetails = await this.getAllDistricts(workRequirement.districtcode);
+    //             const districtName = districtDetails.result ? districtDetails.result.districtName : '';
                
-                const blockDetails = await this.getAllblock(workRequirement.blockcode);
-                const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+    //             const blockDetails = await this.getAllblock(workRequirement.blockcode);
+    //             const blockName = blockDetails.result ? blockDetails.result.blockName : '';
                 
-                const gpDetails = await this.getAllgp(workRequirement.gpCode);
-                const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+    //             const gpDetails = await this.getAllgp(workRequirement.gpCode);
+    //             const gpName = gpDetails.result ? gpDetails.result.gpName : '';
          
-                const deptDetails = await this.getDepatmentbyid(workRequirement.departmentNo);
-                const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+    //             const deptDetails = await this.getDepatmentbyid(workRequirement.departmentNo);
+    //             const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
     
-                // const sectorDetails = await this.getSectorbyid(workRequirement.schemeSector);
-                // const sectorName = sectorDetails.result ? sectorDetails.result.sectorName : '';
+    //             // const sectorDetails = await this.getSectorbyid(workRequirement.schemeSector);
+    //             // const sectorName = sectorDetails.result ? sectorDetails.result.sectorName : '';
     
-                const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
-                const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+    //             const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
+    //             const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
                
               
-                // Convert workRequirement.pedastal to an integer
-                const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
-                const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+    //             // Convert workRequirement.pedastal to an integer
+    //             const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
+    //             const schName = sechDetails.result ? sechDetails.result.schemeName : '';
                 
-                // Fetch block details
-                const conDetails = await this.getsconid(workRequirement.contractorID);
-                const conName = conDetails.result ? conDetails.result.contractorName : '';
+    //             // Fetch block details
+    //             const conDetails = await this.getsconid(workRequirement.ContractorID);
+    //             const conName = conDetails.result ? conDetails.result.contractorName : '';
     
-                // Push worker requirement with details into the array
-                workRequirementsWithDetails.push({
-                    ...workRequirement,
-                    districtName: districtName,
-                    blockName: blockName,
-                    gpName: gpName,
-                    deptName: deptName,
-                    // sectorName: sectorName,
-                    muniName: muniName,
-                    schName:schName,
-                    conName:conName
+    //             // Push worker requirement with details into the array
+    //             workRequirementsWithDetails.push({
+    //                 ...workRequirement,
+    //                 districtName: districtName,
+    //                 blockName: blockName,
+    //                 gpName: gpName,
+    //                 deptName: deptName,
+    //                 // sectorName: sectorName,
+    //                 muniName: muniName,
+    //                 schName:schName,
+    //                 conName:conName
                    
-                });
-            }
+    //             });
+    //         }
     
-            // Return the array of worker requirements with details
-            return {
-                errorCode: 0,
-                result: workRequirementsWithDetails,
-            };
-        } catch (error) {
-            return {
-                errorCode: 1,
-                message: 'Failed to retrieve worker requirements: ' + error.message,
-            };
-        }
-    }
-    
+    //         // Return the array of worker requirements with details
+    //         return {
+    //             errorCode: 0,
+    //             result: workRequirementsWithDetails,
+    //         };
+    //     } catch (error) {
+    //         return {
+    //             errorCode: 1,
+    //             message: 'Failed to retrieve worker requirements: ' + error.message,
+    //         };
+    //     }
+    // }
+    async getallrequztion(userIndex: number) {
+      try {
+          // Find worker requirements by user index
+          const workRequirements = await this.masterWorkerRequirement.find({
+              where: { userIndex },
+              order: { workersl: 'DESC' }
+          });
+  
+          if (!workRequirements || workRequirements.length === 0) {
+              return {
+                  errorCode: 1,
+                  message: 'Worker requirements not found for the provided user index',
+              };
+          }
+  
+          // Get aggregated worker counts grouped by workerreqID
+          const aggregatedWorkerCounts = await this.masterWorkerRequirementallotment.createQueryBuilder('requirement')
+              .select('requirement.workerreqID', 'workerreqID')
+              .addSelect('SUM(requirement.unskilledWorkers)', 'totalUnskilledWorkers')
+              .addSelect('SUM(requirement.semiSkilledWorkers)', 'totalSemiSkilledWorkers')
+              .addSelect('SUM(requirement.skilledWorkers)', 'totalSkilledWorkers')
+              .where('requirement.userIndex = :userIndex', { userIndex })
+              .groupBy('requirement.workerreqID')
+              .getRawMany();
+  
+          // Map aggregated counts to a dictionary for quick lookup
+          const workerCountsMap = {};
+          aggregatedWorkerCounts.forEach(count => {
+              workerCountsMap[count.workerreqID] = {
+                  totalUnskilledWorkers: parseInt(count.totalUnskilledWorkers, 10),
+                  totalSemiSkilledWorkers: parseInt(count.totalSemiSkilledWorkers, 10),
+                  totalSkilledWorkers: parseInt(count.totalSkilledWorkers, 10),
+              };
+          });
+  
+          // Array to store worker requirements with additional details
+          const workRequirementsWithDetails = [];
+  
+          for (const workRequirement of workRequirements) {
+              // Fetch additional details for each worker requirement
+              const districtDetails = await this.getAllDistricts(workRequirement.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+  
+              const blockDetails = await this.getAllblock(workRequirement.blockcode);
+              const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+  
+              const gpDetails = await this.getAllgp(workRequirement.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+  
+              const deptDetails = await this.getDepatmentbyid(workRequirement.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+  
+              const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
+              const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+  
+              const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
+              const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+  
+              const conDetails = await this.getsconid(workRequirement.ContractorID);
+              const conName = conDetails.result ? conDetails.result.contractorName : '';
+  
+              // Get aggregated worker counts for the current worker requirement
+              const workerCounts = workerCountsMap[workRequirement.workerreqID] || {
+                  totalUnskilledWorkers: 0,
+                  totalSemiSkilledWorkers: 0,
+                  totalSkilledWorkers: 0,
+              };
+  
+              // Push worker requirement with details into the array
+              workRequirementsWithDetails.push({
+                  ...workRequirement,
+                  districtName: districtName,
+                  blockName: blockName,
+                  gpName: gpName,
+                  deptName: deptName,
+                  muniName: muniName,
+                  schName: schName,
+                  conName: conName,
+                  totalUnskilledWorkers: workerCounts.totalUnskilledWorkers,
+                  totalSemiSkilledWorkers: workerCounts.totalSemiSkilledWorkers,
+                  totalSkilledWorkers: workerCounts.totalSkilledWorkers,
+              });
+          }
+  
+          // Return the array of worker requirements with details
+          return {
+              errorCode: 0,
+              result: workRequirementsWithDetails,
+          };
+      } catch (error) {
+          return {
+              errorCode: 1,
+              message: 'Failed to retrieve worker requirements: ' + error.message,
+          };
+      }
+  }
+   
    
 async getAllDistricts(districtCode: number) {
   try {

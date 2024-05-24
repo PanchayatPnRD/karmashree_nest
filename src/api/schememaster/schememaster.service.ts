@@ -77,9 +77,9 @@ export class SchememasterService {
         masterSchemeExpenditure.userIndex = createMasterSchemeDto.userIndex;
 
         await this.MasterSchemeExpendutureRepository.save(masterSchemeExpenditure);
-
+        const schemeid =  masterScheme.schemeId;
 //result: savedMasterScheme
-        return { errorCode: 0  ,message:"Scheme created successfully" };
+        return { errorCode: 0  ,message:"Scheme created successfully",schemeid };
     } catch (error) {
       return { errorCode: 1, message: 'Something went wrong', error: error.message };
     }
@@ -87,7 +87,7 @@ export class SchememasterService {
 
     async findByUserIndex(userIndex: number) {
         try {
-            const masterSchemes = await this.masterSchemeRepository.find({ where: { userIndex } });
+            const masterSchemes = await this.masterSchemeRepository.find({ where: { userIndex },order: { scheme_sl: 'DESC' }  });
 
             return {
                 errorCode: 0,
@@ -101,7 +101,7 @@ export class SchememasterService {
     
     async getAllScheme() {
         try {
-            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear','village','ControctorID','FundingDeptname'] });
+            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear','village','ControctorID','FundingDeptname'],order: { scheme_sl: 'DESC' }  });
     
             const concatenatedScheme = schemes.map(scheme => {
                 const Name = scheme.schemeName ? scheme.schemeName : '';

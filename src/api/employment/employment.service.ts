@@ -65,11 +65,12 @@ export class EmploymentService {
         });
     
         const result = await this.employment.save(newWorkAllocations);
-    
+        const employment =  employmentID;
         return {
             errorCode: 0,
             message:"Employment Created Successfully",
-            result: result
+            employment,
+            //result: result,
         };
     }
 

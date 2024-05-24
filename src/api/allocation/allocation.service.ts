@@ -103,9 +103,10 @@ const existingRecord = await this.masterWorkerRequirementallotment.findOne({
        	finYearAllot:createWorkAllocationDto.workAllocations[0].finYear,
     } // Pass the userIndex from the first work allocation
     );
-  
 }
-  return {errorCode: 0, message:"Allocation Created Successfully"};
+const allocation = workAllocationID;
+
+  return {errorCode: 0, message:"Allocation Created Successfully",allocation};
 }
 
 
@@ -114,7 +115,7 @@ async getAllscheme(scheme_sl: number) {
   try {
       const dist = await this.masterSchemeRepository.find({
           where: { scheme_sl },
-          select: ["scheme_sl", "districtcode", "blockcode"]
+          select: ["scheme_sl", "districtcode", "blockcode"],order: { scheme_sl: 'DESC' } 
       });
       
       return {

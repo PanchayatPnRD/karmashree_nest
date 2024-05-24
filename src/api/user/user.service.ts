@@ -434,7 +434,7 @@ async viewUserById(userIndex: number) {
           
           // Use the andWhere method properly for dno_status
           queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
-          
+          queryBuilder .orderBy('user.userIndex', 'DESC');
           // Get users
           const users = await queryBuilder.getMany();
     
@@ -491,6 +491,7 @@ async viewUserById(userIndex: number) {
         // Use the andWhere method properly for dno_status
         queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '1' });
         
+        queryBuilder .orderBy('user.userIndex', 'DESC');
         // Get users
         const users = await queryBuilder.getMany();
   

@@ -33,7 +33,7 @@ export class ActionplanService {
   async getActionDetails(userIndex: number) {
     try {
         // Find action plan details by user index
-        const actionplans = await this.actionplan.find({ where: { userIndex } });
+        const actionplans = await this.actionplan.find({ where: { userIndex },order: { actionSL: 'DESC' } });
 
         if (!actionplans || actionplans.length === 0) {
             return {

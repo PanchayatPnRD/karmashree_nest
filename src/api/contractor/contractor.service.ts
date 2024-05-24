@@ -110,7 +110,7 @@ export class ContractorService {
 
     async getcontractorList(userIndex: number) {
         try {
-            const contractors = await this.Contractor.find({ where: { userIndex },  order: { cont_sl: 'DESC' }  });
+            const contractors = await this.Contractor.find({ where: { userIndex },order: { cont_sl: 'DESC' }  });
     
             if (!contractors || contractors.length === 0) {
                 return {
