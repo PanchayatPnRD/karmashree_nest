@@ -52,7 +52,7 @@ export class AuthService {
                         // Generate OTP}
                         const otp = this.generateOTP();
 
-                        await this.sendSMS(userDetails.userId, userDetails.contactNo, otp);
+                        await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
                         // Save OTP to user record in the database
                         userDetails.otp = otp;
                         await this.user.save(userDetails);
@@ -82,9 +82,9 @@ export class AuthService {
             }
         }
 
-        async sendSMS(userId: string, contactNo: string, otp: string): Promise<any> {
+        async sendSMS(userName: string, contactNo: string, otp: string): Promise<any> {
           try {
-            const message = `Dear  ${userId}, OTP to login Karmashree Portal is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
+            const message = `Dear  ${userName}, OTP to login Karmashree Portal is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
         
          const response1 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
             "feedid": 392809,
@@ -368,7 +368,7 @@ async passwordReset(data: ForgetpasswordResetDto) {
       // Generate OTP
       const otp = this.generateOTP();
 
-      await this.sendSMSreset(userDetails.userId, userDetails.contactNo, otp);
+      await this.sendSMSreset(userDetails.userName, userDetails.contactNo, otp);
       // Save OTP to user record in the database
       userDetails.resetotp = otp;
       await this.user.save(userDetails);
@@ -386,9 +386,9 @@ async passwordReset(data: ForgetpasswordResetDto) {
   }
 }
 
-async sendSMSreset(userId: string, contactNo: string, otp: string) {
+async sendSMSreset(userName: string, contactNo: string, otp: string) {
   try {
-    const message = `Dear ${userId}, OTP to reset your password is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
+    const message = `Dear ${userName}, OTP to reset your password is ${otp} & valid for ${1} minutes. Don't share OTP - State Karmashree Team `;
 
  const response1 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
     "feedid": 392809,
