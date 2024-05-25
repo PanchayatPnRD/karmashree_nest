@@ -30,15 +30,22 @@ export class AllocationService {
 
 
 ) {}
-private generateWorkAllocationID(): string {
-    const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
-  return `AL${random6Digits}`;
-}
-
-async create(createWorkAllocationDto: CreateWorkAllocationDto) {
-        const reqId = createWorkAllocationDto.reqId;
-        const reqDate = createWorkAllocationDto.reqDate;
-  const workAllocationID = this.generateWorkAllocationID();
+private async generateWorkAllocationID(departmentName: number){
+    const random8Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
+    return `${departmentName}${random8Digits}`;
+  }
+  
+  async create(createWorkAllocationDto: CreateWorkAllocationDto) {
+    const reqId = createWorkAllocationDto.reqId;
+    const reqDate = createWorkAllocationDto.reqDate;
+  
+    // Get department details to include the department name in the work allocation ID
+    const department = await this.getDepatmentbyid(createWorkAllocationDto.workAllocations[0].departmentNo);
+    const departmentName = department.result?.deptshort|| '';
+  
+    // Generate the work allocation ID using the department name
+    const workAllocationID = await this.generateWorkAllocationID(departmentName);
+  //const workAllocationID = this.generateWorkAllocationID();
   const newWorkAllocations = createWorkAllocationDto.workAllocations.map(workAllocationDto => {
     return this.workallocation.create({
       schemeArea: workAllocationDto.schemeArea,
@@ -510,7 +517,7 @@ async getDepatmentbyid(departmentNo: number) {
   let dept; // Declare dept before the try block
 
 
-      dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+      dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo","deptshort"] });
   
 
  

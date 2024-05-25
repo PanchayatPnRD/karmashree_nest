@@ -32,9 +32,14 @@ export class SchememasterService {
         const randomNum = random(1000, 9999); // Generates a random number between 1000 and 9999
         
         // Construct the schemeId using 'S', departmentNo, and the random number
-        const schemeId = `S${createMasterSchemeDto.departmentNo}${randomNum}`;
+        const department = await this.getDepatmentbyid(createMasterSchemeDto.departmentNo);
+        const departmentName = department.result?.deptshort || '';
+        const schemeId = `KR-${departmentName}-${createMasterSchemeDto.districtcode}-${randomNum}`;
         
-        masterScheme.schemeId = schemeId; // Set the schemeId
+        masterScheme.schemeId = schemeId;
+      
+        // Generate the work allocation ID using the department name
+       
         
         const savedMasterScheme = await this.masterSchemeRepository.save(masterScheme);
     
@@ -280,7 +285,7 @@ export class SchememasterService {
     let dept; // Declare dept before the try block
   
  
-        dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo"] });
+        dept = await this.masterdepartment.findOne({ where: { departmentNo },  select: ["departmentName","departmentNo","deptshort"] });
     
   
    
