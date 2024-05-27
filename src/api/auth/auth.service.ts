@@ -219,6 +219,8 @@ export class AuthService {
                 designationID: userDetails.designationID,
                 created_by: userDetails.created_by,
                 currentStatus: userDetails.currentStatus,
+                is_passwordreset:userDetails.is_passwordreset
+                
             };
     
             // Assuming process.env.SECRET is defined and valid
