@@ -47,6 +47,16 @@ export class DemandMaster {
     @Column({ length: 10, nullable: true })
     mobileNo: string;
 
+    
+    @Column({ length: 15, nullable: true })
+    workallostatus: string;
+
+    @Column({ length: 15, nullable: true })
+    total_pending: string;
+
+    @Column({ type: 'date', nullable: true })
+    dateoflastallocation: Date;
+
     @Column({ length: 16, nullable: true })
     aadhaarNo: string;
 
@@ -194,6 +204,65 @@ export class MasterWorkerDemand_allotment {
 
     @Column({ nullable: true })
     userIndex: number;
+
+     
+    
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    submitTime: Date;
+
+    @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
+    UpdateTime: Date;
+}
+
+
+
+@Entity()
+export class MasterWorkerDemand_allotmenthistroy {
+    @PrimaryGeneratedColumn()
+    demandsl: number;
+
+    @Column()
+    demanduniqueID: string;
+
+    @Column({  nullable: false })
+    schemeArea: string;
+
+  
+
+    @Column({ length: 100, nullable: true })
+    workerJobCardNo: string;
+
+    @Column({ type: 'date', nullable: true })
+    dateofwork: Date;
+
+    @Column({ length: 1, nullable: true })
+    workAllotedstatus: string;
+
+   
+
+    @Column({ length: 9, nullable: true })
+    finYear_work: string;
+
+    @Column({ nullable: true })
+    allocationID: number;
+
+    @Column({ type: 'date', nullable: true })
+    dateofallotmentfrom: Date;
+
+    @Column({ type: 'date', nullable: true })
+    dateofallotmentto: Date;
+
+    @Column({ nullable: true })
+    CurrentMonth_allot: number;
+
+    @Column({ nullable: true })
+    CurrentYear_allot: number;
+
+    @Column({ length: 9, nullable: true })
+    finYear_allot: string;
+
+    @Column({ nullable: true })
+    allotmentuserIndex: number;
 
      
     

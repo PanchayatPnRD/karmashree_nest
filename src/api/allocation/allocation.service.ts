@@ -74,6 +74,7 @@ private async generateWorkAllocationID(departmentName: number){
 
   const result = await this.workallocation.save(newWorkAllocations);
   
+  
   // Assuming workallocationsl is some unique identifier associated with the new work allocations
   const workallocationsl = newWorkAllocations.map(allocation => allocation.workallocationsl);
 
