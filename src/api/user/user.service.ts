@@ -200,7 +200,7 @@ export class UserService {
               dno_status:data.dno_status,
 
               tech_email: data.tech_email,
-              is_passwordreset:'0',
+              is_passwordreset:'1',
 
 
 
