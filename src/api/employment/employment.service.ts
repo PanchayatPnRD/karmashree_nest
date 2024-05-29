@@ -59,6 +59,7 @@ export class EmploymentService {
                 currentMonth: CreateEmploymentDto.currentMonth,
                 currentYear: CreateEmploymentDto.currentYear,
                 finYear: CreateEmploymentDto.finYear,
+                attandance:CreateEmploymentDto.attandance,
               
                 userIndex: CreateEmploymentDto.userIndex,
             });
