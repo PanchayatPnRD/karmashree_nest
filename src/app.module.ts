@@ -14,6 +14,7 @@ import { Contractor_master } from './entity/contractor.entity';
 import { ContractorModule } from './api/contractor/contractor.module';
 import { MasterScheme, MasterSchemeExpenduture } from './entity/scheme.entity';
 import { SchememasterModule } from './api/schememaster/schememaster.module';
+import * as dotenv from 'dotenv';
 
 import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisition.module';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from './entity/workrequigition.entity';
@@ -25,18 +26,20 @@ import { AllocationModule } from './api/allocation/allocation.module';
 import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.middleware';
 import { Employment } from './entity/employment.entity';
 import { EmploymentModule } from './api/employment/employment.module';
+dotenv.config();
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      port: 3306,
-      // username: 'wbdeptemployment_karmashreeadmin',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+          // username: 'wbdeptemployment_karmashreeadmin',
       // password: '89lD{wBg{s!q',
       // database: 'wbdeptemployment_karmashree',
-      username: 'root',
-      password: '',
-      database: 'karmashree',
       //  host: 'bhowbums72vrebslxsrz-mysql.services.clever-cloud.com',
       // database: 'bhowbums72vrebslxsrz',
       // username: 'usgtbztvqrdg0vjq',
@@ -62,6 +65,8 @@ import { EmploymentModule } from './api/employment/employment.module';
   controllers: [AppController],
   providers: [AppService],
 })
+
+
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
 
