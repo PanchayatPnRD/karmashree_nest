@@ -115,9 +115,9 @@ export class SchememasterService {
           });
       
           const concatenatedScheme = schemes
-            .filter(scheme => scheme.ControctorID !== null)
-            .filter(scheme => scheme.workorderNo !== null)
-            .filter(scheme => scheme.workOderDate !== null)
+            .filter(scheme => scheme.ControctorID !== 0)
+            .filter(scheme => scheme.workorderNo !== "0")
+          
              // Filter out schemes where ControctorID is null
             .map(scheme => {
               const Name = scheme.schemeName ? scheme.schemeName : '';
