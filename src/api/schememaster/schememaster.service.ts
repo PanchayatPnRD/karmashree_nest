@@ -158,61 +158,68 @@ export class SchememasterService {
       }
       
     
-    async getschemeList(userIndex: number) {
-        try {
-            const scheme = await this.masterSchemeRepository.find({ where: { userIndex },  order: { scheme_sl: 'DESC' }  });
-    
-            if (!scheme || scheme.length === 0) {
-                return {
-                    errorCode: 1,
-                    message: 'Contractors not found for the provided user index',
-                };
-            }
-    
-            const schemesWithDetails = [];
-    
-            await Promise.all(scheme.map(async (scheme) => {
-                try {
-                    const districtDetails = await this.getAllDistricts(scheme.districtcode);
-                    const districtName = districtDetails.result ? districtDetails.result.districtName : '';
-    
-                    const blockDetails = await this.getAllblock(scheme.blockcode);
-                    const blockname = blockDetails.result ? blockDetails.result.blockName : '';
-    
-                    const gpDetails = await this.getAllgp(scheme.gpCode);
-                    const gpName = gpDetails.result ? gpDetails.result.gpName : '';
-    
-                    const deptDetails = await this.getDepatmentbyid(scheme.departmentNo);
-                    const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+     
 
-                    const muniDetails = await this.getmunibyid(scheme.municipalityCode);
-                    const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
-
-
-
-                    schemesWithDetails.push({
-                        ...scheme,
-                        districtName: districtName,
-                        blockname: blockname,
-                        gpName: gpName,
-                        deptName: deptName,
-                        muniName: muniName,
-                    });
-                } catch (error) {
-                    // Log the error for this scheme
-                    console.error(`Failed to fetch details for scheme`);
-                }
-            }));
-    
-            return {
-                errorCode: 0,
-                result: schemesWithDetails,
-            };
-        } catch (error) {
-            console.error('Failed to fetch schemes from the database:', error);
-            throw new Error('Failed to fetch schemes from the database.');
-        }
-    }
+      async getschemeList(userIndex: number) {
+          try {
+              // Use QueryBuilder to fetch schemes
+              const schemes = await this.masterSchemeRepository.createQueryBuilder('scheme')
+                
+                  .where('scheme.userIndex = :userIndex', { userIndex })
+                  .orderBy('scheme.SubmitTime', 'DESC')
+                  .addOrderBy('scheme.scheme_sl','DESC')
+                  .getMany();
+      
+              if (!schemes || schemes.length === 0) {
+                  return {
+                      errorCode: 1,
+                      message: 'Schemes not found for the provided user index',
+                  };
+              }
+      
+              const schemesWithDetails = [];
+      
+              await Promise.all(schemes.map(async (scheme) => {
+                  try {
+                      const districtDetails = await this.getAllDistricts(scheme.districtcode);
+                      const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+      
+                      const blockDetails = await this.getAllblock(scheme.blockcode);
+                      const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+      
+                      const gpDetails = await this.getAllgp(scheme.gpCode);
+                      const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+      
+                      const deptDetails = await this.getDepatmentbyid(scheme.departmentNo);
+                      const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+      
+                      const muniDetails = await this.getmunibyid(scheme.municipalityCode);
+                      const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+      
+                      schemesWithDetails.push({
+                          ...scheme,
+                          districtName: districtName,
+                          blockName: blockName,
+                          gpName: gpName,
+                          deptName: deptName,
+                          muniName: muniName,
+                      });
+                  } catch (error) {
+                      // Log the error for this scheme
+                      console.error(`Failed to fetch details for scheme with scheme_sl ${scheme.scheme_sl}:`, error);
+                  }
+              }));
+      
+              return {
+                  errorCode: 0,
+                  result: schemesWithDetails,
+              };
+          } catch (error) {
+              console.error('Failed to fetch schemes from the database:', error);
+              throw new Error('Failed to fetch schemes from the database.');
+          }
+      }
+      
 
     async getAllDistricts(districtCode: number) {
         try {
