@@ -258,6 +258,11 @@ export class CreateEmploymentDto {
     @IsDate()
     @IsNotEmpty()
     empProvidedto: Date;
+
+    @IsString()
+   
+    @IsNotEmpty()
+    attandance:string;
 }
 
 export class EmploymentDto {
@@ -291,6 +296,7 @@ export class EmploymentDto {
           noOfDaysWorProvided:11,
           totalWagePaid: 11,
           dateOfPayment:  "2024-05-20",
+          attandance:"as",
           empProvidedfrom:"2024-05-20",
           empProvidedto: "2024-05-20",
           

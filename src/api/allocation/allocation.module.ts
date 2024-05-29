@@ -6,7 +6,7 @@ import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity'
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
 import { Contractor_master } from 'src/entity/contractor.entity';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
-import { DemandMaster, MasterWorkerDemand_allotment } from 'src/entity/demandmaster.entity';
+import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/entity/workrequigition.entity';
 
 @Module({  imports: [
@@ -18,7 +18,7 @@ import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/
         MasterScheme,MasterSchemeExpenduture,master_urban,
         WorkAllocation,DemandMaster,
         MasterWorkerDemand_allotment,MasterWorkerRequirement,
-        MasterWorkerRequirement_allotment]),
+        MasterWorkerRequirement_allotment,MasterWorkerDemand_allotmenthistroy]),
    
   ],
 

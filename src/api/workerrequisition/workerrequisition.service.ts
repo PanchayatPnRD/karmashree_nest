@@ -250,6 +250,7 @@ export class WorkerrequisitionService {
   
               const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
               const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+              
   
               const conDetails = await this.getsconid(workRequirement.ContractorID);
               const conName = conDetails.result ? conDetails.result.contractorName : '';

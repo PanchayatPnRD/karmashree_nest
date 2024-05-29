@@ -104,34 +104,59 @@ export class SchememasterService {
         }
     }
     
-    async getAllScheme() {
+    async getAllScheme(userIndex: number) {
         try {
-            const schemes = await this.masterSchemeRepository.find({ select: ['scheme_sl','schemeId', 'schemeName', 'finYear','village','ControctorID','FundingDeptname'],order: { scheme_sl: 'DESC' }  });
-    
-            const concatenatedScheme = schemes.map(scheme => {
-                const Name = scheme.schemeName ? scheme.schemeName : '';
-                const ControctorID = scheme.ControctorID ? scheme.ControctorID : '';
-                const FundingDeptname = scheme.FundingDeptname ? scheme.FundingDeptname : '';
-                
-                const village = scheme.village ? scheme.village : '';
-                
-                const schemeId = scheme.schemeId ? scheme.schemeId : '';
-                const finYear = scheme.finYear ? [scheme.finYear] : []; // Wrap finYear in []
-    
-                const schemename = `${schemeId}-${Name}-[${finYear}]`;
-    
-                return { scheme_sl: scheme.scheme_sl, schemename,village,ControctorID ,FundingDeptname};
+          const schemes = await this.masterSchemeRepository.find({
+            where: { userIndex },
+            select: [
+              'scheme_sl', 'schemeId', 'schemeName', 'finYear', 'village', 'ControctorID', 'FundingDeptname', 'workorderNo', 'workOderDate'
+            ],
+            order: { scheme_sl: 'DESC' }
+          });
+      
+          const concatenatedScheme = schemes
+            .filter(scheme => scheme.ControctorID !== null)
+            .filter(scheme => scheme.workorderNo !== null)
+            .filter(scheme => scheme.workOderDate !== null)
+             // Filter out schemes where ControctorID is null
+            .map(scheme => {
+              const Name = scheme.schemeName ? scheme.schemeName : '';
+              const ControctorID = scheme.ControctorID ? scheme.ControctorID : '';
+              const FundingDeptname = scheme.FundingDeptname ? scheme.FundingDeptname : '';
+              const village = scheme.village ? scheme.village : '';
+              const schemeId = scheme.schemeId ? scheme.schemeId : '';
+              const finYear = scheme.finYear ? [scheme.finYear] : []; // Wrap finYear in []
+              const schemename = `${schemeId}-${Name}-[${finYear}]`;
+      
+              // Construct the result object
+              const result = { 
+                scheme_sl: scheme.scheme_sl, 
+                schemename, 
+                village, 
+                ControctorID, 
+                FundingDeptname 
+              };
+      
+              // Only include workOrderNo and workOderDate if they are present
+              if (scheme.workorderNo) {
+                result['workOrderNo'] = scheme.workorderNo;
+              }
+              if (scheme.workOderDate) {
+                result['workOderDate'] = scheme.workOderDate;
+              }
+      
+              return result;
             });
-    
-
-            return {
-                errorCode: 0,
-                result: concatenatedScheme,
-            };
+      
+          return {
+            errorCode: 0,
+            result: concatenatedScheme,
+          };
         } catch (error) {
-            throw new Error('Failed to fetch contractors from the database.');
+          throw new Error('Failed to fetch schemes from the database.');
         }
-    }
+      }
+      
     
     async getschemeList(userIndex: number) {
         try {

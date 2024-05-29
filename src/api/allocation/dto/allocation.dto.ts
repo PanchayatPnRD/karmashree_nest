@@ -44,6 +44,11 @@ export class WorkAllocationDto {
   @IsString()
   contractorID: string;
 
+  @ApiProperty({ example: 'Contractor ID' })
+  @IsNotEmpty()
+  @IsString()
+  demanduniqueID:string;
+
   @ApiProperty({ example: 'Worker Job Card No' })
   @IsNotEmpty()
   @IsString()
@@ -112,6 +117,7 @@ export class CreateWorkAllocationDto {
       blockcode: 123,
       gpCode: 456,
       schemeId: 'Scheme ID',
+      demanduniqueID:'aas',
       schemeName: 'Scheme Name',
       contractorID: 'Contractor ID',
       workerJobCardNo: 'Worker Job Card No',

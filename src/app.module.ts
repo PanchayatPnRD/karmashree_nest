@@ -19,7 +19,7 @@ import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisiti
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from './entity/workrequigition.entity';
 import { jobcardformat } from './entity/nrgsjobcardformat.entity';
 import { DemandModule } from './api/demand/demand.module';
-import { DemandMaster, MasterWorkerDemand_allotment } from './entity/demandmaster.entity';
+import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from './entity/demandmaster.entity';
 import { WorkAllocation } from './entity/workallocation.entity';
 import { AllocationModule } from './api/allocation/allocation.module';
 import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.middleware';
@@ -50,7 +50,7 @@ import { EmploymentModule } from './api/employment/employment.module';
       entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,
         masterdesignation,Actionplan_master,Contractor_master,MasterScheme,
         MasterSchemeExpenduture,pedestalMaster,MasterWorkerRequirement,MasterWorkerRequirement_allotment,
-        jobcardformat,DemandMaster,MasterWorkerDemand_allotment,WorkAllocation,Employment],
+        jobcardformat,DemandMaster,MasterWorkerDemand_allotment,WorkAllocation,Employment,MasterWorkerDemand_allotmenthistroy],
       synchronize: true,
     }),
     ConfigModule.forRoot(),

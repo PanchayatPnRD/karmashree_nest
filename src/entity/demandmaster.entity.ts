@@ -51,8 +51,8 @@ export class DemandMaster {
     @Column({ length: 15, nullable: true })
     workallostatus: string;
 
-    @Column({ length: 15, nullable: true })
-    total_pending: string;
+    @Column({  nullable: true })
+    total_pending: number;
 
     @Column({ type: 'date', nullable: true })
     dateoflastallocation: Date;
@@ -224,8 +224,7 @@ export class MasterWorkerDemand_allotmenthistroy {
     @Column()
     demanduniqueID: string;
 
-    @Column({  nullable: false })
-    schemeArea: string;
+
 
   
 
@@ -234,6 +233,7 @@ export class MasterWorkerDemand_allotmenthistroy {
 
     @Column({ type: 'date', nullable: true })
     dateofwork: Date;
+
 
     @Column({ length: 1, nullable: true })
     workAllotedstatus: string;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employment } from 'src/entity/employment.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateEmploymentDto, EmploymentDto } from './dto/employment.dto';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { Contractor_master } from 'src/entity/contractor.entity';
@@ -66,6 +66,12 @@ export class EmploymentService {
     
         const result = await this.employment.save(newWorkAllocations);
         const employment =  employmentID;
+
+        const workAllocationIDs = createDto.CreateEmploymentDtos.map(dto => dto.workAllocationID);
+    
+        // Update WorkAllocation records with the new employmentID
+        await this.workallocation.update({ workAllocationID: In(workAllocationIDs) }, { empId: employmentID,empStatus: "1"  });
+    
         return {
             errorCode: 0,
             message:"Employment Created Successfully",

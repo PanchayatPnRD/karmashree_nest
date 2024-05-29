@@ -116,6 +116,12 @@ export class DemandMasterDto {
   @IsNumber()
   age: number;
 
+
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty()
+  @IsNumber()
+  total_pending:number;
+
   
   @ApiProperty({ example: 'Nearest Landmark' })
   @IsNotEmpty()
@@ -168,6 +174,8 @@ export class CreateDemandMasterDto {
                 dateOfApplicationForWork: "12-02-2024",
 
                 noOfDaysWorkDemanded: 7,
+
+                total_pending:0,
 
                 currentMonth: 2,
 

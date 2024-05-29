@@ -11,6 +11,8 @@ export class WorkAllocation {
   workAllocationID: string;
 
 
+  @Column({ nullable: true })
+  demanduniqueID:string;
 
   @Column({ name: 'schemeArea' })
   schemeArea: string;
@@ -50,6 +52,15 @@ export class WorkAllocation {
 
   @Column({ name: 'WorkerName', length: 255 })
   workerName: string;
+
+  @Column({ length: 255, nullable: true })
+  empStatus: string;
+
+  @Column({  nullable: true })
+  empDate: Date;
+
+  @Column({  nullable: true })
+  empId: string;
 
   @Column({ name: 'DateOfApplicationForWork', type: 'date' })
   dateOfApplicationForWork: Date;

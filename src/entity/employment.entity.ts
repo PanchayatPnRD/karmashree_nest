@@ -83,6 +83,9 @@ export class Employment {
     @Column({ type: 'date' })
     dateOfPayment: Date;
 
+    @Column({ type: 'varchar', length: 255 })
+    attandance: string;
+
     @Column({ type: 'int', nullable: true })
     currentMonth: number;
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Contractor_master } from 'src/entity/contractor.entity';
-import { DemandMaster, MasterWorkerDemand_allotment } from 'src/entity/demandmaster.entity';
+import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
 import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
@@ -15,6 +15,7 @@ export class AllocationService {
     @InjectRepository(MasterScheme)
     private  masterSchemeRepository: Repository<MasterScheme>,
     @InjectRepository(MasterSchemeExpenduture) private  MasterSchemeExpendutureRepository: Repository<MasterSchemeExpenduture>,
+    @InjectRepository(MasterWorkerDemand_allotmenthistroy) private  Demandallotmenthistroy:Repository<MasterWorkerDemand_allotmenthistroy>,
     @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
     @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
     @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
@@ -50,8 +51,10 @@ private async generateWorkAllocationID(departmentName: number){
     return this.workallocation.create({
       schemeArea: workAllocationDto.schemeArea,
       workAllocationID:workAllocationID,
+      
       departmentNo: workAllocationDto.departmentNo,
       districtcode: workAllocationDto.districtcode,
+      demanduniqueID:workAllocationDto.demanduniqueID,
       municipalityCode: workAllocationDto.municipalityCode,
       blockcode: workAllocationDto.blockcode,
       gpCode: workAllocationDto.gpCode,
@@ -74,25 +77,90 @@ private async generateWorkAllocationID(departmentName: number){
 
   const result = await this.workallocation.save(newWorkAllocations);
   
-  
-  // Assuming workallocationsl is some unique identifier associated with the new work allocations
   const workallocationsl = newWorkAllocations.map(allocation => allocation.workallocationsl);
-
   const workerJobCardNos = createWorkAllocationDto.workAllocations.map(dto => dto.workerJobCardNo);
-  const workerDemandAllotments = await this.MasterWorkerDemandallotment.find({
-    where: { workerJobCardNo: In(workerJobCardNos) },
+  const demanduniqueIDs = createWorkAllocationDto.workAllocations.map(dto => dto.demanduniqueID);
+
+  // Fetch and update records in DemandMaster
+  const demandMasterRecords = await this.demandMaster.find({
+      where: { 
+          workerJobCardNo: In(workerJobCardNos),
+          demanduniqueID: In(demanduniqueIDs)
+      },
   });
-  
+
+  // Calculate the total work days for each job card number and demand unique ID
+  const totalWorkDaysMap = new Map();
+
   for (let i = 0; i < newWorkAllocations.length; i++) {
-    const workAllocationDto = createWorkAllocationDto.workAllocations[i];
-    const matchingAllotment = workerDemandAllotments.find(allotment => allotment.workerJobCardNo === workAllocationDto.workerJobCardNo);
-    if (matchingAllotment) {
-      matchingAllotment.allotmentuserIndex = workAllocationDto.userIndex;
-      matchingAllotment.allocationID = workallocationsl[i];
-      await this.MasterWorkerDemandallotment.save(matchingAllotment); // Save the updated allotment
-    }
+      const workAllocationDto = createWorkAllocationDto.workAllocations[i];
+      const key = `${workAllocationDto.workerJobCardNo}-${workAllocationDto.demanduniqueID}`;
+      const startDate = new Date(workAllocationDto.workAllocationFromDate);
+      const endDate = new Date(workAllocationDto.workAllocationToDate);
+      const workDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+
+      if (totalWorkDaysMap.has(key)) {
+          totalWorkDaysMap.set(key, totalWorkDaysMap.get(key) + workDays);
+      } else {
+          totalWorkDaysMap.set(key, workDays);
+      }
+
+      const newAllotment = this.Demandallotmenthistroy.create({
+          allotmentuserIndex: workAllocationDto.userIndex,
+          allocationID: workallocationsl[i],
+          workerJobCardNo: workAllocationDto.workerJobCardNo,
+          demanduniqueID: workAllocationDto.demanduniqueID,
+          workAllotedstatus: "1",
+          finYear_work: workAllocationDto.finYear,
+          CurrentMonth_allot: workAllocationDto.currentMonth,
+          CurrentYear_allot: workAllocationDto.currentYear,
+          finYear_allot: workAllocationDto.finYear,
+          dateofallotmentfrom: workAllocationDto.workAllocationFromDate,
+          dateofallotmentto: workAllocationDto.workAllocationToDate,
+      });
+      await this.Demandallotmenthistroy.save(newAllotment); // Save the new allotment
   }
 
+  for (let i = 0; i < newWorkAllocations.length; i++) {
+      const workAllocationDto = createWorkAllocationDto.workAllocations[i];
+      const key = `${workAllocationDto.workerJobCardNo}-${workAllocationDto.demanduniqueID}`;
+      const totalWorkDays = totalWorkDaysMap.get(key);
+
+      const matchingDemandMaster = demandMasterRecords.find(record =>
+          record.workerJobCardNo === workAllocationDto.workerJobCardNo &&
+          record.demanduniqueID === workAllocationDto.demanduniqueID
+      );
+
+      if (matchingDemandMaster) {
+        if (matchingDemandMaster.workallostatus === "0") {
+            // Calculate total pending work days
+            matchingDemandMaster.total_pending = workAllocationDto.noOfDaysWorkDemanded - totalWorkDays;
+            matchingDemandMaster.total_pending = Math.max(matchingDemandMaster.total_pending, 0); // Ensure non-negative
+            matchingDemandMaster.workallostatus = "1";
+        } else if (matchingDemandMaster.workallostatus === "1") {
+            // Subtract current work allocation days from total pending
+            matchingDemandMaster.total_pending -= workAllocationDto.noOfDaysWorkAlloted;
+            matchingDemandMaster.total_pending = Math.max(matchingDemandMaster.total_pending, 0); // Ensure non-negative
+        }
+          matchingDemandMaster.workallostatus = "1";
+          matchingDemandMaster.dateoflastallocation = workAllocationDto.workAllocationToDate;
+
+          console.log("Updating DemandMaster:", {
+              workerJobCardNo: matchingDemandMaster.workerJobCardNo,
+              demanduniqueID: matchingDemandMaster.demanduniqueID,
+              total_pending: matchingDemandMaster.total_pending,
+              workallostatus: matchingDemandMaster.workallostatus,
+              dateoflastallocation: matchingDemandMaster.dateoflastallocation,
+          });
+
+          await this.demandMaster.save(matchingDemandMaster); // Save the updated DemandMaster record
+      } else {
+          console.log("No matching record found for:", {
+              workerJobCardNo: workAllocationDto.workerJobCardNo,
+              demanduniqueID: workAllocationDto.demanduniqueID,
+          });
+      }
+  }
   // Check if there is a matching record
 const existingRecord = await this.masterWorkerRequirementallotment.findOne({
     where: { workerreqID: reqId, dateofwork: reqDate }
@@ -299,6 +367,11 @@ async getallocationListforemp(userIndex: number) {
                 const muniDetails = await this.getmunibyid(group.municipalityCode);
                 const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
 
+                const contractorID = parseInt(group.contractorID, 10);
+                // Fetch block details
+                const conDetails = await this.getsconid(contractorID);
+                const conName = conDetails.result ? conDetails.result.contractorName : '';
+
                 allocationsWithDetails.push({
                     submitTime: group.submitTime,
                     noOfDaysWorkDemanded: group.noOfDaysWorkDemanded,
@@ -311,6 +384,7 @@ async getallocationListforemp(userIndex: number) {
                     deptName: deptName,
                  
                     muniName: muniName,
+                    conName:conName,
                     schemeId: group.schemeId,
                     workAllocationID: group.workAllocationID,
                     schemeName: schemeDetails.schemeName,
@@ -334,6 +408,7 @@ async getallocationListforemp(userIndex: number) {
                     workorderNo: schemeDetails.workorderNo,
                     workOderDate: schemeDetails.workOderDate,
                     ControctorID: schemeDetails.ControctorID,
+                  
               
               
               
@@ -389,8 +464,10 @@ async allocationempfinalliat(workAllocationID: string) {
                 const sechDetails = await this.getschemeid(Id);
                 const schName = sechDetails.result ? sechDetails.result.schemeName : '';
                 }
+
+                const contractorID = parseInt(allocation.contractorID, 10);
                 // Fetch block details
-                const conDetails = await this.getsconid(allocation.blockcode);
+                const conDetails = await this.getsconid(contractorID);
                 const conName = conDetails.result ? conDetails.result.contractorName : '';
 
 

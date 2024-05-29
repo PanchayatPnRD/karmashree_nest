@@ -35,6 +35,7 @@ export class DemandService {
 
       const createdTreatment = this.demandMaster.create({
         ...actionDto,
+        total_pending:actionDto.total_pending,
         demanduniqueID
       });
       await this.demandMaster.save(createdTreatment);
@@ -60,6 +61,7 @@ export class DemandService {
           CurrentYear_work: actionDto.currentYear,
           remark:actionDto.remark,
           age:actionDto.age,
+         
 
         });
 

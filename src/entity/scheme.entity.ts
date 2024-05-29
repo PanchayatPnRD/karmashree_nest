@@ -173,7 +173,7 @@ export class MasterSchemeExpenduture {
     @Column({ nullable: true })
     sansadID: number ;
 
-    @Column({ type: 'varchar',length: 9 })
+    @Column({ type: 'varchar',length: 255 })
     village: string;
 
     @Column({type: 'int'} )

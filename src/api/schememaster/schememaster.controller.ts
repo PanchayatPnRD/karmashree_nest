@@ -26,10 +26,10 @@ export class SchememasterController {
         }
     }
 
-    @Get('getAllScheme')
-    async getAllScheme(){
+    @Get('getAllScheme/:userIndex')
+    async getAllScheme(@Param('userIndex') userIndex: number){
         try{
-            const scheme = await this.masterSchemeService.getAllScheme()
+            const scheme = await this.masterSchemeService.getAllScheme(userIndex)
             return scheme;
         }catch(error){
             return{ success:false,message:'Failed to fetch master scheme expenditrure.',error};
