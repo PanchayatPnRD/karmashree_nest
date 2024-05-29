@@ -250,8 +250,12 @@ export class WorkerrequisitionService {
   
               const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
               const schName = sechDetails.result ? sechDetails.result.schemeName : '';
-              
-  
+              const schemeId = sechDetails.result ? sechDetails.result.schemeId : '';
+              const personDaysGenerated = sechDetails.result ? sechDetails.result.personDaysGenerated : '';
+
+              const workorderNo = sechDetails.result ? sechDetails.result.workorderNo : '';
+              const totalprojectCost = sechDetails.result ? sechDetails.result.totalprojectCost : '';
+              const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
               const conDetails = await this.getsconid(workRequirement.ContractorID);
               const conName = conDetails.result ? conDetails.result.contractorName : '';
   
@@ -272,6 +276,14 @@ export class WorkerrequisitionService {
                   muniName: muniName,
                   schName: schName,
                   conName: conName,
+                  schemeId:schemeId,
+                 personDaysGenerated:personDaysGenerated,
+    
+                 workorderNo:workorderNo,
+                 totalprojectCost:totalprojectCost,
+                 ExecutingDeptName:ExecutingDeptName,
+
+
                   totalUnskilledWorkers: workerCounts.totalUnskilledWorkers,
                   totalSemiSkilledWorkers: workerCounts.totalSemiSkilledWorkers,
                   totalSkilledWorkers: workerCounts.totalSkilledWorkers,
@@ -411,7 +423,7 @@ async getDepatmentbyid(departmentNo: number) {
         let dept; // Declare dept before the try block
       
       
-            dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl"] });
+            dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName"] });
         
       
        
