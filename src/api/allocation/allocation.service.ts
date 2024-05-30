@@ -217,7 +217,61 @@ async getdemandforallocation(blockcode: number, gpCode?: number) {
           work = await this.demandMaster.find({ where: { blockcode } });
       }
 
-      return { errorCode: 0, result: work };
+      if (!work || work.length === 0) {
+          return { errorCode: 1, message: 'No demands found for the provided blockcode and gpCode' };
+      }
+
+      // Fetch additional details for each work demand in parallel
+      const workDetailsPromises = work.map(async (demand) => {
+          const [
+              districtDetails,
+              blockDetails,
+              gpDetails,
+              deptDetails,
+              muniDetails,
+              sechDetails
+          ] = await Promise.all([
+              this.getAllDistricts(demand.districtcode),
+              this.getAllblock(demand.blockcode),
+              this.getAllgp(demand.gpCode),
+              this.getDepatmentbyid(demand.departmentNo),
+              this.getmunibyid(demand.municipalityCode),
+              this.getschemeid(demand.schemeId)
+          ]);
+
+          const districtName = districtDetails.result?.districtName || '';
+          const blockName = blockDetails.result?.blockName || '';
+          const gpName = gpDetails.result?.gpName || '';
+          const deptName = deptDetails.result?.departmentName || '';
+          const muniName = muniDetails.result?.urbanName || '';
+          const schName = sechDetails.result?.schemeName || '';
+          const schemeId = sechDetails.result?.schemeId || '';
+          const personDaysGenerated = sechDetails.result?.personDaysGenerated || '';
+          const workorderNo = sechDetails.result?.workorderNo || '';
+          const totalprojectCost = sechDetails.result?.totalprojectCost || '';
+          const ExecutingDeptName = sechDetails.result?.ExecutingDeptName || '';
+          const schemeSector = sechDetails.result?.schemeSector || '';
+
+          return {
+              ...demand,
+              districtName,
+              blockName,
+              gpName,
+              deptName,
+              muniName,
+              schName,
+              schemeId,
+              schemeSector,
+              personDaysGenerated,
+              workorderNo,
+              totalprojectCost,
+              ExecutingDeptName
+          };
+      });
+
+      const workDetails = await Promise.all(workDetailsPromises);
+
+      return { errorCode: 0, result: workDetails };
   } catch (error) {
       return {
           errorCode: 1,
@@ -225,6 +279,7 @@ async getdemandforallocation(blockcode: number, gpCode?: number) {
       };
   }
 }
+
 
 async getDemandByScheme(scheme_sl: number) {
   try {
