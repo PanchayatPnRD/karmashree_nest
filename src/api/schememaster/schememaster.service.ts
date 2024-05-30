@@ -64,11 +64,12 @@ export class SchememasterService {
         masterSchemeExpenditure.ImplementingAgencyID = createMasterSchemeDto.ImplementingAgencyID;
         masterSchemeExpenditure.ImplementingAgencyName = createMasterSchemeDto.ImplementingAgencyName;
         masterSchemeExpenditure.StatusOfWork = createMasterSchemeDto.StatusOfWork;
+      
         masterSchemeExpenditure.tentativeStartDate = createMasterSchemeDto.tentativeStartDate;
         masterSchemeExpenditure.ActualtartDate = createMasterSchemeDto.ActualtartDate;
         masterSchemeExpenditure.ExpectedCompletionDate = createMasterSchemeDto.ExpectedCompletionDate;
         masterSchemeExpenditure.totalprojectCost = createMasterSchemeDto.totalprojectCost;
-        masterSchemeExpenditure.totalWageCost = createMasterSchemeDto.totalWageCost;
+       
         masterSchemeExpenditure.totalLabour = createMasterSchemeDto.totalLabour;
         masterSchemeExpenditure.personDaysGenerated = createMasterSchemeDto.personDaysGenerated;
         masterSchemeExpenditure.totalUnskilledWorkers = createMasterSchemeDto.totalUnskilledWorkers;
@@ -79,6 +80,7 @@ export class SchememasterService {
         masterSchemeExpenditure.ex3 = createMasterSchemeDto.ex3;
         masterSchemeExpenditure.ex4 = createMasterSchemeDto.ex4;
         masterSchemeExpenditure.ex5 = createMasterSchemeDto.ex5;
+        
         masterSchemeExpenditure.userIndex = createMasterSchemeDto.userIndex;
 
         await this.MasterSchemeExpendutureRepository.save(masterSchemeExpenditure);

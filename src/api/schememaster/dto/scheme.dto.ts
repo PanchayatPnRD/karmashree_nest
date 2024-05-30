@@ -86,6 +86,7 @@ export class MasterSchemeDTO {
     @IsNumber()
     ImplementingAgencyID: number;
 
+
     @ApiProperty({ example: 'implementing agency name' })
     @IsNotEmpty()
     @IsString()
@@ -116,7 +117,12 @@ export class MasterSchemeDTO {
     @ApiProperty({ example: 5000.25 })
     @IsNotEmpty()
     @IsNumber()
-    totalWageCost: number;
+    totalwagescostinvoled: number;
+
+
+
+
+
 
     @ApiProperty({ example: 100 })
     @IsNotEmpty()

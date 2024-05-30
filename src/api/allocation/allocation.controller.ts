@@ -49,4 +49,14 @@ export class AllocationController {
               return  allo 
          
       }
+
+      @Get('getallocationdemandview/:allocationID')
+    async getAllocationDemandView(@Param('allocationID') allocationID: string) {
+        try {
+            const result = await this.allocationService.getallocationdemandview(allocationID);
+            return result;
+        } catch (error) {
+            return { errorCode: 1, message: 'Internal server error' };
+        }
+    }
 }

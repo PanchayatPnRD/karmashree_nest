@@ -244,7 +244,7 @@ export class MasterWorkerDemand_allotmenthistroy {
     finYear_work: string;
 
     @Column({ nullable: true })
-    allocationID: number;
+    allocationID: string;
 
     @Column({ type: 'date', nullable: true })
     dateofallotmentfrom: Date;

@@ -28,8 +28,9 @@ export class AllocationService {
     @InjectRepository(MasterWorkerDemand_allotment) private MasterWorkerDemandallotment: Repository<MasterWorkerDemand_allotment>,
     @InjectRepository(MasterWorkerRequirement) private masterWorkerRequirement: Repository<MasterWorkerRequirement>,
     @InjectRepository(MasterWorkerRequirement_allotment) private masterWorkerRequirementallotment: Repository<MasterWorkerRequirement_allotment>,
+    @InjectRepository(MasterWorkerDemand_allotmenthistroy) private MasterWorkerDemandallotmenthistroy: Repository<MasterWorkerDemand_allotmenthistroy>,
 
-
+    
 ) {}
 private async generateWorkAllocationID(departmentName: number){
     const random8Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
@@ -107,7 +108,7 @@ private async generateWorkAllocationID(departmentName: number){
 
       const newAllotment = this.Demandallotmenthistroy.create({
           allotmentuserIndex: workAllocationDto.userIndex,
-          allocationID: workallocationsl[i],
+          allocationID: workAllocationID,
           workerJobCardNo: workAllocationDto.workerJobCardNo,
           demanduniqueID: workAllocationDto.demanduniqueID,
           workAllotedstatus: "1",
@@ -248,6 +249,140 @@ async getDemandByScheme(scheme_sl: number) {
   }
 }
 
+async getallocationList(userIndex: number) {
+  try {
+      // Find worker allocations by user index
+      const allocations = await this.workallocation.find({
+          where: { userIndex },
+          order: { workallocationsl: 'DESC' }
+      });
+
+      if (!allocations || allocations.length === 0) {
+          return {
+              errorCode: 1,
+              message: 'Allocations not found for the provided user index',
+          };
+      }
+
+      // Get aggregated worker counts grouped by workAllocationID
+      const aggregatedWorkerCounts = await this.workallocation.createQueryBuilder('allocation')
+          .select('allocation.workAllocationID', 'workAllocationID')
+          .addSelect('SUM(allocation.noOfDaysWorkDemanded)', 'noOfDaysWorkDemanded')
+          .addSelect('SUM(allocation.noOfDaysWorkAlloted)', 'noOfDaysWorkAlloted')
+          .addSelect('MAX(allocation.workAllocationToDate)', 'workAllocationToDate')
+          .addSelect('MAX(allocation.empStatus)', 'empStatus')
+          .addSelect('MAX(allocation.empDate)', 'empDate')
+          .addSelect('MAX(allocation.empId)', 'empId')
+          .addSelect('MAX(allocation.finYear)', 'finYear')
+          .where('allocation.userIndex = :userIndex', { userIndex })
+          .groupBy('allocation.workAllocationID')
+          .getRawMany();
+
+      // Create a map for easy lookup of aggregated worker counts
+      const workerCountsMap = aggregatedWorkerCounts.reduce((map, count) => {
+          map[count.workAllocationID] = {
+              noOfDaysWorkDemanded: parseInt(count.noOfDaysWorkDemanded, 10),
+              noOfDaysWorkAlloted: parseInt(count.noOfDaysWorkAlloted, 10),
+              workAllocationToDate: count.workAllocationToDate,
+              empStatus: count.empStatus,
+              empDate: count.empDate,
+              empId: count.empId,
+              finYear: count.finYear,
+          };
+          return map;
+      }, {});
+
+      // Aggregate allocations by workAllocationID
+      const allocationsMap = allocations.reduce((map, allocation) => {
+          if (!map[allocation.workAllocationID]) {
+              map[allocation.workAllocationID] = [];
+          }
+          map[allocation.workAllocationID].push(allocation);
+          return map;
+      }, {});
+
+      // Fetch additional details for each workAllocationID in parallel
+      const allocationDetailsPromises = Object.keys(allocationsMap).map(async (workAllocationID) => {
+          const allocationGroup = allocationsMap[workAllocationID];
+
+          // Assuming the first allocation in the group represents the general details
+          const baseAllocation = allocationGroup[0];
+
+          const [districtDetails, blockDetails, gpDetails, deptDetails, muniDetails, sechDetails] = await Promise.all([
+              this.getAllDistricts(baseAllocation.districtcode),
+              this.getAllblock(baseAllocation.blockcode),
+              this.getAllgp(baseAllocation.gpCode),
+              this.getDepatmentbyid(baseAllocation.departmentNo),
+              this.getmunibyid(baseAllocation.municipalityCode),
+              this.getschemeidforallocation(baseAllocation.schemeId)
+          ]);
+
+          const districtName = districtDetails.result?.districtName || '';
+          const blockName = blockDetails.result?.blockName || '';
+          const gpName = gpDetails.result?.gpName || '';
+          const deptName = deptDetails.result?.departmentName || '';
+          const muniName = muniDetails.result?.urbanName || '';
+          const schName = sechDetails.result?.schemeName || '';
+          const schemeId = sechDetails.result?.schemeId || '';
+          const personDaysGenerated = sechDetails.result?.personDaysGenerated || '';
+          const workorderNo = sechDetails.result?.workorderNo || '';
+          const totalprojectCost = sechDetails.result?.totalprojectCost || '';
+          const ExecutingDeptName = sechDetails.result?.ExecutingDeptName || '';
+          const schemeSector = sechDetails.result?.schemeSector || '';
+
+          const workerCounts = workerCountsMap[workAllocationID] || {
+              noOfDaysWorkDemanded: 0,
+              noOfDaysWorkAlloted: 0,
+              workAllocationToDate: '',
+              empStatus: '',
+              empDate: '',
+              empId: '',
+              finYear: '',
+          };
+
+          return {
+              workAllocationID,
+              workAllocationToDate: workerCounts.workAllocationToDate,
+              finYear: workerCounts.finYear,
+              empStatus: workerCounts.empStatus,
+              empDate: workerCounts.empDate,
+              empId: workerCounts.empId,
+              districtName,
+              blockName,
+              gpName,
+              deptName,
+              muniName,
+              schName,
+              schemeId,
+              schemeSector,
+              personDaysGenerated,
+              workorderNo,
+              totalprojectCost,
+              ExecutingDeptName,
+              noOfDaysWorkDemanded: workerCounts.noOfDaysWorkDemanded,
+              noOfDaysWorkAlloted: workerCounts.noOfDaysWorkAlloted,
+          };
+      });
+
+      const allocationDetails = await Promise.all(allocationDetailsPromises);
+
+      // Return the array of worker requirements with details
+      return {
+          errorCode: 0,
+          result: allocationDetails,
+      };
+  } catch (error) {
+      return {
+          errorCode: 1,
+          message: 'Failed to retrieve worker requirements: ' + error.message,
+      };
+  }
+}
+
+
+
+
+
 // async getallocationList(userIndex: number) {
 //   try {
 //       const allocations = await this.workallocation.find({ where: { userIndex },  order: { workallocationsl: 'DESC' }  });
@@ -305,97 +440,7 @@ async getDemandByScheme(scheme_sl: number) {
 // }
 //
 
-async getallocationList(userIndex: number) {
-  try {
-      // Find worker requirements by user index
-      const allocations = await this.workallocation.find({ where: { userIndex },  order: { workallocationsl: 'DESC' }  });
 
-      if (!allocations || allocations.length === 0) {
-          return {
-              errorCode: 1,
-              message: 'allocations not found for the provided user index',
-          };
-      }
-
-      // Get aggregated worker counts grouped by workerreqID
-      const aggregatedWorkerCounts = await this.workallocation.createQueryBuilder('allocation')
-          .select('allocation.workAllocationID', 'workAllocationID')
-         
-          .where('allocation.userIndex = :userIndex', { userIndex })
-          .groupBy('allocation.workAllocationID')
-          .getRawMany();
-
-          const allocationdetails = [];
-
-    
-
-      for (const allocation of allocations) {
-          // Fetch additional details for each worker requirement
-          const districtDetails = await this.getAllDistricts(allocation.districtcode);
-          const districtName = districtDetails.result ? districtDetails.result.districtName : '';
-
-          const blockDetails = await this.getAllblock(allocation.blockcode);
-          const blockName = blockDetails.result ? blockDetails.result.blockName : '';
-
-          const gpDetails = await this.getAllgp(allocation.gpCode);
-          const gpName = gpDetails.result ? gpDetails.result.gpName : '';
-
-          const deptDetails = await this.getDepatmentbyid(allocation.departmentNo);
-          const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
-
-          const muniDetails = await this.getmunibyid(allocation.municipalityCode);
-          const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
-
-          // const sectorDetails = await this.getSectorbyid(schemeSector);
-          // const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
-
-          const sechDetails = await this.getschemeidforallocation(allocation.schemeId);
-          const schName = sechDetails.result ? sechDetails.result.schemeName : '';
-          const schemeId = sechDetails.result ? sechDetails.result.schemeId : '';
-          const personDaysGenerated = sechDetails.result ? sechDetails.result.personDaysGenerated : '';
-
-          const workorderNo = sechDetails.result ? sechDetails.result.workorderNo : '';
-          const totalprojectCost = sechDetails.result ? sechDetails.result.totalprojectCost : '';
-          const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
-          const schemeSector = sechDetails.result ? sechDetails.result.schemeSector : '';
-   
-
-       
-          // Push worker requirement with details into the array
-          allocationdetails.push({
-              ...allocation,
-              districtName: districtName,
-              blockName: blockName,
-              gpName: gpName,
-              deptName: deptName,
-              muniName: muniName,
-              schName: schName,
-             
-              schemeId:schemeId,
-              schemeSector:schemeSector,
-             personDaysGenerated:personDaysGenerated,
-
-             workorderNo:workorderNo,
-             totalprojectCost:totalprojectCost,
-             ExecutingDeptName:ExecutingDeptName,
-
-
-           
-          });
-      }
-
-      // Return the array of worker requirements with details
-      return {
-          errorCode: 0,
-          result: allocationdetails,
-      };
-  } catch (error) {
-      return {
-          errorCode: 1,
-          message: 'Failed to retrieve worker requirements: ' + error.message,
-      };
-  }
-}
 
 
 ///
@@ -495,7 +540,7 @@ async getallocationListforemp(userIndex: number) {
             ActualtartDate: schemeDetails.ActualtartDate,
             ExpectedCompletionDate: schemeDetails.ExpectedCompletionDate,
             totalprojectCost: schemeDetails.totalprojectCost,
-            totalWageCost: schemeDetails.totalWageCost,
+            totalwagescostinvoled: schemeDetails.totalwagescostinvoled,
             totalLabour: schemeDetails.totalLabour,
             personDaysGenerated: schemeDetails.personDaysGenerated,
             totalUnskilledWorkers: schemeDetails.totalUnskilledWorkers,
@@ -752,6 +797,40 @@ async getDepatmentbyid(departmentNo: number) {
        
       }
 
-
+      async getallocationdemandview(allocationID: string) {
+        try {
+            if (!allocationID || allocationID === "0") {
+                // Handle the case when allocationID is empty or '0'
+                return { errorCode: 1, message: 'Invalid allocationID' };
+            }
+    
+            // Retrieve records from MasterWorkerDemandallotmenthistroy based on allocationID
+            const allocationHistoryRecords = await this.MasterWorkerDemandallotmenthistroy.find({
+                where: { allocationID },
+            });
+    
+            if (!allocationHistoryRecords || allocationHistoryRecords.length === 0) {
+                return { errorCode: 1, message: 'Allocation history not found' };
+            }
+    
+            // Extract demanduniqueIDs from the allocation history records
+            const demanduniqueIDs = allocationHistoryRecords.map(record => record.demanduniqueID);
+    
+            // Fetch corresponding data from the DemandMaster table
+            const demandMasterRecords = await this.demandMaster.find({
+                where: { demanduniqueID: In(demanduniqueIDs) },
+            });
+    
+            return demandMasterRecords.length > 0 
+                ? { errorCode: 0, result: demandMasterRecords } 
+                : { errorCode: 1, message: 'DemandMaster records not found' };
+        } catch (error) {
+            return {
+                errorCode: 1,
+                message: "Something went wrong while retrieving allocation demand view: " + error.message
+            };
+        }
+    }
+    
 
 }

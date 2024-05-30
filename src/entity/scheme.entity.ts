@@ -75,11 +75,20 @@ export class MasterScheme {
     @Column('double', { precision: 19, scale: 2 })
     totalprojectCost: number;
 
-    @Column('double', { precision: 19, scale: 2, nullable: true })
-    totalWageCost: number ;
+ 
+
+    @Column({
+        type: 'double',
+        precision: 10, // Adjust according to your needs
+        scale: 2, // Adjust according to your needs
+        nullable: true // Ensure this is a valid default value
+      })
+      totalwagescostinvoled: number;
+    
 
     @Column({ nullable: true })
     totalLabour: number ;
+
 
 
     @Column({ nullable: true })
@@ -212,11 +221,15 @@ export class MasterSchemeExpenduture {
     @Column({ type: 'date', nullable: true })
     ActualtartDate: Date ;
 
-    @Column({ type: 'date', nullable: true })
+    @Column({ type: 'date', nullable: true ,})
     ExpectedCompletionDate: Date;
 
-    @Column('double', { precision: 19, scale: 2 })
+    @Column('double', { precision: 19, scale: 2,nullable: true  })
     totalprojectCost: number;
+
+   
+
+    
 
     @Column('double', { precision: 19, scale: 2, nullable: true })
     totalWageCost: number ;
