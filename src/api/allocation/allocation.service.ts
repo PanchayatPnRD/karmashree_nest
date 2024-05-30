@@ -248,8 +248,66 @@ async getDemandByScheme(scheme_sl: number) {
   }
 }
 
+// async getallocationList(userIndex: number) {
+//   try {
+//       const allocations = await this.workallocation.find({ where: { userIndex },  order: { workallocationsl: 'DESC' }  });
+
+//       if (!allocations || allocations.length === 0) {
+//           return {
+//               errorCode: 1,
+//               message: 'allocations not found for the provided user index',
+//           };
+//       }
+
+//       const allocationsWithDetails = [];
+
+//       await Promise.all(allocations.map(async (allocation) => {
+//           try {
+//               const districtDetails = await this.getAllDistricts(allocation.districtcode);
+//               const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+
+//               const blockDetails = await this.getAllblock(allocation.blockcode);
+//               const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+
+//               const gpDetails = await this.getAllgp(allocation.gpCode);
+//               const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+
+//               const deptDetails = await this.getDepatmentbyid(allocation.departmentNo);
+//               const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+
+//               const muniDetails = await this.getmunibyid(allocation.municipalityCode);
+//               const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+
+              
+
+//               allocationsWithDetails.push({
+//                   ...allocation,
+//                   districtName: districtName,
+//                   blockname: blockname,
+//                   gpName: gpName,
+//                   deptName: deptName,
+//                   muniName: muniName,
+//               });
+//           } catch (error) {
+//               // Log the error for this contractor
+//               console.error(`Failed to fetch details for contractor`);
+//           }
+//       }));
+
+//       return {
+//           errorCode: 0,
+//           result: allocationsWithDetails,
+//       };
+//   } catch (error) {
+//       console.error('Failed to fetch allocations from the database:', error);
+//       throw new Error('Failed to fetch allocations from the database.');
+//   }
+// }
+//
+
 async getallocationList(userIndex: number) {
   try {
+      // Find worker requirements by user index
       const allocations = await this.workallocation.find({ where: { userIndex },  order: { workallocationsl: 'DESC' }  });
 
       if (!allocations || allocations.length === 0) {
@@ -259,51 +317,88 @@ async getallocationList(userIndex: number) {
           };
       }
 
-      const allocationsWithDetails = [];
+      // Get aggregated worker counts grouped by workerreqID
+      const aggregatedWorkerCounts = await this.workallocation.createQueryBuilder('allocation')
+          .select('allocation.workAllocationID', 'workAllocationID')
+         
+          .where('allocation.userIndex = :userIndex', { userIndex })
+          .groupBy('allocation.workAllocationID')
+          .getRawMany();
 
-      await Promise.all(allocations.map(async (allocation) => {
-          try {
-              const districtDetails = await this.getAllDistricts(allocation.districtcode);
-              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+          const allocationdetails = [];
 
-              const blockDetails = await this.getAllblock(allocation.blockcode);
-              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+    
 
-              const gpDetails = await this.getAllgp(allocation.gpCode);
-              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+      for (const allocation of allocations) {
+          // Fetch additional details for each worker requirement
+          const districtDetails = await this.getAllDistricts(allocation.districtcode);
+          const districtName = districtDetails.result ? districtDetails.result.districtName : '';
 
-              const deptDetails = await this.getDepatmentbyid(allocation.departmentNo);
-              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+          const blockDetails = await this.getAllblock(allocation.blockcode);
+          const blockName = blockDetails.result ? blockDetails.result.blockName : '';
 
-              const muniDetails = await this.getmunibyid(allocation.municipalityCode);
-              const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+          const gpDetails = await this.getAllgp(allocation.gpCode);
+          const gpName = gpDetails.result ? gpDetails.result.gpName : '';
 
-              
+          const deptDetails = await this.getDepatmentbyid(allocation.departmentNo);
+          const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
 
-              allocationsWithDetails.push({
-                  ...allocation,
-                  districtName: districtName,
-                  blockname: blockname,
-                  gpName: gpName,
-                  deptName: deptName,
-                  muniName: muniName,
-              });
-          } catch (error) {
-              // Log the error for this contractor
-              console.error(`Failed to fetch details for contractor`);
-          }
-      }));
+          const muniDetails = await this.getmunibyid(allocation.municipalityCode);
+          const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
 
+          // const sectorDetails = await this.getSectorbyid(schemeSector);
+          // const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
+
+          const sechDetails = await this.getschemeidforallocation(allocation.schemeId);
+          const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+          const schemeId = sechDetails.result ? sechDetails.result.schemeId : '';
+          const personDaysGenerated = sechDetails.result ? sechDetails.result.personDaysGenerated : '';
+
+          const workorderNo = sechDetails.result ? sechDetails.result.workorderNo : '';
+          const totalprojectCost = sechDetails.result ? sechDetails.result.totalprojectCost : '';
+          const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
+          const schemeSector = sechDetails.result ? sechDetails.result.schemeSector : '';
+   
+
+       
+          // Push worker requirement with details into the array
+          allocationdetails.push({
+              ...allocation,
+              districtName: districtName,
+              blockName: blockName,
+              gpName: gpName,
+              deptName: deptName,
+              muniName: muniName,
+              schName: schName,
+             
+              schemeId:schemeId,
+              schemeSector:schemeSector,
+             personDaysGenerated:personDaysGenerated,
+
+             workorderNo:workorderNo,
+             totalprojectCost:totalprojectCost,
+             ExecutingDeptName:ExecutingDeptName,
+
+
+           
+          });
+      }
+
+      // Return the array of worker requirements with details
       return {
           errorCode: 0,
-          result: allocationsWithDetails,
+          result: allocationdetails,
       };
   } catch (error) {
-      console.error('Failed to fetch allocations from the database:', error);
-      throw new Error('Failed to fetch allocations from the database.');
+      return {
+          errorCode: 1,
+          message: 'Failed to retrieve worker requirements: ' + error.message,
+      };
   }
 }
 
+
+///
 async getallocationListforemp(userIndex: number) {
     try {
       const allocations = await this.workallocation.find({
@@ -614,6 +709,21 @@ async getDepatmentbyid(departmentNo: number) {
   
      
     }
+
+    async getschemeidforallocation(schemeId: string) {
+      let dept; // Declare dept before the try block
+    
+    
+          dept = await this.masterSchemeRepository.findOne({ where: { schemeId },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName","schemeSector"] });
+      
+    
+     
+    
+        return { errorCode: 0, result: dept };
+    
+       
+      }
+    
     async getsconid(cont_sl: number) {
       let dept; // Declare dept before the try block
     
