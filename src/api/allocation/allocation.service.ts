@@ -314,7 +314,7 @@ async getallocationList(userIndex: number) {
               this.getAllgp(baseAllocation.gpCode),
               this.getDepatmentbyid(baseAllocation.departmentNo),
               this.getmunibyid(baseAllocation.municipalityCode),
-              this.getschemeidforallocation(baseAllocation.schemeId)
+              this.getschemeid(baseAllocation.schemeId)
           ]);
 
           const districtName = districtDetails.result?.districtName || '';
@@ -759,7 +759,7 @@ async getDepatmentbyid(departmentNo: number) {
       let dept; // Declare dept before the try block
     
     
-          dept = await this.masterSchemeRepository.findOne({ where: { schemeId },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName","schemeSector"] });
+          dept = await this.masterSchemeRepository.find({ where: { schemeId },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName","schemeSector"] });
       
     
      
