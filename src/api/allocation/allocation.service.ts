@@ -146,14 +146,7 @@ private async generateWorkAllocationID(departmentName: number){
           matchingDemandMaster.workallostatus = "1";
           matchingDemandMaster.dateoflastallocation = workAllocationDto.workAllocationToDate;
 
-          console.log("Updating DemandMaster:", {
-              workerJobCardNo: matchingDemandMaster.workerJobCardNo,
-              demanduniqueID: matchingDemandMaster.demanduniqueID,
-              total_pending: matchingDemandMaster.total_pending,
-              workallostatus: matchingDemandMaster.workallostatus,
-              dateoflastallocation: matchingDemandMaster.dateoflastallocation,
-          });
-
+     
           await this.demandMaster.save(matchingDemandMaster); // Save the updated DemandMaster record
       } else {
           console.log("No matching record found for:", {
@@ -436,189 +429,282 @@ async getallocationList(userIndex: number) {
 
 
 
-
-
-// async getallocationList(userIndex: number) {
-//   try {
-//       const allocations = await this.workallocation.find({ where: { userIndex },  order: { workallocationsl: 'DESC' }  });
-
-//       if (!allocations || allocations.length === 0) {
-//           return {
-//               errorCode: 1,
-//               message: 'allocations not found for the provided user index',
-//           };
-//       }
-
-//       const allocationsWithDetails = [];
-
-//       await Promise.all(allocations.map(async (allocation) => {
-//           try {
-//               const districtDetails = await this.getAllDistricts(allocation.districtcode);
-//               const districtName = districtDetails.result ? districtDetails.result.districtName : '';
-
-//               const blockDetails = await this.getAllblock(allocation.blockcode);
-//               const blockname = blockDetails.result ? blockDetails.result.blockName : '';
-
-//               const gpDetails = await this.getAllgp(allocation.gpCode);
-//               const gpName = gpDetails.result ? gpDetails.result.gpName : '';
-
-//               const deptDetails = await this.getDepatmentbyid(allocation.departmentNo);
-//               const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
-
-//               const muniDetails = await this.getmunibyid(allocation.municipalityCode);
-//               const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
-
-              
-
-//               allocationsWithDetails.push({
-//                   ...allocation,
-//                   districtName: districtName,
-//                   blockname: blockname,
-//                   gpName: gpName,
-//                   deptName: deptName,
-//                   muniName: muniName,
-//               });
-//           } catch (error) {
-//               // Log the error for this contractor
-//               console.error(`Failed to fetch details for contractor`);
-//           }
-//       }));
-
-//       return {
-//           errorCode: 0,
-//           result: allocationsWithDetails,
-//       };
-//   } catch (error) {
-//       console.error('Failed to fetch allocations from the database:', error);
-//       throw new Error('Failed to fetch allocations from the database.');
-//   }
-// }
-//
-
-
-
-
-///
 async getallocationListforemp(userIndex: number) {
-    try {
-      const allocations = await this.workallocation.find({
-        where: { userIndex },
-        order: { workallocationsl: 'DESC' }
-      });
-  
-      if (!allocations || allocations.length === 0) {
-        return {
-          errorCode: 1,
-          message: 'Allocations not found for the provided user index'
+  try {
+    const allocations = await this.workallocation.find({
+      where: { userIndex },
+      order: { workallocationsl: 'DESC' }
+    });
+
+    if (!allocations || allocations.length === 0) {
+      return {
+        errorCode: 1,
+        message: 'Allocations not found for the provided user index'
+      };
+    }
+
+    // Group allocations by workAllocationID
+    const allocationGroups = allocations.reduce((groups, allocation) => {
+      if (!groups[allocation.workAllocationID]) {
+        groups[allocation.workAllocationID] = {
+          submitTime: allocation.submitTime.toISOString().split('T')[0], // Get date part of submitTime
+          schemeId: allocation.schemeId,
+          noOfDaysWorkDemanded: 0,
+          districtcode: 0,
+          blockcode: 0,
+          noOfDaysWorkAlloted: 0,
+          workAllocationID: allocation.workAllocationID,
+          gpCode: allocation.gpCode, // Added for fetching gp details
+          departmentNo: allocation.departmentNo, // Added for fetching department details
+          municipalityCode: allocation.municipalityCode, // Added for fetching municipality details
+          contractorID: allocation.contractorID // Added for fetching contractor details
         };
       }
-  
-      // Group allocations by workAllocationID
-      const allocationGroups = allocations.reduce((groups, allocation) => {
-        if (!groups[allocation.workAllocationID]) {
-          groups[allocation.workAllocationID] = {
-            submitTime: allocation.submitTime.toISOString().split('T')[0], // Get date part of submitTime
-            schemeId: allocation.schemeId,
-            noOfDaysWorkDemanded: 0,
-            districtcode: 0,
-            blockcode: 0,
-            noOfDaysWorkAlloted: 0,
-            workAllocationID: allocation.workAllocationID
-          };
+      groups[allocation.workAllocationID].noOfDaysWorkDemanded += allocation.noOfDaysWorkDemanded;
+      groups[allocation.workAllocationID].districtcode = allocation.districtcode;
+      groups[allocation.workAllocationID].noOfDaysWorkAlloted += allocation.noOfDaysWorkAlloted;
+      groups[allocation.workAllocationID].blockcode = allocation.blockcode;
+      return groups;
+    }, {});
+
+    const allocationsWithDetails = [];
+
+    await Promise.all(Object.values(allocationGroups).map(async (group: any) => {
+      try {
+        const schemeDetails = await this.masterSchemeRepository.findOne({
+          where: { scheme_sl: group.schemeId }
+        });
+        if (!schemeDetails) {
+          throw new Error(`Scheme details not found for schemeId ${group.schemeId}`);
         }
-        groups[allocation.workAllocationID].noOfDaysWorkDemanded += allocation.noOfDaysWorkDemanded;
-        groups[allocation.workAllocationID].districtcode = allocation.districtcode;
-        groups[allocation.workAllocationID].noOfDaysWorkAlloted += allocation.noOfDaysWorkAlloted;
-        groups[allocation.workAllocationID].blockcode = allocation.blockcode;
-        return groups;
-      }, {});
+
+        const [
+          districtDetails,
+          blockDetails,
+          gpDetails,
+          deptDetails,
+          muniDetails,
+          conDetails,
+          requirementDetails
+        ] = await Promise.all([
+          this.getAllDistricts(group.districtcode),
+          this.getAllblock(group.blockcode),
+          this.getAllgp(group.gpCode),
+          this.getDepatmentbyid(group.departmentNo),
+          this.getmunibyid(group.municipalityCode),
+          this.getsconid(parseInt(group.contractorID, 10)),
+          this.masterWorkerRequirementallotment.findOne({ where: { allocationID: group.workAllocationID } })
+        ]);
+
+        const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+        const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+        const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+        const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+        const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+        const contractorName = conDetails.result ? conDetails.result.contractorName : '';
+
+        const requirementData = requirementDetails ? {
+          workerreqID: requirementDetails.workerreqID,
+          schemeArea: requirementDetails.schemeArea,
+          dateofwork: requirementDetails.dateofwork,
+          unskilledWorkers: requirementDetails.unskilledWorkers,
+          semiSkilledWorkers: requirementDetails.semiSkilledWorkers,
+          skilledWorkers: requirementDetails.skilledWorkers,
+          contactPersonName: requirementDetails.contactPersonName,
+          contactPersonPhoneNumber: requirementDetails.contactPersonPhoneNumber,
+          FundingDeptname: requirementDetails.FundingDeptname,
+          currentMonthWork: requirementDetails.currentMonthWork,
+          currentYearWork: requirementDetails.currentYearWork,
+          finYearWork: requirementDetails.finYearWork,
+          dateofallotment: requirementDetails.dateofallotment,
+          noUnskilledWorkers: requirementDetails.noUnskilledWorkers,
+          noSemiSkilledWorkers: requirementDetails.noSemiSkilledWorkers,
+          noSkilledWorkers: requirementDetails.noSkilledWorkers,
+          currentMonthAllot: requirementDetails.currentMonthAllot,
+          currentYearAllot: requirementDetails.currentYearAllot,
+          finYearAllot: requirementDetails.finYearAllot,
+          allotmentuserIndex: requirementDetails.allotmentuserIndex,
+          submitTime: requirementDetails.submitTime
+        } : {};
+
+        allocationsWithDetails.push({
+          submitTime: group.submitTime,
+          noOfDaysWorkDemanded: group.noOfDaysWorkDemanded,
+          noOfDaysWorkAlloted: group.noOfDaysWorkAlloted,
+          districtcode: group.districtcode,
+          districtName: districtName,
+          blockcode: group.blockcode,
+          blockName: blockName,
+          gpName: gpName,
+          deptName: deptName,
+          muniName: muniName,
+          conName: contractorName,
+          schemeId: group.schemeId,
+          workAllocationID: group.workAllocationID,
+          schemeName: schemeDetails.schemeName,
+          FundingDepttID: schemeDetails.FundingDepttID,
+          FundingDeptname: schemeDetails.FundingDeptname,
+          ExecutingDepttID: schemeDetails.ExecutingDepttID,
+          ExecutingDeptName: schemeDetails.ExecutingDeptName,
+          ImplementingAgencyID: schemeDetails.ImplementingAgencyID,
+          ImplementingAgencyName: schemeDetails.ImplementingAgencyName,
+          StatusOfWork: schemeDetails.StatusOfWork,
+          tentativeStartDate: schemeDetails.tentativeStartDate,
+          ActualtartDate: schemeDetails.ActualtartDate,
+          ExpectedCompletionDate: schemeDetails.ExpectedCompletionDate,
+          totalprojectCost: schemeDetails.totalprojectCost,
+          totalwagescostinvoled: schemeDetails.totalwagescostinvoled,
+          totalLabour: schemeDetails.totalLabour,
+          personDaysGenerated: schemeDetails.personDaysGenerated,
+          totalUnskilledWorkers: schemeDetails.totalUnskilledWorkers,
+          totalSemiSkilledWorkers: schemeDetails.totalSemiSkilledWorkers,
+          totalSkilledWorkers: schemeDetails.totalSkilledWorkers,
+          workorderNo: schemeDetails.workorderNo,
+          workOderDate: schemeDetails.workOderDate,
+          ControctorID: schemeDetails.ControctorID,
+          ...requirementData
+        });
+      } catch (error) {
+        console.error(`Failed to fetch details for group with submitTime ${group.submitTime}:`, error);
+      }
+    }));
+
+    return {
+      errorCode: 0,
+      result: allocationsWithDetails,
+    };
+  } catch (error) {
+    console.error('Failed to fetch allocations from the database:', error);
+    return {
+      errorCode: 1,
+      message: 'Failed to fetch allocations from the database.'
+    };
+  }
+}
+
+
+
+
+// async getallocationListforemp(userIndex: number) {
+//     try {
+//       const allocations = await this.workallocation.find({
+//         where: { userIndex },
+//         order: { workallocationsl: 'DESC' }
+//       });
   
-      const allocationsWithDetails = [];
+//       if (!allocations || allocations.length === 0) {
+//         return {
+//           errorCode: 1,
+//           message: 'Allocations not found for the provided user index'
+//         };
+//       }
   
-      await Promise.all(Object.values(allocationGroups).map(async (group: any) => {
-        try {
-          const schemeDetails = await this.masterSchemeRepository.findOne({
-            where: { scheme_sl: group.schemeId }
-          });
-          if (!schemeDetails) {
-            throw new Error(`Scheme details not found for schemeId ${group.schemeId}`);
-          }
+//       // Group allocations by workAllocationID
+//       const allocationGroups = allocations.reduce((groups, allocation) => {
+//         if (!groups[allocation.workAllocationID]) {
+//           groups[allocation.workAllocationID] = {
+//             submitTime: allocation.submitTime.toISOString().split('T')[0], // Get date part of submitTime
+//             schemeId: allocation.schemeId,
+//             noOfDaysWorkDemanded: 0,
+//             districtcode: 0,
+//             blockcode: 0,
+//             noOfDaysWorkAlloted: 0,
+//             workAllocationID: allocation.workAllocationID
+//           };
+//         }
+//         groups[allocation.workAllocationID].noOfDaysWorkDemanded += allocation.noOfDaysWorkDemanded;
+//         groups[allocation.workAllocationID].districtcode = allocation.districtcode;
+//         groups[allocation.workAllocationID].noOfDaysWorkAlloted += allocation.noOfDaysWorkAlloted;
+//         groups[allocation.workAllocationID].blockcode = allocation.blockcode;
+//         return groups;
+//       }, {});
   
-          const districtDetails = await this.getAllDistricts(group.districtcode);
-          const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+//       const allocationsWithDetails = [];
   
-          const blockDetails = await this.getAllblock(group.blockcode);
-          const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+//       await Promise.all(Object.values(allocationGroups).map(async (group: any) => {
+//         try {
+//           const schemeDetails = await this.masterSchemeRepository.findOne({
+//             where: { scheme_sl: group.schemeId }
+//           });
+//           if (!schemeDetails) {
+//             throw new Error(`Scheme details not found for schemeId ${group.schemeId}`);
+//           }
   
-          const gpDetails = await this.getAllgp(group.gpCode);
-          const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+//           const districtDetails = await this.getAllDistricts(group.districtcode);
+//           const districtName = districtDetails.result ? districtDetails.result.districtName : '';
   
-          const deptDetails = await this.getDepatmentbyid(group.departmentNo);
-          const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+//           const blockDetails = await this.getAllblock(group.blockcode);
+//           const blockName = blockDetails.result ? blockDetails.result.blockName : '';
   
-          const muniDetails = await this.getmunibyid(group.municipalityCode);
-          const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+//           const gpDetails = await this.getAllgp(group.gpCode);
+//           const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+  
+//           const deptDetails = await this.getDepatmentbyid(group.departmentNo);
+//           const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+  
+//           const muniDetails = await this.getmunibyid(group.municipalityCode);
+//           const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
   
 
-          const contractorID = parseInt(group.contractorID, 10);
-          // Pass the converted integer to the getpedabyid function if it's a valid number
-          let contractorName = '';
-          if (!isNaN(contractorID)) {
+//           const contractorID = parseInt(group.contractorID, 10);
+//           // Pass the converted integer to the getpedabyid function if it's a valid number
+//           let contractorName = '';
+//           if (!isNaN(contractorID)) {
           
         
-          const conDetails = await this.getsconid(contractorID);
-          const contractorName = conDetails.result ? conDetails.result.contractorName : '';
-          }
-          allocationsWithDetails.push({
-            submitTime: group.submitTime,
-            noOfDaysWorkDemanded: group.noOfDaysWorkDemanded,
-            noOfDaysWorkAlloted: group.noOfDaysWorkAlloted,
-            districtcode: group.districtcode,
-            districtName: districtName,
-            blockcode: group.blockcode,
-            blockName: blockName,
-            gpName: gpName,
-            deptName: deptName,
-            muniName: muniName,
-            conName: contractorName,
-            schemeId: group.schemeId,
-            workAllocationID: group.workAllocationID,
-            schemeName: schemeDetails.schemeName,
-            FundingDepttID: schemeDetails.FundingDepttID,
-            FundingDeptname: schemeDetails.FundingDeptname,
-            ExecutingDepttID: schemeDetails.ExecutingDepttID,
-            ExecutingDeptName: schemeDetails.ExecutingDeptName,
-            ImplementingAgencyID: schemeDetails.ImplementingAgencyID,
-            ImplementingAgencyName: schemeDetails.ImplementingAgencyName,
-            StatusOfWork: schemeDetails.StatusOfWork,
-            tentativeStartDate: schemeDetails.tentativeStartDate,
-            ActualtartDate: schemeDetails.ActualtartDate,
-            ExpectedCompletionDate: schemeDetails.ExpectedCompletionDate,
-            totalprojectCost: schemeDetails.totalprojectCost,
-            totalwagescostinvoled: schemeDetails.totalwagescostinvoled,
-            totalLabour: schemeDetails.totalLabour,
-            personDaysGenerated: schemeDetails.personDaysGenerated,
-            totalUnskilledWorkers: schemeDetails.totalUnskilledWorkers,
-            totalSemiSkilledWorkers: schemeDetails.totalSemiSkilledWorkers,
-            totalSkilledWorkers: schemeDetails.totalSkilledWorkers,
-            workorderNo: schemeDetails.workorderNo,
-            workOderDate: schemeDetails.workOderDate,
-            ControctorID: schemeDetails.ControctorID,
-          });
-        } catch (error) {
-          console.error(`Failed to fetch details for group with submitTime ${group.submitTime}:`, error);
-        }
-      }));
+//           const conDetails = await this.getsconid(contractorID);
+//           const contractorName = conDetails.result ? conDetails.result.contractorName : '';
+//           }
+//           allocationsWithDetails.push({
+//             submitTime: group.submitTime,
+//             noOfDaysWorkDemanded: group.noOfDaysWorkDemanded,
+//             noOfDaysWorkAlloted: group.noOfDaysWorkAlloted,
+//             districtcode: group.districtcode,
+//             districtName: districtName,
+//             blockcode: group.blockcode,
+//             blockName: blockName,
+//             gpName: gpName,
+//             deptName: deptName,
+//             muniName: muniName,
+//             conName: contractorName,
+//             schemeId: group.schemeId,
+//             workAllocationID: group.workAllocationID,
+//             schemeName: schemeDetails.schemeName,
+//             FundingDepttID: schemeDetails.FundingDepttID,
+//             FundingDeptname: schemeDetails.FundingDeptname,
+//             ExecutingDepttID: schemeDetails.ExecutingDepttID,
+//             ExecutingDeptName: schemeDetails.ExecutingDeptName,
+//             ImplementingAgencyID: schemeDetails.ImplementingAgencyID,
+//             ImplementingAgencyName: schemeDetails.ImplementingAgencyName,
+//             StatusOfWork: schemeDetails.StatusOfWork,
+//             tentativeStartDate: schemeDetails.tentativeStartDate,
+//             ActualtartDate: schemeDetails.ActualtartDate,
+//             ExpectedCompletionDate: schemeDetails.ExpectedCompletionDate,
+//             totalprojectCost: schemeDetails.totalprojectCost,
+//             totalwagescostinvoled: schemeDetails.totalwagescostinvoled,
+//             totalLabour: schemeDetails.totalLabour,
+//             personDaysGenerated: schemeDetails.personDaysGenerated,
+//             totalUnskilledWorkers: schemeDetails.totalUnskilledWorkers,
+//             totalSemiSkilledWorkers: schemeDetails.totalSemiSkilledWorkers,
+//             totalSkilledWorkers: schemeDetails.totalSkilledWorkers,
+//             workorderNo: schemeDetails.workorderNo,
+//             workOderDate: schemeDetails.workOderDate,
+//             ControctorID: schemeDetails.ControctorID,
+//           });
+//         } catch (error) {
+//           console.error(`Failed to fetch details for group with submitTime ${group.submitTime}:`, error);
+//         }
+//       }));
   
-      return {
-        errorCode: 0,
-        result: allocationsWithDetails,
-      };
-    } catch (error) {
-      console.error('Failed to fetch allocations from the database:', error);
-      throw new Error('Failed to fetch allocations from the database.');
-    }
-  }
+//       return {
+//         errorCode: 0,
+//         result: allocationsWithDetails,
+//       };
+//     } catch (error) {
+//       console.error('Failed to fetch allocations from the database:', error);
+//       throw new Error('Failed to fetch allocations from the database.');
+//     }
+//   }
   
 
 
