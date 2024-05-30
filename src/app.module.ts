@@ -37,19 +37,7 @@ dotenv.config();
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-          // username: 'wbdeptemployment_karmashreeadmin',
-      // password: '89lD{wBg{s!q',
-      // database: 'wbdeptemployment_karmashree',
-      //  host: 'bhowbums72vrebslxsrz-mysql.services.clever-cloud.com',
-      // database: 'bhowbums72vrebslxsrz',
-      // username: 'usgtbztvqrdg0vjq',
-      // password: '6qKfYZrQshnAuWwCAj7a',
-      // host: '103.165.118.211',
-      // //port: 3306, // Default MySQL port
-      // username: 'wbdeptemployment_karmashreeadmin',
-      // password: 'xQW+g~(zC!HA$8',
-
-      // database: 'wbdeptemployment_karmashreeTestdb',
+       
       entities: [user_role,master_zp,master_urban,master_ps,master_subdivision,mastersector,masterdepartment,gram_panchayat,master_users,
         masterdesignation,Actionplan_master,Contractor_master,MasterScheme,
         MasterSchemeExpenduture,pedestalMaster,MasterWorkerRequirement,MasterWorkerRequirement_allotment,

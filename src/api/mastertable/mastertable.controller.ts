@@ -54,6 +54,11 @@ export class MastertableController {
       @Param('blockCode') blockCode: number) {
       return this.mastertableService.getBlock(districtCode,blockCode); 
     }
+    @Get('getBlockbydistandsub/:districtCode/:subdivCode') 
+    async getBlockbydistandsub(@Param('districtCode') districtCode: number,
+      @Param('subdivCode') subdivCode: number) {
+      return this.mastertableService.getBlockbydistandsub(districtCode,subdivCode); 
+    }
 
     @Get('getBlockaction/:districtCode') 
     async getBlockaction(@Param('districtCode') districtCode: number) {

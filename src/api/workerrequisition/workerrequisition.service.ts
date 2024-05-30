@@ -18,7 +18,7 @@ export class WorkerrequisitionService {
         @InjectRepository(master_ps) private masterps: Repository<master_ps>,
         @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
-       
+        @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
         @InjectRepository(MasterScheme)
         private  masterSchemeRepository: Repository<MasterScheme>,
@@ -247,6 +247,9 @@ export class WorkerrequisitionService {
   
               const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
               const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+
+              // const sectorDetails = await this.getSectorbyid(schemeSector);
+              // const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
   
               const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
               const schName = sechDetails.result ? sechDetails.result.schemeName : '';
@@ -256,6 +259,7 @@ export class WorkerrequisitionService {
               const workorderNo = sechDetails.result ? sechDetails.result.workorderNo : '';
               const totalprojectCost = sechDetails.result ? sechDetails.result.totalprojectCost : '';
               const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
+              const schemeSector = sechDetails.result ? sechDetails.result.schemeSector : '';
               const conDetails = await this.getsconid(workRequirement.ContractorID);
               const conName = conDetails.result ? conDetails.result.contractorName : '';
   
@@ -277,6 +281,7 @@ export class WorkerrequisitionService {
                   schName: schName,
                   conName: conName,
                   schemeId:schemeId,
+                  schemeSector:schemeSector,
                  personDaysGenerated:personDaysGenerated,
     
                  workorderNo:workorderNo,
@@ -419,11 +424,24 @@ async getDepatmentbyid(departmentNo: number) {
   
        
       }
+      async getSectorbyid(sectorid: number) {
+        let dept; // Declare dept before the try block
+      
+     
+            dept = await this.mastersector.findOne({ where: { sectorid },  select: ["sectorname","sectorid"] });
+        
+      
+       
+      
+          return { errorCode: 0, result: dept };
+    
+         
+        }
       async getschemeid(scheme_sl: number) {
         let dept; // Declare dept before the try block
       
       
-            dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName"] });
+            dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName","schemeSector"] });
         
       
        

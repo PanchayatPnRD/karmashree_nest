@@ -14,7 +14,7 @@ import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity'
   
     TypeOrmModule.forFeature([MasterWorkerRequirement,MasterWorkerRequirement_allotment,master_zp,masterdepartment,
       master_subdivision,master_ps,gram_panchayat,masterdepartment,
-      master_urban,mastersector,Contractor_master,MasterScheme,MasterSchemeExpenduture]),
+      master_urban,mastersector,Contractor_master,MasterScheme,MasterSchemeExpenduture,mastersector]),
    
   ],
 

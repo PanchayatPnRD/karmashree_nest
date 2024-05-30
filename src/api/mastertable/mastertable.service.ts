@@ -208,7 +208,27 @@ export class MastertableService {
             return { errorCode: 1, message: 'Something went wrong', error: error.message };
         }
     }
-    
+    async getBlockbydistandsub(districtCode: number, subdivCode?: number) {
+      try {
+          let blocks;
+  
+          if (districtCode && (subdivCode == 0 || subdivCode == null)) {
+              blocks = await this.masterps.find({ where: { districtCode }, select: ["blockCode", "blockName"] });
+          } else if (subdivCode && subdivCode != 0) {
+              blocks = await this.masterps.find({ where: { districtCode, subdivCode }, select: ["blockCode", "blockName"] });
+          } else {
+              return { errorCode: 1, message: 'Invalid parameters provided' };
+          }
+  
+          if (!blocks || blocks.length === 0) {
+              return { errorCode: 1, message: 'Blocks not found' };
+          }
+  
+          return { errorCode: 0, result: blocks };
+      } catch (error) {
+          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+      }
+  }
 
       async getGpaction(districtCode: number, blockCode: number) {
         try {

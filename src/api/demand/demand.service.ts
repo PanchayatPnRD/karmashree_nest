@@ -278,4 +278,60 @@ export class DemandService {
           }
     
 
+
+          async getdemandListbyallocation_id(userIndex: number) {
+            try {
+                const demands = await this.demandMaster.find({ where: { userIndex },  order: { demandsl: 'DESC' }  });
+        
+                if (!demands || demands.length === 0) {
+                    return {
+                        errorCode: 1,
+                        message: 'demands not found for the provided user index',
+                    };
+                }
+        
+                const demandsWithDetails = [];
+        
+                await Promise.all(demands.map(async (demand) => {
+                    try {
+                        const districtDetails = await this.getAllDistricts(demand.districtcode);
+                        const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+        
+                        const blockDetails = await this.getAllblock(demand.blockcode);
+                        const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+        
+                        const gpDetails = await this.getAllgp(demand.gpCode);
+                        const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+        
+                        const deptDetails = await this.getDepatmentbyid(demand.departmentNo);
+                        const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+    
+                        const muniDetails = await this.getmunibyid(demand.municipalityCode);
+                        const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+    
+                        
+        
+                        demandsWithDetails.push({
+                            ...demand,
+                            districtName: districtName,
+                            blockname: blockname,
+                            gpName: gpName,
+                            deptName: deptName,
+                            muniName: muniName,
+                        });
+                    } catch (error) {
+                        // Log the error for this contractor
+                        console.error(`Failed to fetch details for contractor`);
+                    }
+                }));
+        
+                return {
+                    errorCode: 0,
+                    result: demandsWithDetails,
+                };
+            } catch (error) {
+                console.error('Failed to fetch demands from the database:', error);
+                throw new Error('Failed to fetch demands from the database.');
+            }
+        }
 }
