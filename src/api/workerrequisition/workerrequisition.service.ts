@@ -280,7 +280,7 @@ export class WorkerrequisitionService {
                   muniName: muniName,
                   schName: schName,
                   conName: conName,
-                  schemeId:schemeId,
+                  scheme_Id:schemeId,
                   schemeSector:schemeSector,
                  personDaysGenerated:personDaysGenerated,
     
