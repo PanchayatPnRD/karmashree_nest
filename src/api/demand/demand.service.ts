@@ -23,67 +23,66 @@ export class DemandService {
     ) {}
 
     private generateEMPID(): string {
-      const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
-      return `DEMD${random6Digits}`;
-    }
-  async createDemand(createDto: CreateDemandMasterDto) {
-  try {
-    const created: DemandMaster[] = [];
-    const masterAllotment: MasterWorkerDemand_allotment[] = [];
-    let demand: string;
-    for (const actionDto of createDto.DemandMasterDto) {
-      const demanduniqueID = this.generateEMPID();
-
-      const createdTreatment = this.demandMaster.create({
-        ...actionDto,
-        total_pending:actionDto.total_pending,
-        demanduniqueID
-      });
-      await this.demandMaster.save(createdTreatment);
-      created.push(createdTreatment);
-       demand =  demanduniqueID;
-      const startDate = new Date(actionDto.dateOfApplicationForWork);
-      
-      for (let i = 0; i < actionDto.noOfDaysWorkDemanded; i++) {
-        const currentWorkDate = new Date(startDate);
-        currentWorkDate.setDate(startDate.getDate() + i);
-
-        const newMasterAllotment = this.MasterWorkerDemandallotment.create({
-          demanduniqueID,
-          schemeArea: actionDto.schemeArea,
-          departmentNo: actionDto.departmentNo,
-          districtcode: actionDto.districtcode,
-          municipalityCode: actionDto.municipalityCode,
-          blockcode: actionDto.blockcode,
-          gpCode: actionDto.gpCode,
-          workerJobCardNo: actionDto.workerJobCardNo,
-          dateofwork: currentWorkDate,
-          CurrentMonth_work: actionDto.currentMonth,
-          CurrentYear_work: actionDto.currentYear,
-          remark:actionDto.remark,
-          age:actionDto.age,
-         
-
-        });
-
-        const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
-        masterAllotment.push(createdMasterWorkerAllotment);
-      }
+        const random6Digits = Math.floor(100000 + Math.random() * 900000).toString();
+        return `DEMD${random6Digits}`;
     }
     
-    return {
-      errorCode: 0,
-      message: "Demand Created Successfully",
-      result: created,
-      demand
-    };
-  } catch (error) {
-    return {
-      errorCode: 1,
-      message: "Something went wrong: " + error.message,
-    };
-  }
-}
+    async createDemand(createDto: CreateDemandMasterDto) {
+        try {
+            const created: DemandMaster[] = [];
+            const masterAllotment: MasterWorkerDemand_allotment[] = [];
+            let demand: string;
+            for (const actionDto of createDto.DemandMasterDto) {
+                const demanduniqueID = this.generateEMPID();
+                const createdTreatment = this.demandMaster.create({
+                    ...actionDto,
+                    total_pending: actionDto.total_pending,
+                    demanduniqueID
+                });
+                await this.demandMaster.save(createdTreatment);
+                created.push(createdTreatment);
+                demand = demanduniqueID;
+                const startDate = new Date(actionDto.dateOfApplicationForWork);
+                
+                for (let i = 0; i < actionDto.noOfDaysWorkDemanded; i++) {
+                    const currentWorkDate = new Date(startDate);
+                    currentWorkDate.setDate(startDate.getDate() + i);
+    
+                    const newMasterAllotment = this.MasterWorkerDemandallotment.create({
+                        demanduniqueID: this.generateEMPID(), // Generate a new ID for each allotment
+                        schemeArea: actionDto.schemeArea,
+                        departmentNo: actionDto.departmentNo,
+                        districtcode: actionDto.districtcode,
+                        municipalityCode: actionDto.municipalityCode,
+                        blockcode: actionDto.blockcode,
+                        gpCode: actionDto.gpCode,
+                        workerJobCardNo: actionDto.workerJobCardNo,
+                        dateofwork: currentWorkDate,
+                        CurrentMonth_work: actionDto.currentMonth,
+                        CurrentYear_work: actionDto.currentYear,
+                        remark: actionDto.remark,
+                        age: actionDto.age,
+                    });
+    
+                    const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
+                    masterAllotment.push(createdMasterWorkerAllotment);
+                }
+            }
+            
+            return {
+                errorCode: 0,
+                message: "Demand Created Successfully",
+                result: created,
+                demand
+            };
+        } catch (error) {
+            return {
+                errorCode: 1,
+                message: "Something went wrong: " + error.message,
+            };
+        }
+    }
+    
 
     
 

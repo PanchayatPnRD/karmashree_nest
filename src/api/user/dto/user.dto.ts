@@ -6,42 +6,42 @@ import { ApiProperty } from '@nestjs/swagger';
         
 
         @IsNotEmpty()
-        @ApiProperty({default:'Admin'})
+        @ApiProperty({default:'HQ'})
         category: string;
 
         @IsNotEmpty()
-        @ApiProperty({ default: '1' })
+        @ApiProperty({ default: 0 })
         departmentNo: number;
 
         @IsNotEmpty()
-        @ApiProperty({default:'ABC'})
+        @ApiProperty({default:''})
         deptWing: string;
       
         @IsNotEmpty()
-        @ApiProperty({default:'ABC'})
+        @ApiProperty({default:''})
         area:string
      
       
         @IsNotEmpty()
-        @ApiProperty({ default: '1' })
+        @ApiProperty({ default: '0' })
         districtcode: number;
       
       
         @IsNotEmpty()
-        @ApiProperty({ default: '1' })
+        @ApiProperty({ default: '0' })
         subDivision: number;
       
         @IsNotEmpty()
-        @ApiProperty({ default: '1' })
+        @ApiProperty({ default: '0' })
         blockCode: number;
 
         @IsNotEmpty()
-        @ApiProperty({ default: '1' })
+        @ApiProperty({ default: '0' })
         municipalityCode:number;
       
        
         @IsNotEmpty()
-        @ApiProperty({ default: '1' })
+        @ApiProperty({ default: '0' })
         gpCode: number;
 
        
@@ -68,33 +68,33 @@ import { ApiProperty } from '@nestjs/swagger';
         encryptpassword: string;
 
         @IsNotEmpty()
-        @ApiProperty({default:'PWD'})
+        @ApiProperty({default:'Karmashree Admin'})
         officeName_hd: string;
 
         @IsNotEmpty()
-        @ApiProperty({default:'PWD'})
+        @ApiProperty({default:'PnRD'})
         officeName_dept: string;
 
         @IsNotEmpty()
-        @ApiProperty({default:'PWD'})
+        @ApiProperty({default:''})
         officeName_dist: string;
 
         @IsNotEmpty()
-        @ApiProperty({default:'PWD'})
+        @ApiProperty({default:''})
         officeName_block: string;
 
         @IsNotEmpty()
-        @ApiProperty({default:'PWD'})
+        @ApiProperty({default:''})
         officeName_gp: string;
       
         @IsNotEmpty()
-        @ApiProperty({default:'ani'})
+        @ApiProperty({default:'Karmashre Test'})
         userName: string;
 
       
       
         @IsNotEmpty()
-        @ApiProperty({default:'2369723674'})
+        @ApiProperty({default:'8796541236'})
         contactNo: string;
 
         @IsNotEmpty()
@@ -102,7 +102,7 @@ import { ApiProperty } from '@nestjs/swagger';
         email: string;
       
         @IsNotEmpty()
-        @ApiProperty({default:'1'})
+        @ApiProperty({default:'2'})
         designationID: number;
       
         @IsNotEmpty()
@@ -111,19 +111,19 @@ import { ApiProperty } from '@nestjs/swagger';
 
 
         @IsNotEmpty()
-        @ApiProperty({default:'abc'})
+        @ApiProperty({default:''})
   technical_officer: string;
 
   @IsNotEmpty()
-  @ApiProperty({default:'1'})
+  @ApiProperty({default:''})
   tech_designation_id: string;
 
   @IsNotEmpty()
-  @ApiProperty({default:'75767'})
+  @ApiProperty({default:''})
   tech_mobile: string;
 
   @IsNotEmpty()
-  @ApiProperty({default:'wuvfgwv@gmail.com'})
+  @ApiProperty({default:''})
   tech_email: string;
 
 
@@ -137,7 +137,7 @@ import { ApiProperty } from '@nestjs/swagger';
         created_by: number;
 
         @IsNotEmpty()
-        @ApiProperty({default:'1'})
+        @ApiProperty({default:'0'})
         dno_status:string
 
         @IsNotEmpty()
