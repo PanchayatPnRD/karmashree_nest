@@ -432,7 +432,7 @@ async getallocationList(userIndex: number) {
 async getallocationListforemp(userIndex: number) {
   try {
     const allocations = await this.workallocation.find({
-      where: { userIndex, empStatus: Not('1') },
+      where: { userIndex },
       order: { workallocationsl: 'DESC' }
     });
 
