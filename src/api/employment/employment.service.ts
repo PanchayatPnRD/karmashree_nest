@@ -62,6 +62,7 @@ export class EmploymentService {
               empProvidedfrom:CreateEmploymentDto.empProvidedfrom,
               empProvidedto: CreateEmploymentDto.empProvidedto,
               dateOfPayment: CreateEmploymentDto.dateOfPayment,
+              noOfDaysWorProvided:CreateEmploymentDto.noOfDaysWorProvided,
               currentMonth: CreateEmploymentDto.currentMonth,
               currentYear: CreateEmploymentDto.currentYear,
               finYear: CreateEmploymentDto.finYear,
