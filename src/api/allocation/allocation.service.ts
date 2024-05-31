@@ -6,7 +6,7 @@ import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp,
 import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment, } from 'src/entity/workrequigition.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { CreateWorkAllocationDto, WorkAllocationDto } from './dto/allocation.dto';
 
 @Injectable()
@@ -432,7 +432,7 @@ async getallocationList(userIndex: number) {
 async getallocationListforemp(userIndex: number) {
   try {
     const allocations = await this.workallocation.find({
-      where: { userIndex },
+      where: { userIndex, empStatus: Not('1') },
       order: { workallocationsl: 'DESC' }
     });
 
@@ -539,7 +539,7 @@ async getallocationListforemp(userIndex: number) {
           deptName: deptName,
           muniName: muniName,
           conName: contractorName,
-          schemeId: group.schemeId,
+          scheme_Id: group.schemeId,
           workAllocationID: group.workAllocationID,
           schemeName: schemeDetails.schemeName,
           FundingDepttID: schemeDetails.FundingDepttID,
