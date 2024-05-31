@@ -226,7 +226,15 @@ export class MasterWorkerDemand_allotmenthistroy {
 
 
 
+
+    @Column({ length: 100, nullable: true })
+    empid:string;
+
+    @Column({  nullable: true })
+    empStatus: string;
   
+    @Column({ type: 'double', precision: 19, scale: 2 ,nullable: true  })
+    totalWagePaid: number;
 
     @Column({ length: 100, nullable: true })
     workerJobCardNo: string;

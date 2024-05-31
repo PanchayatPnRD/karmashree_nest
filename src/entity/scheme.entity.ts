@@ -30,7 +30,7 @@ export class MasterScheme {
     @Column({ nullable: true })
     sansadID: number ;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({  nullable: true })
     village: string;
 
     @Column({type: 'int', nullable: true } )
@@ -54,13 +54,13 @@ export class MasterScheme {
     @Column({ type: 'varchar',length: 255, nullable: true  })
     ExecutingDeptName: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true} )
     ImplementingAgencyID: number;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255, nullable: true })
     ImplementingAgencyName: string;
 
-    @Column({ type: 'varchar',length: 15 })
+    @Column({ type: 'varchar',length: 15, nullable: true })
     StatusOfWork: string;
 
     @Column({ type: 'date', nullable: true })
@@ -72,7 +72,7 @@ export class MasterScheme {
     @Column({ type: 'date', nullable: true })
     ExpectedCompletionDate: Date;
 
-    @Column('double', { precision: 19, scale: 2 })
+    @Column('double', { precision: 19, scale: 2, nullable: true })
     totalprojectCost: number;
 
  
@@ -88,6 +88,19 @@ export class MasterScheme {
 
     @Column({ nullable: true })
     totalLabour: number ;
+
+
+    @Column('double', { precision: 19, scale: 2,nullable: true })
+    totalCostprovided: number;
+
+
+    @Column({ nullable: true })
+    personDaysGeneratedprovided:number;
+
+
+    
+    @Column({ nullable: true })
+    totalLabourprovided: number ;
 
 
 
@@ -116,10 +129,10 @@ export class MasterScheme {
     @Column({type: 'varchar', length: 1 })
     schemeStatus: string;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     CurrentMonth: number;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     CurrentYear: number;
 
     @Column({  type: 'varchar',length: 9, nullable: true }) 
@@ -164,10 +177,10 @@ export class MasterSchemeExpenduture {
     @Column({ type: 'varchar',length: 5 })
     schemeArea: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true} )
     departmentNo: number;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     districtcode: number;
 
     @Column({ type: 'int', nullable: true })
@@ -182,7 +195,7 @@ export class MasterSchemeExpenduture {
     @Column({ nullable: true })
     sansadID: number ;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({  nullable: true})
     village: string;
 
     @Column({type: 'int'} )
@@ -191,28 +204,28 @@ export class MasterSchemeExpenduture {
     @Column({ type: 'varchar',length: 255, nullable: true })
     schemeSubsector: string ;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255, nullable: true })
     schemeName: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true} )
     FundingDepttID: number;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255 , nullable: true})
     FundingDeptname: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true} )
     ExecutingDepttID: number;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255 , nullable: true})
     ExecutingDeptName: string;
 
-    @Column({type: 'int'} )
+    @Column({type: 'int', nullable: true} )
     ImplementingAgencyID: number;
 
-    @Column({ type: 'varchar',length: 255 })
+    @Column({ type: 'varchar',length: 255 , nullable: true})
     ImplementingAgencyName: string;
 
-    @Column({ type: 'varchar',length: 19 })
+    @Column({ type: 'varchar',length: 19, nullable: true })
     StatusOfWork: string;
 
     @Column({ type: 'date', nullable: true })
@@ -270,7 +283,7 @@ export class MasterSchemeExpenduture {
     @Column({ type: 'varchar', length: 1, nullable: true })
     ex5: string ;
 
-    @Column({ type: 'int' })
+    @Column({ type: 'int', nullable: true })
     userIndex: number;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

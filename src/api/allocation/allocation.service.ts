@@ -562,6 +562,11 @@ async getallocationListforemp(userIndex: number) {
           workorderNo: schemeDetails.workorderNo,
           workOderDate: schemeDetails.workOderDate,
           ControctorID: schemeDetails.ControctorID,
+          totalCostprovided: schemeDetails.totalCostprovided,
+          personDaysGeneratedprovided: schemeDetails.personDaysGeneratedprovided,
+          totalLabourprovided: schemeDetails.totalLabourprovided,
+
+        
           ...requirementData
         });
       } catch (error) {
@@ -707,7 +712,7 @@ async getallocationListforemp(userIndex: number) {
 //   }
   
 
-
+//emplymebntdemandlist
 async allocationempfinalliat(workAllocationID: string) {
   try {
       const allocations = await this.workallocation.find({ where: { workAllocationID }, order: { workallocationsl: 'DESC' } });

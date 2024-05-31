@@ -263,6 +263,12 @@ export class CreateEmploymentDto {
    
     @IsNotEmpty()
     attandance:string;
+
+
+   
+   
+    @IsNotEmpty()
+    demandid:number;
 }
 
 export class EmploymentDto {
@@ -299,7 +305,7 @@ export class EmploymentDto {
           attandance:"as",
           empProvidedfrom:"2024-05-20",
           empProvidedto: "2024-05-20",
-          
+          demandid:5,
           currentMonth: 5,
           currentYear: 2024,
           finYear: "2023-2024",

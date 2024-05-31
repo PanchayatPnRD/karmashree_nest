@@ -8,6 +8,10 @@ export class Employment {
     @Column({ type: 'varchar'})
     employmentID: string; // Assuming you'll generate this value in your code
 
+    @Column({ type: 'varchar'})
+    demandid: number; // Assuming you'll generate this value in your code
+
+
     @Column({ type: 'varchar', nullable: true })
     schemeArea: string;
 

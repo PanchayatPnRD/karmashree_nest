@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DemandMaster, MasterWorkerDemand_allotment } from 'src/entity/demandmaster.entity';
+import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 import { Repository } from 'typeorm';
 import { CreateDemandMasterDto } from './dto/demand.entity';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
@@ -17,6 +17,7 @@ export class DemandService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
        
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
+        @InjectRepository(MasterWorkerDemand_allotmenthistroy) private  Demandallotmenthistroy:Repository<MasterWorkerDemand_allotmenthistroy>,
         
         
     ) {}
@@ -105,12 +106,32 @@ export class DemandService {
 
       async getdemandList(userIndex: number) {
         try {
-            const demands = await this.demandMaster.find({ where: { userIndex },  order: { demandsl: 'DESC' }  });
+            const demands = await this.demandMaster.createQueryBuilder('demand')
+                .leftJoin('MasterWorkerDemand_allotmenthistroy', 'history', 'demand.demandsl = history.demandsl')
+                .select([
+                    'demand.*',
+                    'history.empid',
+                    'history.empStatus',
+                    'history.workerJobCardNo',
+                    'history.dateofwork',
+                    'history.workAllotedstatus',
+                    'history.finYear_work',
+                    'history.allocationID',
+                    'history.dateofallotmentfrom',
+                    'history.dateofallotmentto',
+                    'history.CurrentMonth_allot',
+                    'history.CurrentYear_allot',
+                    'history.finYear_allot',
+                    'history.allotmentuserIndex',
+                ])
+                .where('demand.userIndex = :userIndex', { userIndex })
+                .orderBy('demand.demandsl', 'DESC')
+                .getRawMany();
     
             if (!demands || demands.length === 0) {
                 return {
                     errorCode: 1,
-                    message: 'demands not found for the provided user index',
+                    message: 'Demands not found for the provided user index',
                 };
             }
     
@@ -118,34 +139,46 @@ export class DemandService {
     
             await Promise.all(demands.map(async (demand) => {
                 try {
-                    const districtDetails = await this.getAllDistricts(demand.districtcode);
+                    const districtDetails = await this.getAllDistricts(demand.demand_districtcode);
                     const districtName = districtDetails.result ? districtDetails.result.districtName : '';
     
-                    const blockDetails = await this.getAllblock(demand.blockcode);
-                    const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+                    const blockDetails = await this.getAllblock(demand.demand_blockcode);
+                    const blockName = blockDetails.result ? blockDetails.result.blockName : '';
     
-                    const gpDetails = await this.getAllgp(demand.gpCode);
+                    const gpDetails = await this.getAllgp(demand.demand_gpCode);
                     const gpName = gpDetails.result ? gpDetails.result.gpName : '';
     
-                    const deptDetails = await this.getDepatmentbyid(demand.departmentNo);
+                    const deptDetails = await this.getDepatmentbyid(demand.demand_departmentNo);
                     const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
-
-                    const muniDetails = await this.getmunibyid(demand.municipalityCode);
+    
+                    const muniDetails = await this.getmunibyid(demand.demand_municipalityCode);
                     const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
-
-                    
     
                     demandsWithDetails.push({
                         ...demand,
-                        districtName: districtName,
-                        blockname: blockname,
-                        gpName: gpName,
-                        deptName: deptName,
-                        muniName: muniName,
+                        districtName,
+                        blockName,
+                        gpName,
+                        deptName,
+                        muniName,
+                        historyDetails: {
+                            empid: demand.history_empid,
+                            empStatus: demand.history_empStatus,
+                            workerJobCardNo: demand.history_workerJobCardNo,
+                            dateofwork: demand.history_dateofwork,
+                            workAllotedstatus: demand.history_workAllotedstatus,
+                            finYear_work: demand.history_finYear_work,
+                            allocationID: demand.history_allocationID,
+                            dateofallotmentfrom: demand.history_dateofallotmentfrom,
+                            dateofallotmentto: demand.history_dateofallotmentto,
+                            CurrentMonth_allot: demand.history_CurrentMonth_allot,
+                            CurrentYear_allot: demand.history_CurrentYear_allot,
+                            finYear_allot: demand.history_finYear_allot,
+                            allotmentuserIndex: demand.history_allotmentuserIndex,
+                        },
                     });
                 } catch (error) {
-                    // Log the error for this contractor
-                    console.error(`Failed to fetch details for contractor`);
+                    console.error(`Failed to fetch details for demand with demandsl ${demand.demandsl}:`, error);
                 }
             }));
     
@@ -158,6 +191,9 @@ export class DemandService {
             throw new Error('Failed to fetch demands from the database.');
         }
     }
+    
+    
+    
     async getAllDistricts(districtCode: number) {
       try {
           let districtDetails;

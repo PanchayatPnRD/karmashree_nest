@@ -7,6 +7,7 @@ import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { Contractor_master } from 'src/entity/contractor.entity';
 import { MasterScheme } from 'src/entity/scheme.entity';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
+import { MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 
 @Injectable()
 export class EmploymentService {
@@ -23,6 +24,7 @@ export class EmploymentService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
+        @InjectRepository(MasterWorkerDemand_allotmenthistroy) private  Demandallotmenthistroy:Repository<MasterWorkerDemand_allotmenthistroy>,
         
     ) {}
     private generateEMPID(): string {
@@ -31,55 +33,93 @@ export class EmploymentService {
     }
     async create(createDto: EmploymentDto) {
       const employmentID = this.generateEMPID();
-        const newWorkAllocations = createDto.CreateEmploymentDtos.map(CreateEmploymentDto => {
-            return this.employment.create({
+      
+      const newWorkAllocations = createDto.CreateEmploymentDtos.map(CreateEmploymentDto => {
+          return this.employment.create({
               employmentID: employmentID,
-                schemeArea: CreateEmploymentDto.schemeArea,
-                departmentNo: CreateEmploymentDto.departmentNo,
-                districtcode: CreateEmploymentDto.districtcode,
-                municipalityCode: CreateEmploymentDto.municipalityCode,
-                blockcode: CreateEmploymentDto.blockcode,
-                gpCode: CreateEmploymentDto.gpCode,
-                schemeId: CreateEmploymentDto.schemeId,
-                schemeSector: CreateEmploymentDto.schemeSector,
-                FundingDepttID: CreateEmploymentDto.FundingDepttID,
-                FundingDeptname: CreateEmploymentDto.FundingDeptname,
-                ExecutingDepttID: CreateEmploymentDto.ExecutingDepttID,
-                ExecutingDeptName: CreateEmploymentDto.ExecutingDeptName,
-                ImplementingAgencyID: CreateEmploymentDto.ImplementingAgencyID,
-                ImplementingAgencyName: CreateEmploymentDto.ImplementingAgencyName,
-                workAllocationID: CreateEmploymentDto.workAllocationID,
-                workerJobCardNo: CreateEmploymentDto.workerJobCardNo,
-                workerName: CreateEmploymentDto.workerName,
-                workAllocationFromDate: CreateEmploymentDto.workAllocationFromDate,
-                workAllocationToDate: CreateEmploymentDto.workAllocationToDate,
-                noOfDaysWorkAlloted: CreateEmploymentDto.noOfDaysWorkAlloted,
-                totalWagePaid: CreateEmploymentDto.totalWagePaid,
-                dateOfPayment: CreateEmploymentDto.dateOfPayment,
-                currentMonth: CreateEmploymentDto.currentMonth,
-                currentYear: CreateEmploymentDto.currentYear,
-                finYear: CreateEmploymentDto.finYear,
-                attandance:CreateEmploymentDto.attandance,
-              
-                userIndex: CreateEmploymentDto.userIndex,
-            });
-        });
-    
-        const result = await this.employment.save(newWorkAllocations);
-        const employment =  employmentID;
+              schemeArea: CreateEmploymentDto.schemeArea,
+              departmentNo: CreateEmploymentDto.departmentNo,
+              districtcode: CreateEmploymentDto.districtcode,
+              municipalityCode: CreateEmploymentDto.municipalityCode,
+              blockcode: CreateEmploymentDto.blockcode,
+              gpCode: CreateEmploymentDto.gpCode,
+              schemeId: CreateEmploymentDto.schemeId,
+              demandid: CreateEmploymentDto.demandid,
+              schemeSector: CreateEmploymentDto.schemeSector,
+              FundingDepttID: CreateEmploymentDto.FundingDepttID,
+              FundingDeptname: CreateEmploymentDto.FundingDeptname,
+              ExecutingDepttID: CreateEmploymentDto.ExecutingDepttID,
+              ExecutingDeptName: CreateEmploymentDto.ExecutingDeptName,
+              ImplementingAgencyID: CreateEmploymentDto.ImplementingAgencyID,
+              ImplementingAgencyName: CreateEmploymentDto.ImplementingAgencyName,
+              workAllocationID: CreateEmploymentDto.workAllocationID,
+              workerJobCardNo: CreateEmploymentDto.workerJobCardNo,
+              workerName: CreateEmploymentDto.workerName,
+              workAllocationFromDate: CreateEmploymentDto.workAllocationFromDate,
+              workAllocationToDate: CreateEmploymentDto.workAllocationToDate,
+              noOfDaysWorkAlloted: CreateEmploymentDto.noOfDaysWorkAlloted,
+              totalWagePaid: CreateEmploymentDto.totalWagePaid,
+              dateOfPayment: CreateEmploymentDto.dateOfPayment,
+              currentMonth: CreateEmploymentDto.currentMonth,
+              currentYear: CreateEmploymentDto.currentYear,
+              finYear: CreateEmploymentDto.finYear,
+              attandance: CreateEmploymentDto.attandance,
+              userIndex: CreateEmploymentDto.userIndex,
+          });
+      });
+  
+      const result = await this.employment.save(newWorkAllocations);
+      const employment = employmentID;
+  
+      const workAllocationIDs = createDto.CreateEmploymentDtos.map(dto => dto.workAllocationID);
+      const demanduniqueIDs = createDto.CreateEmploymentDtos.map(dto => dto.demandid);
+      const schemeIds = createDto.CreateEmploymentDtos.map(dto => dto.schemeId);
+  
+      const totalWagePaid = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalWagePaid, 0);
+      //const totalLabourProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalLabourprovided, 0);
+      const personDaysGeneratedProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.noOfDaysWorkAlloted, 0);
+      const totalLabourProvided = createDto.CreateEmploymentDtos.map(_ => 1).reduce((sum, count) => sum + count, 0);
 
-        const workAllocationIDs = createDto.CreateEmploymentDtos.map(dto => dto.workAllocationID);
-    
-        // Update WorkAllocation records with the new employmentID
-        await this.workallocation.update({ workAllocationID: In(workAllocationIDs) }, { empId: employmentID,empStatus: "1"  });
-    
-        return {
-            errorCode: 0,
-            message:"Employment Created Successfully",
-            employment,
-            //result: result,
-        };
-    }
+      // Fetch existing values from masterSchemeRepository
+      const schemes = await this.masterSchemeRepository.findByIds(schemeIds);
+  
+      // Calculate new values
+      const updates = schemes.map(scheme => ({
+          schemeId: scheme.schemeId,
+          totalCostprovided: scheme.totalCostprovided + totalWagePaid,
+          totalLabourprovided: scheme.totalLabourprovided + totalLabourProvided,
+          personDaysGeneratedprovided: scheme.personDaysGeneratedprovided + personDaysGeneratedProvided,
+      }));
+  
+      // Update WorkAllocation, Demandallotmenthistroy and masterSchemeRepository records
+      await Promise.all([
+          this.workallocation.update(
+              { workAllocationID: In(workAllocationIDs) },
+              { empId: employmentID, empStatus: "1" }
+          ),
+          this.Demandallotmenthistroy.update(
+              { demanduniqueID: In(demanduniqueIDs) },
+              { empid: employmentID, empStatus: "1" }
+          ),
+          ...updates.map(update => 
+              this.masterSchemeRepository.update(
+                  { schemeId: update.schemeId },
+                  {
+                      totalCostprovided: update.totalCostprovided,
+                      totalLabourprovided: update.totalLabourprovided,
+                      personDaysGeneratedprovided: update.personDaysGeneratedprovided,
+                  }
+              )
+          )
+      ]);
+  
+      return {
+          errorCode: 0,
+          message: "Employment Created Successfully",
+          employment,
+      };
+  }
+  
 
     async listWorkAllocations(districtcode?: number,blockcode?: number, gpCode?: number,municipalityCode?: number, schemeId?: number){
         try {
