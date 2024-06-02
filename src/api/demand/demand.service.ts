@@ -138,19 +138,19 @@ export class DemandService {
     
             await Promise.all(demands.map(async (demand) => {
                 try {
-                    const districtDetails = await this.getAllDistricts(demand.demand_districtcode);
+                    const districtDetails = await this.getAllDistricts(demand.districtcode);
                     const districtName = districtDetails.result ? districtDetails.result.districtName : '';
     
-                    const blockDetails = await this.getAllblock(demand.demand_blockcode);
+                    const blockDetails = await this.getAllblock(demand.blockcode);
                     const blockName = blockDetails.result ? blockDetails.result.blockName : '';
     
-                    const gpDetails = await this.getAllgp(demand.demand_gpCode);
+                    const gpDetails = await this.getAllgp(demand.gpCode);
                     const gpName = gpDetails.result ? gpDetails.result.gpName : '';
     
-                    const deptDetails = await this.getDepatmentbyid(demand.demand_departmentNo);
+                    const deptDetails = await this.getDepatmentbyid(demand.departmentNo);
                     const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
     
-                    const muniDetails = await this.getmunibyid(demand.demand_municipalityCode);
+                    const muniDetails = await this.getmunibyid(demand.municipalityCode);
                     const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
     
                     demandsWithDetails.push({
