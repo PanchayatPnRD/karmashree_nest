@@ -215,7 +215,7 @@ async getdemandforallocation(blockcode: number, gpCode?: number) {
       }
   
       // Filter demands based on workallostatus and total_pending conditions
-      const filteredWork = work.filter(demand => !(demand.workallostatus === '0' && demand.total_pending === 0));
+      const filteredWork = work.filter(demand => !(demand.workallostatus === '1' && demand.total_pending === 0));
   
       if (filteredWork.length === 0) {
         return { errorCode: 1, message: 'No open demand available', result: [] };
