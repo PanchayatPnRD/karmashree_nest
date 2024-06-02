@@ -201,77 +201,85 @@ async getAllscheme(scheme_sl: number) {
 }
 
 async getdemandforallocation(blockcode: number, gpCode?: number) {
-  try {
+    try {
       let work;
-
+  
       if (gpCode !== undefined) {
-          work = await this.demandMaster.find({ where: { blockcode, gpCode } });
+        work = await this.demandMaster.find({ where: { blockcode, gpCode } });
       } else {
-          work = await this.demandMaster.find({ where: { blockcode } });
+        work = await this.demandMaster.find({ where: { blockcode } });
       }
-
+  
       if (!work || work.length === 0) {
-          return { errorCode: 1, message: 'No demands found for the provided blockcode and gpCode' };
+        return { errorCode: 1, message: 'No demands found for the provided blockcode and gpCode' };
       }
-
+  
+      // Filter demands based on workallostatus and total_pending conditions
+      const filteredWork = work.filter(demand => !(demand.workallostatus === '0' && demand.total_pending === 0));
+  
+      if (filteredWork.length === 0) {
+        return { errorCode: 1, message: 'No open demand available', result: [] };
+      }
+  
       // Fetch additional details for each work demand in parallel
-      const workDetailsPromises = work.map(async (demand) => {
-          const [
-              districtDetails,
-              blockDetails,
-              gpDetails,
-              deptDetails,
-              muniDetails,
-              sechDetails
-          ] = await Promise.all([
-              this.getAllDistricts(demand.districtcode),
-              this.getAllblock(demand.blockcode),
-              this.getAllgp(demand.gpCode),
-              this.getDepatmentbyid(demand.departmentNo),
-              this.getmunibyid(demand.municipalityCode),
-              this.getschemeid(demand.schemeId)
-          ]);
-
-          const districtName = districtDetails.result?.districtName || '';
-          const blockName = blockDetails.result?.blockName || '';
-          const gpName = gpDetails.result?.gpName || '';
-          const deptName = deptDetails.result?.departmentName || '';
-          const muniName = muniDetails.result?.urbanName || '';
-          const schName = sechDetails.result?.schemeName || '';
-          const schemeId = sechDetails.result?.schemeId || '';
-          const personDaysGenerated = sechDetails.result?.personDaysGenerated || '';
-          const workorderNo = sechDetails.result?.workorderNo || '';
-          const totalprojectCost = sechDetails.result?.totalprojectCost || '';
-          const ExecutingDeptName = sechDetails.result?.ExecutingDeptName || '';
-          const schemeSector = sechDetails.result?.schemeSector || '';
-
-          return {
-              ...demand,
-              districtName,
-              blockName,
-              gpName,
-              deptName,
-              muniName,
-              schName,
-              schemeId,
-              schemeSector,
-              personDaysGenerated,
-              workorderNo,
-              totalprojectCost,
-              ExecutingDeptName
-          };
+      const workDetailsPromises = filteredWork.map(async (demand) => {
+        const [
+          districtDetails,
+          blockDetails,
+          gpDetails,
+          deptDetails,
+          muniDetails,
+          sechDetails
+        ] = await Promise.all([
+          this.getAllDistricts(demand.districtcode),
+          this.getAllblock(demand.blockcode),
+          this.getAllgp(demand.gpCode),
+          this.getDepatmentbyid(demand.departmentNo),
+          this.getmunibyid(demand.municipalityCode),
+          this.getschemeid(demand.schemeId)
+        ]);
+  
+        const districtName = districtDetails.result?.districtName || '';
+        const blockName = blockDetails.result?.blockName || '';
+        const gpName = gpDetails.result?.gpName || '';
+        const deptName = deptDetails.result?.departmentName || '';
+        const muniName = muniDetails.result?.urbanName || '';
+        const schName = sechDetails.result?.schemeName || '';
+        const schemeId = sechDetails.result?.schemeId || '';
+        const personDaysGenerated = sechDetails.result?.personDaysGenerated || '';
+        const workorderNo = sechDetails.result?.workorderNo || '';
+        const totalprojectCost = sechDetails.result?.totalprojectCost || '';
+        const ExecutingDeptName = sechDetails.result?.ExecutingDeptName || '';
+        const schemeSector = sechDetails.result?.schemeSector || '';
+  
+        return {
+          ...demand,
+          districtName,
+          blockName,
+          gpName,
+          deptName,
+          muniName,
+          schName,
+          schemeId,
+          schemeSector,
+          personDaysGenerated,
+          workorderNo,
+          totalprojectCost,
+          ExecutingDeptName
+        };
       });
-
+  
       const workDetails = await Promise.all(workDetailsPromises);
-
+  
       return { errorCode: 0, result: workDetails };
-  } catch (error) {
+    } catch (error) {
       return {
-          errorCode: 1,
-          message: 'Something went wrong: ' + error.message
+        errorCode: 1,
+        message: 'Something went wrong: ' + error.message
       };
+    }
   }
-}
+  
 
 
 async getDemandByScheme(scheme_sl: number) {
