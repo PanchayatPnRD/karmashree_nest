@@ -210,92 +210,94 @@ export class WorkerrequisitionService {
   
           // Get aggregated worker counts grouped by workerreqID
           const aggregatedWorkerCounts = await this.masterWorkerRequirementallotment.createQueryBuilder('requirement')
-              .select('requirement.workerreqID', 'workerreqID')
-              .addSelect('SUM(requirement.unskilledWorkers)', 'totalUnskilledWorkers')
-              .addSelect('SUM(requirement.semiSkilledWorkers)', 'totalSemiSkilledWorkers')
-              .addSelect('SUM(requirement.skilledWorkers)', 'totalSkilledWorkers')
-              .where('requirement.userIndex = :userIndex', { userIndex })
-              .groupBy('requirement.workerreqID')
-              .getRawMany();
-  
-          // Map aggregated counts to a dictionary for quick lookup
-          const workerCountsMap = {};
-          aggregatedWorkerCounts.forEach(count => {
-              workerCountsMap[count.workerreqID] = {
-                  totalUnskilledWorkers: parseInt(count.totalUnskilledWorkers, 10),
-                  totalSemiSkilledWorkers: parseInt(count.totalSemiSkilledWorkers, 10),
-                  totalSkilledWorkers: parseInt(count.totalSkilledWorkers, 10),
-              };
-          });
-  
-          // Array to store worker requirements with additional details
-          const workRequirementsWithDetails = [];
-  
-          for (const workRequirement of workRequirements) {
-              // Fetch additional details for each worker requirement
-              const districtDetails = await this.getAllDistricts(workRequirement.districtcode);
-              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
-  
-              const blockDetails = await this.getAllblock(workRequirement.blockcode);
-              const blockName = blockDetails.result ? blockDetails.result.blockName : '';
-  
-              const gpDetails = await this.getAllgp(workRequirement.gpCode);
-              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
-  
-              const deptDetails = await this.getDepatmentbyid(workRequirement.departmentNo);
-              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
-  
-              const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
-              const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+            .select('requirement.workerreqID', 'workerreqID')
+            .addSelect('SUM(requirement.unskilledWorkers)', 'totalUnskilledWorkers')
+            .addSelect('SUM(requirement.semiSkilledWorkers)', 'totalSemiSkilledWorkers')
+            .addSelect('SUM(requirement.skilledWorkers)', 'totalSkilledWorkers')
+            .addSelect('requirement.allocationID', 'allocationID')
+            .addSelect('requirement.dateofallotment', 'dateofallotment')
+            .where('requirement.userIndex = :userIndex', { userIndex })
+            .groupBy('requirement.workerreqID')
+            .addGroupBy('requirement.allocationID')
+            .addGroupBy('requirement.dateofallotment')
+            .getRawMany();
 
-              // const sectorDetails = await this.getSectorbyid(schemeSector);
-              // const sectorName = sectorDetails.result ? sectorDetails.result.sectorname : '';
-  
-              const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
-              const schName = sechDetails.result ? sechDetails.result.schemeName : '';
-              const schemeId = sechDetails.result ? sechDetails.result.schemeId : '';
-              const personDaysGenerated = sechDetails.result ? sechDetails.result.personDaysGenerated : '';
+        // Map aggregated counts to a dictionary for quick lookup
+        const workerCountsMap = {};
+        aggregatedWorkerCounts.forEach(count => {
+            workerCountsMap[count.workerreqID] = {
+                totalUnskilledWorkers: parseInt(count.totalUnskilledWorkers, 10),
+                totalSemiSkilledWorkers: parseInt(count.totalSemiSkilledWorkers, 10),
+                totalSkilledWorkers: parseInt(count.totalSkilledWorkers, 10),
+                allocationID: count.allocationID,
+                dateofallotment: count.dateofallotment,
+            };
+        });
 
-              const workorderNo = sechDetails.result ? sechDetails.result.workorderNo : '';
-              const totalprojectCost = sechDetails.result ? sechDetails.result.totalprojectCost : '';
-              const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
-              const schemeSector = sechDetails.result ? sechDetails.result.schemeSector : '';
-              const conDetails = await this.getsconid(workRequirement.ContractorID);
-              const conName = conDetails.result ? conDetails.result.contractorName : '';
-  
-              // Get aggregated worker counts for the current worker requirement
-              const workerCounts = workerCountsMap[workRequirement.workerreqID] || {
-                  totalUnskilledWorkers: 0,
-                  totalSemiSkilledWorkers: 0,
-                  totalSkilledWorkers: 0,
-              };
-  
-              // Push worker requirement with details into the array
-              workRequirementsWithDetails.push({
-                  ...workRequirement,
-                  districtName: districtName,
-                  blockName: blockName,
-                  gpName: gpName,
-                  deptName: deptName,
-                  muniName: muniName,
-                  schName: schName,
-                  conName: conName,
-                  scheme_Id:schemeId,
-                  schemeSector:schemeSector,
-                 personDaysGenerated:personDaysGenerated,
-    
-                 workorderNo:workorderNo,
-                 totalprojectCost:totalprojectCost,
-                 ExecutingDeptName:ExecutingDeptName,
+        // Array to store worker requirements with additional details
+        const workRequirementsWithDetails = [];
 
+        for (const workRequirement of workRequirements) {
+            // Fetch additional details for each worker requirement
+            const districtDetails = await this.getAllDistricts(workRequirement.districtcode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
 
-                  totalUnskilledWorkers: workerCounts.totalUnskilledWorkers,
-                  totalSemiSkilledWorkers: workerCounts.totalSemiSkilledWorkers,
-                  totalSkilledWorkers: workerCounts.totalSkilledWorkers,
-              });
-          }
-  
-          // Return the array of worker requirements with details
+            const blockDetails = await this.getAllblock(workRequirement.blockcode);
+            const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+
+            const gpDetails = await this.getAllgp(workRequirement.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+
+            const deptDetails = await this.getDepatmentbyid(workRequirement.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+
+            const muniDetails = await this.getmunibyid(workRequirement.municipalityCode);
+            const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+
+            const sechDetails = await this.getschemeid(workRequirement.workCodeSchemeID);
+            const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+            const schemeId = sechDetails.result ? sechDetails.result.schemeId : '';
+            const personDaysGenerated = sechDetails.result ? sechDetails.result.personDaysGenerated : '';
+            const workorderNo = sechDetails.result ? sechDetails.result.workorderNo : '';
+            const totalprojectCost = sechDetails.result ? sechDetails.result.totalprojectCost : '';
+            const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
+            const schemeSector = sechDetails.result ? sechDetails.result.schemeSector : '';
+
+            const conDetails = await this.getsconid(workRequirement.ContractorID);
+            const conName = conDetails.result ? conDetails.result.contractorName : '';
+
+            // Get aggregated worker counts for the current worker requirement
+            const workerCounts = workerCountsMap[workRequirement.workerreqID] || {
+                totalUnskilledWorkers: 0,
+                totalSemiSkilledWorkers: 0,
+                totalSkilledWorkers: 0,
+                allocationID: '',
+                dateofallotment: null,
+            };
+
+            // Push worker requirement with details into the array
+            workRequirementsWithDetails.push({
+                ...workRequirement,
+                districtName,
+                blockName,
+                gpName,
+                deptName,
+                muniName,
+                schName,
+                conName,
+                scheme_Id: schemeId,
+                schemeSector,
+                personDaysGenerated,
+                workorderNo,
+                totalprojectCost,
+                ExecutingDeptName,
+                totalUnskilledWorkers: workerCounts.totalUnskilledWorkers,
+                totalSemiSkilledWorkers: workerCounts.totalSemiSkilledWorkers,
+                totalSkilledWorkers: workerCounts.totalSkilledWorkers,
+                allocationID: workerCounts.allocationID,
+                dateofallotment: workerCounts.dateofallotment,
+            });
+        }
           return {
               errorCode: 0,
               result: workRequirementsWithDetails,
