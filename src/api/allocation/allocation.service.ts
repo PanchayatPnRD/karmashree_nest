@@ -157,14 +157,14 @@ private async generateWorkAllocationID(departmentName: number){
   }
   // Check if there is a matching record
 const existingRecord = await this.masterWorkerRequirementallotment.findOne({
-    where: { workerreqID: reqId, dateofwork: reqDate }
+    where: { workerreqID: reqId, submitTime: reqDate }
   });
 
   const totalUnskilledWorkers = createWorkAllocationDto.workAllocations.length;
   const submitTime = new Date(); 
   if (existingRecord) {
     await this.masterWorkerRequirementallotment.update(
-      { workerreqID: reqId, dateofwork: reqDate }, 
+      { workerreqID: reqId, submitTime: reqDate }, 
       { allocationID: workAllocationID, allotmentuserIndex: createWorkAllocationDto.workAllocations[0].userIndex,
         dateofallotment:submitTime,
         noUnskilledWorkers:totalUnskilledWorkers,
