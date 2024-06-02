@@ -262,6 +262,11 @@ export class WorkerrequisitionService {
             const ExecutingDeptName = sechDetails.result ? sechDetails.result.ExecutingDeptName : '';
             const schemeSector = sechDetails.result ? sechDetails.result.schemeSector : '';
 
+            const totalCostprovided = sechDetails.result ? sechDetails.result.totalCostprovided : '';
+            const personDaysGeneratedprovided = sechDetails.result ? sechDetails.result.personDaysGeneratedprovided : '';
+            const totalLabourprovided = sechDetails.result ? sechDetails.result.totalLabourprovided : '';
+
+
             const conDetails = await this.getsconid(workRequirement.ContractorID);
             const conName = conDetails.result ? conDetails.result.contractorName : '';
 
@@ -290,6 +295,9 @@ export class WorkerrequisitionService {
                 workorderNo,
                 totalprojectCost,
                 ExecutingDeptName,
+                totalCostprovided,
+                personDaysGeneratedprovided,
+                totalLabourprovided,
                 totalUnskilledWorkers: workerCounts.totalUnskilledWorkers,
                 totalSemiSkilledWorkers: workerCounts.totalSemiSkilledWorkers,
                 totalSkilledWorkers: workerCounts.totalSkilledWorkers,
