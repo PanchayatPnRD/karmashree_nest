@@ -218,8 +218,7 @@ export class WorkerrequisitionService {
             .addSelect('requirement.dateofallotment', 'dateofallotment')
             .where('requirement.userIndex = :userIndex', { userIndex })
             .groupBy('requirement.workerreqID')
-            .addGroupBy('requirement.allocationID')
-            .addGroupBy('requirement.dateofallotment')
+        
             .getRawMany();
 
         // Map aggregated counts to a dictionary for quick lookup
