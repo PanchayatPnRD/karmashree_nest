@@ -467,7 +467,11 @@ async getallocationListforemp(userIndex: number) {
           blockcode: 0,
           noOfDaysWorkAlloted: 0,
           workAllocationID: allocation.workAllocationID,
-          gpCode: allocation.gpCode, // Added for fetching gp details
+          gpCode: allocation.gpCode, 
+          empStatus: allocation.empStatus, 
+          empId: allocation.empId, 
+          empDate: allocation.empDate, 
+        
           departmentNo: allocation.departmentNo, // Added for fetching department details
           municipalityCode: allocation.municipalityCode, // Added for fetching municipality details
           contractorID: allocation.contractorID // Added for fetching contractor details
@@ -551,6 +555,9 @@ async getallocationListforemp(userIndex: number) {
           gpName: gpName,
           deptName: deptName,
           muniName: muniName,
+          empStatus: group.empStatus, 
+          empId: group.empId, 
+          empDate: group.empDate, 
           conName: contractorName,
           schemeId: group.schemeId,
           workAllocationID: group.workAllocationID,
@@ -981,11 +988,21 @@ async getDepatmentbyid(departmentNo: number) {
        
       }
 
+    
+
       async getallocationdemandview(allocationID: string) {
         try {
             if (!allocationID || allocationID === "0") {
-                // Handle the case when allocationID is empty or '0'
                 return { errorCode: 1, message: 'Invalid allocationID' };
+            }
+    
+            // Retrieve records from workallocation based on allocationID
+            const allocations: WorkAllocation[] = await this.workallocation.find({
+                where: { workAllocationID: allocationID },
+            });
+    
+            if (!Array.isArray(allocations) || allocations.length === 0) {
+                return { errorCode: 1, message: 'Allocations not found for the provided allocation ID' };
             }
     
             // Retrieve records from MasterWorkerDemandallotmenthistroy based on allocationID
@@ -993,7 +1010,7 @@ async getDepatmentbyid(departmentNo: number) {
                 where: { allocationID },
             });
     
-            if (!allocationHistoryRecords || allocationHistoryRecords.length === 0) {
+            if (!Array.isArray(allocationHistoryRecords) || allocationHistoryRecords.length === 0) {
                 return { errorCode: 1, message: 'Allocation history not found' };
             }
     
@@ -1005,16 +1022,38 @@ async getDepatmentbyid(departmentNo: number) {
                 where: { demanduniqueID: In(demanduniqueIDs) },
             });
     
-            return demandMasterRecords.length > 0 
-                ? { errorCode: 0, result: demandMasterRecords } 
-                : { errorCode: 1, message: 'DemandMaster records not found' };
+            if (!Array.isArray(demandMasterRecords) || demandMasterRecords.length === 0) {
+                return { errorCode: 1, message: 'DemandMaster records not found' };
+            }
+    
+            // Combine allocation and demand master data into a structured response
+            const result = allocations.map(allocation => {
+                const relatedDemandMasters = demandMasterRecords.filter(demandMaster =>
+                    demanduniqueIDs.includes(demandMaster.demanduniqueID)
+                );
+    
+                // Merge the allocation data with the related demand master data
+                const mergedData = relatedDemandMasters.map(demandMaster => ({
+                    ...allocation,
+                    demandMaster,
+                }));
+    
+                return mergedData;
+            }).flat(); // Flatten the array to avoid nested arrays
+    
+            return {
+                errorCode: 0,
+                result,
+            };
         } catch (error) {
             return {
                 errorCode: 1,
-                message: "Something went wrong while retrieving allocation demand view: " + error.message
+                message: "Something went wrong while retrieving allocation demand view: " + error.message,
             };
         }
     }
     
+      
+      
 
 }
