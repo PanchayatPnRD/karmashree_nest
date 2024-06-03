@@ -156,24 +156,29 @@ private async generateWorkAllocationID(departmentName: number){
       }
   }
   // Check if there is a matching record
-const existingRecord = await this.masterWorkerRequirementallotment.findOne({
-    where: { workerreqID: reqId, submitTime: reqDate }
-  });
+  const existingRecords = await this.masterWorkerRequirementallotment.find({
+    where: { workerreqID: reqId }
+});
 
-  const totalUnskilledWorkers = createWorkAllocationDto.workAllocations.length;
-  const submitTime = new Date(); 
-  if (existingRecord) {
+const totalUnskilledWorkers = createWorkAllocationDto.workAllocations.length;
+const submitTime = new Date();
+
+for (const existingRecord of existingRecords) {
     await this.masterWorkerRequirementallotment.update(
-      { workerreqID: reqId, submitTime: reqDate }, 
-      { allocationID: workAllocationID, allotmentuserIndex: createWorkAllocationDto.workAllocations[0].userIndex,
-        dateofallotment:submitTime,
-        noUnskilledWorkers:totalUnskilledWorkers,
-        currentMonthAllot:createWorkAllocationDto.workAllocations[0].currentMonth,
-      currentYearAllot:createWorkAllocationDto.workAllocations[0].currentYear,
-       	finYearAllot:createWorkAllocationDto.workAllocations[0].finYear,
-    } // Pass the userIndex from the first work allocation
+        { workersl: existingRecord.workersl }, // Ensure this matches your entity's unique identifier
+        {
+            allocationID: workAllocationID,
+            allotmentuserIndex: createWorkAllocationDto.workAllocations[0].userIndex,
+            dateofallotment: submitTime,
+            noUnskilledWorkers: totalUnskilledWorkers,
+            currentMonthAllot: createWorkAllocationDto.workAllocations[0].currentMonth,
+            currentYearAllot: createWorkAllocationDto.workAllocations[0].currentYear,
+            finYearAllot: createWorkAllocationDto.workAllocations[0].finYear,
+        }
     );
 }
+
+
 const allocation = workAllocationID;
 
   return {errorCode: 0, message:"Allocation Created Successfully",allocation};
@@ -532,7 +537,7 @@ async getallocationListforemp(userIndex: number) {
           currentYearAllot: requirementDetails.currentYearAllot,
           finYearAllot: requirementDetails.finYearAllot,
           allotmentuserIndex: requirementDetails.allotmentuserIndex,
-          submitTime: requirementDetails.submitTime
+          submitTimereq: requirementDetails.submitTime
         } : {};
 
         allocationsWithDetails.push({
@@ -721,75 +726,100 @@ async getallocationListforemp(userIndex: number) {
   
 
 //emplymebntdemandlist
+
+
 async allocationempfinalliat(workAllocationID: string) {
-  try {
-      const allocations = await this.workallocation.find({ where: { workAllocationID }, order: { workallocationsl: 'DESC' } });
+    try {
+        const allocations = await this.workallocation.find({ where: { workAllocationID }, order: { workallocationsl: 'DESC' } });
 
-      if (!allocations || allocations.length === 0) {
-          return {
-              errorCode: 1,
-              message: 'allocations not found for the provided workAllocationID',
-          };
-      }
+        if (!allocations || allocations.length === 0) {
+            return {
+                errorCode: 1,
+                message: 'Allocations not found for the provided workAllocationID',
+            };
+        }
 
-      const allocationsWithDetails = [];
+        const allocationsWithDetails = [];
 
-      await Promise.all(allocations.map(async (allocation) => {
-          try {
-              // Fetch additional details if needed. For example:
-              const districtDetails = await this.getAllDistricts(allocation.districtcode);
+        await Promise.all(allocations.map(async (allocation) => {
+            try {
+                // Fetch district details
+                const districtDetails = await this.getAllDistricts(allocation.districtcode);
                 const districtName = districtDetails.result ? districtDetails.result.districtName : '';
 
                 // Fetch block details
                 const blockDetails = await this.getAllblock(allocation.blockcode);
                 const blockName = blockDetails.result ? blockDetails.result.blockName : '';
 
-
-                const Id = parseInt(allocation.schemeId, 10);
-
-                // Pass the converted integer to the getpedabyid function if it's a valid number
-                let pedaName = '';
-                if (!isNaN(Id)) {
-             
-                const sechDetails = await this.getschemeid(Id);
-                const schName = sechDetails.result ? sechDetails.result.schemeName : '';
+                // Fetch scheme details
+                const schemeId = parseInt(allocation.schemeId, 10);
+                let schName = '';
+                if (!isNaN(schemeId)) {
+                    const schemeDetails = await this.getschemeid(schemeId);
+                    schName = schemeDetails.result ? schemeDetails.result.schemeName : '';
                 }
 
+                // Fetch contractor details
                 const contractorID = parseInt(allocation.contractorID, 10);
-                // Fetch block details
-                const conDetails = await this.getsconid(contractorID);
-                const conName = conDetails.result ? conDetails.result.contractorName : '';
+                let conName = '';
+                if (!isNaN(contractorID)) {
+                    const contractorDetails = await this.getsconid(contractorID);
+                    conName = contractorDetails.result ? contractorDetails.result.contractorName : '';
+                }
 
+                // Fetch worker requirement details
+                const requirementDetails = await this.masterWorkerRequirementallotment.findOne({ where: { allocationID: workAllocationID } });
+                const requirementData = requirementDetails ? {
+                    workerreqID: requirementDetails.workerreqID,
+                    submitTimereq: requirementDetails.submitTime,
+                    schemeArea: requirementDetails.schemeArea,
+                    dateofwork: requirementDetails.dateofwork,
+                    unskilledWorkers: requirementDetails.unskilledWorkers,
+                    semiSkilledWorkers: requirementDetails.semiSkilledWorkers,
+                    skilledWorkers: requirementDetails.skilledWorkers,
+                    contactPersonName: requirementDetails.contactPersonName,
+                    contactPersonPhoneNumber: requirementDetails.contactPersonPhoneNumber,
+                    FundingDeptname: requirementDetails.FundingDeptname,
+                    currentMonthWork: requirementDetails.currentMonthWork,
+                    currentYearWork: requirementDetails.currentYearWork,
+                    finYearWork: requirementDetails.finYearWork,
+                    dateofallotment: requirementDetails.dateofallotment,
+                    noUnskilledWorkers: requirementDetails.noUnskilledWorkers,
+                    noSemiSkilledWorkers: requirementDetails.noSemiSkilledWorkers,
+                    noSkilledWorkers: requirementDetails.noSkilledWorkers,
+                    currentMonthAllot: requirementDetails.currentMonthAllot,
+                    currentYearAllot: requirementDetails.currentYearAllot,
+                    finYearAllot: requirementDetails.finYearAllot,
+                    allotmentuserIndex: requirementDetails.allotmentuserIndex,
+                   
+                } : {};
 
+                allocationsWithDetails.push({
+                    ...allocation,
+                    districtName,
+                    blockName,
+                    schName,
+                    conName,
+                    requirementData // include requirement details if needed
+                });
+            } catch (error) {
+                console.error(`Failed to fetch details for allocation with ID ${allocation.workallocationsl}: ${error.message}`);
+            }
+        }));
 
-
-             
-              allocationsWithDetails.push({
-                  ...allocation,
-                  districtName: districtName,
-                  blockName: blockName,
-                  schName:pedaName,
-                  conName:conName
-
-              });
-          } catch (error) {
-              // Log the error for this allocation
-              console.error(`Failed to fetch details for allocation with ID ${allocation.workallocationsl}`);
-          }
-      }));
-
-      return {
-          errorCode: 0,
-          result: allocationsWithDetails,
-      };
-  } catch (error) {
-      console.error('Failed to fetch allocations from the database:', error);
-      return {
-          errorCode: 1,
-          message: 'Something went wrong: ' + error.message,
-      };
-  }
+        return {
+            errorCode: 0,
+            result: allocationsWithDetails,
+        };
+    } catch (error) {
+        console.error('Failed to fetch allocations from the database:', error);
+        return {
+            errorCode: 1,
+            message: 'Something went wrong: ' + error.message,
+        };
+    }
 }
+
 async getAllDistricts(districtCode: number) {
   try {
       let districtDetails;

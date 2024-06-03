@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { SchememasterService } from './schememaster.service';
 import { MasterSchemeDTO } from './dto/scheme.dto';
 import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { UpdateMasterSchemeDTO } from './dto/updateschem.dto';
 
 
 @ApiTags('schememaster')
@@ -16,6 +17,19 @@ export class SchememasterController {
     async create(@Body() createMasterSchemeDto: MasterSchemeDTO) {
         return this.masterSchemeService.create(createMasterSchemeDto);
     }
+    @Get('schemeview/:scheme_sl')
+    async getSchemeById(@Param('scheme_sl') scheme_sl: number) {
+      return this.masterSchemeService.getSchemeById(scheme_sl);
+    }
+    @Post('updateschme/:scheme_sl')
+    async updateMasterScheme(
+      @Param('scheme_sl') scheme_sl: number,
+      @Body() updateMasterSchemeDto: UpdateMasterSchemeDTO,
+     
+    ) {
+      return this.masterSchemeService.updateMasterScheme(scheme_sl, updateMasterSchemeDto);
+    }
+  
     @Get('schemelist/:userIndex')
     async getMasterSchemeExpendituresByUserIndex(@Param('userIndex') userIndex: number) {
         try {

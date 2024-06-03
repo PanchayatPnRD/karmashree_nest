@@ -207,7 +207,8 @@ export class MasterWorkerRequirement_allotment {
   @Column({ type: 'int', nullable: true })
   userIndex: number;
 
-  @Column({ type: 'timestamp', nullable: true })
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   submitTime: Date;
 
   @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })

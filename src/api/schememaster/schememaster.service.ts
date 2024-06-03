@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
 import { Contractor_master } from 'src/entity/contractor.entity';
 import { random } from 'lodash'; // Import the random function from lodash
+import { UpdateMasterSchemeDTO } from './dto/updateschem.dto';
 @Injectable()
 export class SchememasterService {
     constructor(
@@ -354,4 +355,115 @@ export class SchememasterService {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };
             }
           }
+
+          async getSchemeById(scheme_sl: number) {
+            try {
+              // Find the MasterScheme by schemeId
+              const masterScheme = await this.masterSchemeRepository.findOne({ where: { scheme_sl } });
+              
+              if (!masterScheme) {
+                return { errorCode: 1, message: 'Master Scheme not found' };
+              }
+          
+              // Find the MasterSchemeExpenditure by schemeId
+            
+              return {
+                errorCode: 0,
+                message: 'Scheme found successfully',
+                masterScheme,
+           
+              };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            }
+          }
+          
+          async updateMasterScheme(scheme_sl: number, updateMasterSchemeDto: UpdateMasterSchemeDTO) {
+            try {
+              // Find the existing MasterScheme by schemeId
+              const existingMasterScheme = await this.masterSchemeRepository.findOne({ where: { scheme_sl } });
+          
+              if (!existingMasterScheme) {
+                return { errorCode: 1, message: 'Master Scheme not found' };
+              }
+          
+              // Update MasterScheme fields
+              existingMasterScheme.schemeArea = updateMasterSchemeDto.schemeArea;
+              existingMasterScheme.departmentNo = updateMasterSchemeDto.departmentNo;
+              existingMasterScheme.districtcode = updateMasterSchemeDto.districtcode;
+              existingMasterScheme.municipalityCode = updateMasterSchemeDto.municipalityCode;
+              existingMasterScheme.blockcode = updateMasterSchemeDto.blockcode;
+              existingMasterScheme.gpCode = updateMasterSchemeDto.gpCode;
+              existingMasterScheme.sansadID = updateMasterSchemeDto.sansadID;
+              existingMasterScheme.village = updateMasterSchemeDto.village;
+              existingMasterScheme.schemeSector = updateMasterSchemeDto.schemeSector;
+              existingMasterScheme.schemeSubsector = updateMasterSchemeDto.schemeSubsector;
+              existingMasterScheme.schemeName = updateMasterSchemeDto.schemeName;
+              existingMasterScheme.FundingDepttID = updateMasterSchemeDto.FundingDepttID;
+              existingMasterScheme.FundingDeptname = updateMasterSchemeDto.FundingDeptname;
+              existingMasterScheme.ExecutingDepttID = updateMasterSchemeDto.ExecutingDepttID;
+              existingMasterScheme.ExecutingDeptName = updateMasterSchemeDto.ExecutingDeptName;
+              existingMasterScheme.ImplementingAgencyID = updateMasterSchemeDto.ImplementingAgencyID;
+              existingMasterScheme.ImplementingAgencyName = updateMasterSchemeDto.ImplementingAgencyName;
+              existingMasterScheme.StatusOfWork = updateMasterSchemeDto.StatusOfWork;
+              existingMasterScheme.tentativeStartDate = updateMasterSchemeDto.tentativeStartDate;
+              existingMasterScheme.ActualtartDate = updateMasterSchemeDto.ActualtartDate;
+              existingMasterScheme.ExpectedCompletionDate = updateMasterSchemeDto.ExpectedCompletionDate;
+              existingMasterScheme.totalprojectCost = updateMasterSchemeDto.totalprojectCost;
+              existingMasterScheme.totalLabour = updateMasterSchemeDto.totalLabour;
+              existingMasterScheme.personDaysGenerated = updateMasterSchemeDto.personDaysGenerated;
+              existingMasterScheme.totalUnskilledWorkers = updateMasterSchemeDto.totalUnskilledWorkers;
+              existingMasterScheme.totalSemiSkilledWorkers = updateMasterSchemeDto.totalSemiSkilledWorkers;
+              existingMasterScheme.totalSkilledWorkers = updateMasterSchemeDto.totalSkilledWorkers;
+           
+          
+              // Save the updated MasterScheme
+              await this.masterSchemeRepository.save(existingMasterScheme);
+          
+              // Find the existing MasterSchemeExpenditure by schemeId
+              const existingMasterSchemeExpenditure = await this.MasterSchemeExpendutureRepository.findOne({ where: { schemeId:scheme_sl } });
+          
+              if (!existingMasterSchemeExpenditure) {
+                return { errorCode: 1, message: 'Master Scheme Expenditure not found' };
+              }
+          
+              // Update MasterSchemeExpenditure fields
+              existingMasterSchemeExpenditure.schemeArea = updateMasterSchemeDto.schemeArea;
+              existingMasterSchemeExpenditure.departmentNo = updateMasterSchemeDto.departmentNo;
+              existingMasterSchemeExpenditure.districtcode = updateMasterSchemeDto.districtcode;
+              existingMasterSchemeExpenditure.municipalityCode = updateMasterSchemeDto.municipalityCode;
+              existingMasterSchemeExpenditure.blockcode = updateMasterSchemeDto.blockcode;
+              existingMasterSchemeExpenditure.gpCode = updateMasterSchemeDto.gpCode;
+              existingMasterSchemeExpenditure.sansadID = updateMasterSchemeDto.sansadID;
+              existingMasterSchemeExpenditure.village = updateMasterSchemeDto.village;
+              existingMasterSchemeExpenditure.schemeSector = updateMasterSchemeDto.schemeSector;
+              existingMasterSchemeExpenditure.schemeSubsector = updateMasterSchemeDto.schemeSubsector;
+              existingMasterSchemeExpenditure.schemeName = updateMasterSchemeDto.schemeName;
+              existingMasterSchemeExpenditure.FundingDepttID = updateMasterSchemeDto.FundingDepttID;
+              existingMasterSchemeExpenditure.FundingDeptname = updateMasterSchemeDto.FundingDeptname;
+              existingMasterSchemeExpenditure.ExecutingDepttID = updateMasterSchemeDto.ExecutingDepttID;
+              existingMasterSchemeExpenditure.ExecutingDeptName = updateMasterSchemeDto.ExecutingDeptName;
+              existingMasterSchemeExpenditure.ImplementingAgencyID = updateMasterSchemeDto.ImplementingAgencyID;
+              existingMasterSchemeExpenditure.ImplementingAgencyName = updateMasterSchemeDto.ImplementingAgencyName;
+              existingMasterSchemeExpenditure.StatusOfWork = updateMasterSchemeDto.StatusOfWork;
+              existingMasterSchemeExpenditure.tentativeStartDate = updateMasterSchemeDto.tentativeStartDate;
+              existingMasterSchemeExpenditure.ActualtartDate = updateMasterSchemeDto.ActualtartDate;
+              existingMasterSchemeExpenditure.ExpectedCompletionDate = updateMasterSchemeDto.ExpectedCompletionDate;
+              existingMasterSchemeExpenditure.totalprojectCost = updateMasterSchemeDto.totalprojectCost;
+              existingMasterSchemeExpenditure.totalLabour = updateMasterSchemeDto.totalLabour;
+              existingMasterSchemeExpenditure.personDaysGenerated = updateMasterSchemeDto.personDaysGenerated;
+              existingMasterSchemeExpenditure.totalUnskilledWorkers = updateMasterSchemeDto.totalUnskilledWorkers;
+              existingMasterSchemeExpenditure.totalSemiSkilledWorkers = updateMasterSchemeDto.totalSemiSkilledWorkers;
+              existingMasterSchemeExpenditure.totalSkilledWorkers = updateMasterSchemeDto.totalSkilledWorkers;
+            
+          
+              // Save the updated MasterSchemeExpenditure
+              await this.MasterSchemeExpendutureRepository.save(existingMasterSchemeExpenditure);
+          
+              return { errorCode: 0, message: "Scheme and expenditure updated successfully" };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            }
+          }
+          
 }
