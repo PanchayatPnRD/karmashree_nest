@@ -929,9 +929,9 @@ async getDepatmentbyid(departmentNo: number) {
     let dept; // Declare dept before the try block
   
   
-        dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl"] });
+        dept = await this.masterSchemeRepository.findOne({ where: { scheme_sl },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName","schemeSector"] });
     
-  
+
    
   
       return { errorCode: 0, result: dept };
