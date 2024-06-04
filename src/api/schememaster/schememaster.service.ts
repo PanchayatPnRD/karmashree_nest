@@ -7,6 +7,7 @@ import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp,
 import { Contractor_master } from 'src/entity/contractor.entity';
 import { random } from 'lodash'; // Import the random function from lodash
 import { UpdateMasterSchemeDTO } from './dto/updateschem.dto';
+import { DemandMaster } from 'src/entity/demandmaster.entity';
 @Injectable()
 export class SchememasterService {
     constructor(
@@ -20,7 +21,7 @@ export class SchememasterService {
         @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
-        
+        @InjectRepository(DemandMaster) private demandMaster: Repository<DemandMaster>,
     ) {}
 
     async create(createMasterSchemeDto: MasterSchemeDTO) {
@@ -465,5 +466,153 @@ export class SchememasterService {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };
             }
           }
+        
           
+
+          async getCounts() {
+            try {
+              // Count unique ExecutingDepttID
+              const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+                .getRawOne();
+        
+              // Count unique departmentNo
+              const uniqueDepartmentNoCount = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+                .getRawOne();
+        
+              // Count unique FundingDepttID
+              const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+                .getRawOne();
+        
+              // Sum of personDaysGenerated
+              const totalPersonDaysGenerated = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('SUM(mse.personDaysGenerated)', 'total')
+                .getRawOne();
+        
+              // Sum of totalUnskilledWorkers
+              const totalUnskilledWorkers = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('SUM(mse.totalUnskilledWorkers)', 'total')
+                .getRawOne();
+
+                const totalAvgMandays = await this.demandMaster
+                .createQueryBuilder('dm')
+                .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+                .getRawOne();
+          
+              // Sum the total cost provided
+              const totalCostProvided = await this.masterSchemeRepository
+                .createQueryBuilder('ms')
+                .select('SUM(ms.totalCostprovided)', 'total')
+                .getRawOne();
+          
+              // Calculate the average cost provided per worker
+              const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+              const dummyData = [
+                { month: "June 2024", engaged: 0, mandays: 0 },
+                { month: "May 2024", engaged: 0, mandays: 0 },
+                { month: "April 2024", engaged: 0, mandays: 0 },
+                { month: "March 2024", engaged: 0, mandays: 0 },
+                { month: "February 2024", engaged: 0, mandays: 0 },
+                { month: "January 2024", engaged: 0, mandays: 0 },
+             
+                // Add more dummy data as needed
+              ];
+              return {
+                errorCode: 0,
+                result: {
+                  ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count,
+                  DepartmentNoCount: uniqueDepartmentNoCount.count,
+                  FundingDepttIDCount: uniqueFundingDepttIDCount.count,
+                  totalPersonDaysGenerated: totalPersonDaysGenerated.total,
+                  totalUnskilledWorkers: totalUnskilledWorkers.total,
+                  avgCostProvidedPerWorker:avgCostProvidedPerWorker,
+                  charts:dummyData
+            
+                },
+              };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            }
+          }
+        
+
+          async getactionplanreport() {
+            try {
+              // Count unique ExecutingDepttID
+              const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+                .getRawOne();
+        
+              // Count unique departmentNo
+              const uniqueDepartmentNoCount = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+                .getRawOne();
+        
+              // Count unique FundingDepttID
+              const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+                .getRawOne();
+
+                const schemeSector = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.schemeSector)', 'count')
+                .getRawOne();
+        
+                
+              // Sum of personDaysGenerated
+              const totalPersonDaysGenerated = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('SUM(mse.personDaysGenerated)', 'total')
+                .getRawOne();
+        
+              // Sum of totalUnskilledWorkers
+              const totalUnskilledWorkers = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('SUM(mse.totalUnskilledWorkers)', 'total')
+                .getRawOne();
+
+                const totalAvgMandays = await this.demandMaster
+                .createQueryBuilder('dm')
+                .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+                .getRawOne();
+          
+              // Sum the total cost provided
+              const totalCostProvided = await this.masterSchemeRepository
+                .createQueryBuilder('ms')
+                .select('SUM(ms.totalCostprovided)', 'total')
+                .getRawOne();
+          
+              // Calculate the average cost provided per worker
+              const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+           
+           
+              return {
+                errorCode: 0,
+                result: [
+                  {
+                  ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count,
+                  DepartmentNoCount: uniqueDepartmentNoCount.count,
+                  FundingDepttIDCount: uniqueFundingDepttIDCount.count,
+                  totalPersonDaysGenerated: totalPersonDaysGenerated.total,
+                  totalUnskilledWorkers: totalUnskilledWorkers.total,
+                  avgCostProvidedPerWorker:avgCostProvidedPerWorker,
+                  schemeSector:schemeSector.total
+                 
+                  }
+                ],
+              };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            }
+          }
 }

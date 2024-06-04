@@ -59,4 +59,17 @@ export class SchememasterController {
         return { errorCode: 1, message: 'Something went wrong', error: error.message };
       }
     }
+
+    @Get('dashboard')
+  async getCounts() {
+    return this.masterSchemeService.getCounts();
+  }
+
+  
+  @Get('getactionplanreport')
+  async getactionplanreport() {
+    return this.masterSchemeService.getactionplanreport();
+  }
+
+  
 }
