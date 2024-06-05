@@ -307,8 +307,8 @@ async viewUserById(userIndex: number) {
       const districtName = districtDetails.result ? districtDetails.result.districtName : '';
       const subDetails = await this.getAllsub(user.subDivision);
       const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : '';
-      const blockDetails = await this.getAllblock(user.subDivision);
-      const blockname = blockDetails.result ? blockDetails.result.blockname : '';
+      const blockDetails = await this.getAllblock(user.blockCode);
+      const blockname = blockDetails.result ? blockDetails.result.blockName : '';
       const gpDetails = await this.getAllgp(user.gpCode);
       const gpName = gpDetails.result ? gpDetails.result.gpName : '';
       const deptDetails = await this.getDepatmentbyid(user.departmentNo);
