@@ -314,6 +314,109 @@ try {
 }
 }
 
+async getAggregatedData3() {
+    try {
+      const data = await this.actionplan
+        .createQueryBuilder('actionPlan')
+        .select('masterDepartment.departmentNo', 'departmentNo')
+        .addSelect('masterDepartment.departmentName', 'departmentName')
+        .addSelect('actionPlan.finYear', 'finYear')
+        .addSelect('COUNT(DISTINCT actionPlan.districtCode)', 'TOTAL_DISTRICT_WORKING')
+        .addSelect('COUNT(DISTINCT actionPlan.schemeSector)', 'TOTAL_SECTOR_WORKING')
+        .addSelect('SUM(actionPlan.schemeProposed)', 'No_of_works_proposed')
+        .addSelect('SUM(actionPlan.tentativeCostOfScheme)', 'Tentative_Total_Cost_of_works')
+        .addSelect('SUM(actionPlan.totWagesPaid)', 'Tentative_Total_Wage_to_be_paid_in_the_works')
+        .addSelect('SUM(actionPlan.totPersonDays)', 'Total_Persondays_to_be_generated')
+        .addSelect('SUM(actionPlan.totJobCard)', 'Total_No_of_Job_Card_holders_to_be_engaged')
+        .addSelect('SUM(actionPlan.totWagesPaid) / SUM(actionPlan.totJobCard)', 'Average_Days_of_Employment_to_be_provided_per_family')
+        .leftJoin(masterdepartment, 'masterDepartment', 'masterDepartment.departmentNo = actionPlan.departmentNo')
+        .groupBy('masterDepartment.departmentNo')
+        .addGroupBy('masterDepartment.departmentName')
+        .addGroupBy('actionPlan.finYear')
+        .orderBy('masterDepartment.departmentName', 'ASC')
+        .getRawMany();
+
+      return { errorCode: 0, result: data };
+    } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+    }
+  }
+
+async getAggregatedData() {
+    try {
+      const data = await this.actionplan
+        .createQueryBuilder('actionPlan')
+        .select('actionPlan.departmentNo', 'actionPlanDepartmentNo')
+        .addSelect('actionPlan.finYear', 'finYear')
+        .addSelect('actionPlan.districtCode', 'districtCode')
+        .addSelect('masterDepartment.departmentNo', 'departmentNo')
+        .addSelect('masterDepartment.departmentName', 'departmentName')
+        .addSelect('masterZP.districtCode', 'districtCode')
+        .addSelect('masterZP.districtName', 'districtName')
+        .addSelect('COUNT(DISTINCT actionPlan.schemeSector)', 'TOTAL_SECTOR_WORKING')
+        .addSelect('SUM(actionPlan.schemeProposed)', 'No_of_works_proposed')
+        .addSelect('SUM(actionPlan.tentativeCostOfScheme)', 'Tentative_Total_Cost_of_works')
+        .addSelect('SUM(actionPlan.totWagesPaid)', 'Tentative_Total_Wage_to_be_paid_in_the_works')
+        .addSelect('SUM(actionPlan.totPersonDays)', 'Total_Persondays_to_be_generated')
+        .addSelect('SUM(actionPlan.totJobCard)', 'Total_No_of_Job_Card_holders_to_be_engaged')
+        .addSelect('SUM(actionPlan.totWagesPaid) / SUM(actionPlan.totJobCard)', 'Average_Days_of_Employment_to_be_provided_per_family')
+        .leftJoin(masterdepartment, 'masterDepartment', 'masterDepartment.departmentNo = actionPlan.departmentNo')
+        .leftJoin(master_zp, 'masterZP', 'masterZP.districtCode = actionPlan.districtCode')
+        .groupBy('actionPlan.departmentNo')
+        .addGroupBy('actionPlan.finYear')
+        .addGroupBy('actionPlan.districtCode')
+        .addGroupBy('masterDepartment.departmentNo')
+        .addGroupBy('masterDepartment.departmentName')
+        .addGroupBy('masterZP.districtCode')
+        .addGroupBy('masterZP.districtName')
+        .orderBy('masterDepartment.departmentName', 'ASC')
+        .addOrderBy('masterZP.districtName', 'ASC')
+        .getRawMany();
+
+      return { errorCode: 0, result: data };
+    } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+    }
+  }
+
+
+  async getAggregatedData2() {
+    try {
+      const data = await this.actionplan
+        .createQueryBuilder('actionPlan')
+        .select('masterDepartment.departmentNo', 'departmentNo')
+        .addSelect('masterDepartment.departmentName', 'departmentName')
+        .addSelect('pedestalMaster.pedestalName', 'pedestalName')
+        .addSelect('actionPlan.finYear', 'finYear')
+        .addSelect('masterZP.districtCode', 'districtCode')
+        .addSelect('masterZP.districtName', 'districtName')
+        .addSelect('COUNT(DISTINCT actionPlan.schemeSector)', 'TOTAL_SECTOR_WORKING')
+        .addSelect('SUM(actionPlan.schemeProposed)', 'No_of_works_proposed')
+        .addSelect('SUM(actionPlan.tentativeCostOfScheme)', 'Tentative_Total_Cost_of_works')
+        .addSelect('SUM(actionPlan.totWagesPaid)', 'Tentative_Total_Wage_to_be_paid_in_the_works')
+        .addSelect('SUM(actionPlan.totPersonDays)', 'Total_Persondays_to_be_generated')
+        .addSelect('SUM(actionPlan.totJobCard)', 'Total_No_of_Job_Card_holders_to_be_engaged')
+        .addSelect('SUM(actionPlan.totWagesPaid) / SUM(actionPlan.totJobCard)', 'Average_Days_of_Employment_to_be_provided_per_family')
+        .leftJoin(masterdepartment, 'masterDepartment', 'masterDepartment.departmentNo = actionPlan.departmentNo')
+        .leftJoin(pedestalMaster, 'pedestalMaster', 'masterDepartment.departmentNo = pedestalMaster.departmentNo')
+        .leftJoin(master_zp, 'masterZP', 'actionPlan.districtCode = masterZP.districtCode')
+        .groupBy('masterDepartment.departmentNo')
+        .addGroupBy('masterDepartment.departmentName')
+        .addGroupBy('pedestalMaster.pedestalName')
+        .addGroupBy('actionPlan.finYear')
+        .addGroupBy('masterZP.districtCode')
+        .addGroupBy('masterZP.districtName')
+        .orderBy('masterDepartment.departmentName', 'ASC')
+        .addOrderBy('masterZP.districtName', 'ASC')
+        .getRawMany();
+
+      return { errorCode: 0, result: data };
+    } catch (error) {
+      return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+    }
+  }
+
+
   
 
 }

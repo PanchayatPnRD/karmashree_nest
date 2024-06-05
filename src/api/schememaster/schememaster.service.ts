@@ -527,12 +527,12 @@ export class SchememasterService {
               return {
                 errorCode: 0,
                 result: {
-                  ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count,
-                  DepartmentNoCount: uniqueDepartmentNoCount.count,
-                  FundingDepttIDCount: uniqueFundingDepttIDCount.count,
-                  totalPersonDaysGenerated: totalPersonDaysGenerated.total,
-                  totalUnskilledWorkers: totalUnskilledWorkers.total,
-                  avgCostProvidedPerWorker:avgCostProvidedPerWorker,
+                  ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count||0,
+                  DepartmentNoCount: uniqueDepartmentNoCount.count||0,
+                  FundingDepttIDCount: uniqueFundingDepttIDCount.count||0,
+                  totalPersonDaysGenerated: totalPersonDaysGenerated.total||0,
+                  totalUnskilledWorkers: totalUnskilledWorkers.total||0,
+                  avgCostProvidedPerWorker:avgCostProvidedPerWorker||0,
                   charts:dummyData
             
                 },
