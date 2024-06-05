@@ -515,12 +515,12 @@ export class SchememasterService {
               // Calculate the average cost provided per worker
               const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
               const dummyData = [
-                { month: "June 2024", engaged: 0, mandays: 0 },
+                { month: "June 2024", engaged: 5, mandays: 6 },
                 { month: "May 2024", engaged: 0, mandays: 0 },
-                { month: "April 2024", engaged: 0, mandays: 0 },
+                { month: "April 2024", engaged: 15, mandays: 11 },
                 { month: "March 2024", engaged: 0, mandays: 0 },
-                { month: "February 2024", engaged: 0, mandays: 0 },
-                { month: "January 2024", engaged: 0, mandays: 0 },
+                { month: "February 2024", engaged: 45, mandays: 1 },
+                { month: "January 2024", engaged: 0, mandays: 8 },
              
                 // Add more dummy data as needed
               ];
@@ -607,7 +607,7 @@ export class SchememasterService {
                   totalUnskilledWorkers: totalUnskilledWorkers.total,
                   avgCostProvidedPerWorker:avgCostProvidedPerWorker,
                   schemeSector:schemeSector.total
-                 
+
                   }
                 ],
               };
