@@ -369,4 +369,37 @@ export class DemandService {
                 throw new Error('Failed to fetch demands from the database.');
             }
         }
+
+        
+       // AND C.total_pending >= 0 AND C.workallostatus = 0
+       // AND A.total_pending >= 0 AND A.workallostatus = 0
+        // getDemandsforallocation(userIndex: number, districtcode: number) {
+            async getDemandsforallocation(userIndex: number, districtcode: number) {
+                try {
+                  // Manually construct the UNION query with parameters
+                  const query1 = `
+                    SELECT A.* FROM demand_master A
+                    WHERE A.userIndex = ? 
+                  `;
+                  const query2 = `
+                    SELECT C.* FROM demand_master C
+                    WHERE C.userIndex != ? AND C.districtcode = ? 
+                  `;
+                  const combinedQuery = `${query1} UNION ${query2}`;
+            
+                  // Execute the combined query with parameters
+                  const demands = await this.demandMaster.query(combinedQuery, [userIndex, userIndex, districtcode]);
+            
+                  return {
+                    errorCode: 0,
+                    result: demands,
+                  };
+                } catch (error) {
+                  return {
+                    errorCode: 1,
+                    message: 'Something went wrong: ' + error.message,
+                  };
+                }
+              }
+        
 }

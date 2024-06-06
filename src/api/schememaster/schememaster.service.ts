@@ -8,6 +8,7 @@ import { Contractor_master } from 'src/entity/contractor.entity';
 import { random } from 'lodash'; // Import the random function from lodash
 import { UpdateMasterSchemeDTO } from './dto/updateschem.dto';
 import { DemandMaster } from 'src/entity/demandmaster.entity';
+import { Employment } from 'src/entity/employment.entity';
 @Injectable()
 export class SchememasterService {
     constructor(
@@ -22,6 +23,7 @@ export class SchememasterService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
         @InjectRepository(DemandMaster) private demandMaster: Repository<DemandMaster>,
+        @InjectRepository(Employment)private  employment: Repository<Employment>,
     ) {}
 
     async create(createMasterSchemeDto: MasterSchemeDTO) {
@@ -306,6 +308,8 @@ export class SchememasterService {
               select: ["gpName","gpCode"],
           });
       }
+
+
     
       return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
     } catch (error) {
@@ -330,7 +334,28 @@ export class SchememasterService {
 
      
     }
-
+    async getContractor(cont_sl: number) {
+      try {
+        // Use `findOne` to retrieve a single record
+        const contractor = await this.Contractor.findOne({ where: { cont_sl } });
+    
+        if (!contractor) {
+          return {
+            errorCode: 1,
+            message: 'Contractor not found',
+          };
+        }
+    
+    
+    
+        return {
+          errorCode: 0,
+          result: contractor,
+        };
+      } catch (error) {
+        throw new Error('Failed to fetch contractor from the database.');
+      }
+    }
     async getmunibyid(urbanCode: number) {
         let dept; // Declare dept before the try block
       
@@ -366,6 +391,7 @@ export class SchememasterService {
                 return { errorCode: 1, message: 'Master Scheme not found' };
               }
           
+              const conDetails = await this.getContractor(masterScheme.ControctorID);
               // Find the MasterSchemeExpenditure by schemeId
             
               return {
@@ -488,6 +514,12 @@ export class SchememasterService {
                 .createQueryBuilder('mse')
                 .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
                 .getRawOne();
+
+                const scheme = await this.masterSchemeRepository
+                .createQueryBuilder('mse')
+                .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+                .getRawOne();
+        
         
               // Sum of personDaysGenerated
               const totalPersonDaysGenerated = await this.masterSchemeRepository
@@ -511,19 +543,17 @@ export class SchememasterService {
                 .createQueryBuilder('ms')
                 .select('SUM(ms.totalCostprovided)', 'total')
                 .getRawOne();
-          
+
+
+                const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+
+
+
+
+              
               // Calculate the average cost provided per worker
-              const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
-              const dummyData = [
-                { month: "June 2024", engaged: 5, mandays: 6 },
-                { month: "May 2024", engaged: 0, mandays: 0 },
-                { month: "April 2024", engaged: 15, mandays: 11 },
-                { month: "March 2024", engaged: 0, mandays: 0 },
-                { month: "February 2024", engaged: 45, mandays: 1 },
-                { month: "January 2024", engaged: 0, mandays: 8 },
-             
-                // Add more dummy data as needed
-              ];
+          
+              const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
               return {
                 errorCode: 0,
                 result: {
@@ -533,7 +563,8 @@ export class SchememasterService {
                   totalPersonDaysGenerated: totalPersonDaysGenerated.total||0,
                   totalUnskilledWorkers: totalUnskilledWorkers.total||0,
                   avgCostProvidedPerWorker:avgCostProvidedPerWorker||0,
-                  charts:dummyData
+                  totalscheme:scheme.count||0,
+                  charts: employmentDataForLast7Days,
             
                 },
               };
@@ -542,7 +573,92 @@ export class SchememasterService {
             }
           }
         
+          async getEmploymentDataForLast7Days() {
+            try {
+              const today = new Date();
+              const last7Days = new Date(today);
+              last7Days.setDate(today.getDate() - 6); // Including today
+          
+              // Generate an array of all dates within the last 7 days
+              const dateArray = [];
+              for (let i = 0; i < 7; i++) {
+                const date = new Date(last7Days);
+                date.setDate(last7Days.getDate() + i);
+                dateArray.push(date);
+              }
+          
+              // Query total mandays provided in the last 7 days
+              const totalMandays = await this.employment
+                .createQueryBuilder('e')
+                .select('DATE(e.submitTime)', 'day')
+                .addSelect('SUM(e.noOfDaysWorProvided)', 'totalMandays')
+                .where('e.submitTime >= :last7Days', {
+                  last7Days: last7Days.toISOString().slice(0, 19).replace('T', ' ')
+                })
+                .groupBy('day')
+                .orderBy('day', 'ASC')
+                .getRawMany();
+          
+              // Query total engaged workers in the last 7 days
+              const totalEngaged = await this.employment
+                .createQueryBuilder('e')
+                .select('DATE(e.submitTime)', 'day')
+                .addSelect('COUNT(DISTINCT e.workerJobCardNo)', 'totalEngaged')
+                .where('e.submitTime >= :last7Days', {
+                  last7Days: last7Days.toISOString().slice(0, 19).replace('T', ' ')
+                })
+                .groupBy('day')
+                .orderBy('day', 'ASC')
+                .getRawMany();
+          
+              // Create a mapping of dates with default values
+              const dateMap = dateArray.reduce((map, date) => {
+                const dateString = date.toISOString().slice(0, 10);
+                const monthDay = `${date.getDate()} ${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+                map[dateString] = {
+                  month: monthDay,
+                  engaged: 0,
+                  mandays: 0
+                };
+                return map;
+              }, {});
+          
+              // Merge totalMandays into the dateMap
+              totalMandays.forEach(item => {
+                const dateString = item.day.toISOString().slice(0, 10);
+                if (dateMap[dateString]) {
+                  dateMap[dateString].mandays = parseInt(item.totalMandays);
+                }
+              });
+          
+              // Merge totalEngaged into the dateMap
+              totalEngaged.forEach(item => {
+                const dateString = item.day.toISOString().slice(0, 10);
+                if (dateMap[dateString]) {
+                  dateMap[dateString].engaged = parseInt(item.totalEngaged);
+                }
+              });
+          
+              // Aggregate the results
+              const result = Object.values(dateMap).map((data: any) => ({
+                month: data.month,
+                engaged: data.engaged > 0 ? data.engaged : null,
+                mandays: data.mandays > 0 ? data.mandays : null
+              }));
+          
+              return   result
+             
+            } catch (error) {
+              return {
+                errorCode: 1,
+                message: 'Something went wrong: ' + error.message
+              };
+            }
+          }
+          
+          
 
+          
           async getactionplanreport() {
             try {
               // Count unique ExecutingDepttID
@@ -613,6 +729,36 @@ export class SchememasterService {
               };
             } catch (error) {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };
+            }
+          }
+
+        
+          async Summary_Report_on_Annual_Action_Plan() {
+            try {
+              const stats = await this.masterSchemeRepository
+                .createQueryBuilder('master_scheme')
+                .select([
+                  'COUNT(DISTINCT master_scheme.ImplementingAgencyID) AS totalImplementingDepartments',
+                  'COUNT(DISTINCT master_scheme.ExecutingDepttID) AS totalPIAs',
+                  'COUNT(DISTINCT master_scheme.blockcode) AS totalBlocksInvolved',
+                  'COUNT(DISTINCT master_scheme.schemeSector) AS totalSectors',
+                  'COUNT(master_scheme.schemeId) AS totalSchemesEntered',
+                  'COUNT(master_scheme.workorderNo != \'\' AND master_scheme.ControctorID != 0) AS totalSchemesWithWorkOrderIssued',
+                  'SUM(CASE WHEN (master_scheme.workorderNo != \'\' AND master_scheme.ControctorID != 0) THEN master_scheme.totalprojectCost END) AS totalProjectCost',
+                  'SUM(CASE WHEN (master_scheme.workorderNo != \'\' AND master_scheme.ControctorID != 0) THEN master_scheme.totalLabour END) AS totalUnskilledWorkers',
+                  'SUM(CASE WHEN (master_scheme.workorderNo != \'\' AND master_scheme.ControctorID != 0) THEN master_scheme_expenduture.totalWageCost END) AS totalWageCost',
+                  'SUM(CASE WHEN (master_scheme.workorderNo != \'\' AND master_scheme.ControctorID != 0) THEN master_scheme_expenduture.personDaysGenerated END) AS totalMandays'
+                ])
+                .innerJoin(
+                  MasterSchemeExpenduture,
+                  'master_scheme_expenduture',
+                  'master_scheme.scheme_sl = master_scheme_expenduture.schemeId'
+                )
+                .getRawOne();
+        
+              return { errorCode: 0, result: stats };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong: ' + error.message };
             }
           }
 }

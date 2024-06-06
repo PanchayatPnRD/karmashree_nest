@@ -34,4 +34,13 @@ export class DemandController {
             return  demands 
        
     }
+
+    @Get('getDemandsforallocation_and_direct_emp')
+   // @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
+    async getDemandsforallocation(
+      @Query('userIndex') userIndex: number,
+      @Query('districtcode') districtcode: number,
+    ) {
+      return this.demandService.getDemandsforallocation(userIndex, districtcode);
+    }
 }

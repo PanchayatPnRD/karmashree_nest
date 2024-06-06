@@ -71,5 +71,11 @@ export class SchememasterController {
     return this.masterSchemeService.getactionplanreport();
   }
 
+  @Get('Summary_Report_on_Annual_Action_Plan')
+  async Summary_Report_on_Annual_Action_Plan() {
+    return this.masterSchemeService.Summary_Report_on_Annual_Action_Plan();
+  }
+
+
   
 }
