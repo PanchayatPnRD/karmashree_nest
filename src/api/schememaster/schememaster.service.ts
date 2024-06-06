@@ -642,8 +642,8 @@ export class SchememasterService {
               // Aggregate the results
               const result = Object.values(dateMap).map((data: any) => ({
                 month: data.month,
-                engaged: data.engaged > 0 ? data.engaged : null,
-                mandays: data.mandays > 0 ? data.mandays : null
+                engaged: data.engaged > 0 ? data.engaged : 0,
+                mandays: data.mandays > 0 ? data.mandays : 0
               }));
           
               return   result
