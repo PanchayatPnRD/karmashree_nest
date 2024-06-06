@@ -43,4 +43,9 @@ export class DemandController {
     ) {
       return this.demandService.getDemandsforallocation(userIndex, districtcode);
     }
+
+    @Get('Summary_Report_on_Demand_for_Work')
+    async getDemandStats() {
+      return this.demandService.getDemandStats();
+    }
 }

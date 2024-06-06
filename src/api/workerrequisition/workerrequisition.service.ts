@@ -211,13 +211,16 @@ export class WorkerrequisitionService {
           // Get aggregated worker counts grouped by workerreqID
           const aggregatedWorkerCounts = await this.masterWorkerRequirementallotment.createQueryBuilder('requirement')
             .select('requirement.workerreqID', 'workerreqID')
+            .addSelect('requirement.allocationID', 'allocationID')
+            .addSelect('requirement.dateofallotment', 'dateofallotment')
             .addSelect('SUM(requirement.unskilledWorkers)', 'totalUnskilledWorkers')
             .addSelect('SUM(requirement.semiSkilledWorkers)', 'totalSemiSkilledWorkers')
             .addSelect('SUM(requirement.skilledWorkers)', 'totalSkilledWorkers')
-            .addSelect('requirement.allocationID', 'allocationID')
-            .addSelect('requirement.dateofallotment', 'dateofallotment')
+          
             .where('requirement.userIndex = :userIndex', { userIndex })
-            .groupBy('requirement.workerreqID')
+            .groupBy('workerreqID')
+            .addGroupBy('allocationID')
+            .addGroupBy('dateofallotment')
         
             .getRawMany();
 

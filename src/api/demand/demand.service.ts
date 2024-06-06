@@ -402,4 +402,34 @@ export class DemandService {
                 }
               }
         
+
+              async getDemandStats() {
+                try {
+                  const stats = await this.masterdepartment
+                    .createQueryBuilder('masterdepartment')
+                    .select([
+                      'COUNT(DISTINCT demand_master.districtCode) AS totalNoOfDistricts',
+                      `COUNT(CASE WHEN demand_master.schemeArea = 'U' AND (demand_master.municipalityCode != '' OR demand_master.municipalityCode != 0) THEN 1 END) AS totalNoOfMunicipalBodies`,
+                      `COUNT(CASE WHEN demand_master.schemeArea = 'R' AND (demand_master.blockcode != '' OR demand_master.blockcode != 0) THEN 1 END) AS totalBlocks`,
+                      `COUNT(CASE WHEN demand_master.schemeArea = 'R' AND (demand_master.gpCode != '' OR demand_master.gpCode != 0) THEN 1 END) AS totalGPs`,
+                      'COUNT(DISTINCT demand_master.workerJobCardNo) AS cumulativeNoOfJobCardHoldersDemandForWork',
+                      'COUNT(demand_master.workerJobCardNo) AS cumulativeNoOfJobCardHoldersDemandForWork',
+                      `COUNT(CASE WHEN demand_master.gender = 'M' THEN 1 END) AS noOfMaleWorkers`,
+                      `COUNT(CASE WHEN demand_master.gender = 'F' THEN 1 END) AS noOfFemaleWorkers`,
+                      `COUNT(CASE WHEN demand_master.caste = 'SC' THEN 1 END) AS sc`,
+                      `COUNT(CASE WHEN demand_master.caste = 'ST' THEN 1 END) AS st`,
+                      `COUNT(CASE WHEN demand_master.caste = 'Others' THEN 1 END) AS others`,
+                      `COUNT(CASE WHEN demand_master.whetherMinority = 'Y' THEN 1 END) AS minority`,
+                      'SUM(demand_master.noOfDaysWorkDemanded) AS cumulativeNoOfMandaysDemanded',
+                      `'0' AS cumulativeNoOfMandaysProvided`,
+                      `'0' AS averageDaysOfEmploymentProvidedPerHH`
+                    ])
+                    .leftJoin('demand_master', 'demand_master', 'masterdepartment.departmentNo = demand_master.departmentNo')
+                    .getRawOne();
+            
+                  return { errorCode: 0, result: stats };
+                } catch (error) {
+                  return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+                }
+              }
 }
