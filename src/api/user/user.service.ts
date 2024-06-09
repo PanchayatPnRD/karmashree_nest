@@ -654,5 +654,36 @@ async getAllgp(gpCode: number) {
       };
   }
 }
+
+async getUserSummaryByDepartment(departmentNo: number) {
+  try {
+    const queryBuilder = this.masterdepartmentREpo
+      .createQueryBuilder('masterdepartment')
+      .leftJoin('master_users', 'master_users', 'masterdepartment.departmentNo = master_users.departmentNo')
+      .select([
+        'masterdepartment.departmentNo',
+        'masterdepartment.departmentName',
+        'master_users.category',
+        "COUNT(CASE WHEN master_users.role_type = '1' AND master_users.area = 'R' THEN 1 END) AS 'Admin User in Rural'",
+        "COUNT(CASE WHEN master_users.role_type = '3' AND master_users.area = 'R' THEN 1 END) AS 'PIA in Rural'",
+        "COUNT(CASE WHEN master_users.role_type = '2' AND master_users.area = 'R' THEN 1 END) AS 'Operater in Rural'",
+        "COUNT(CASE WHEN master_users.role_type = '1' AND master_users.area = 'U' THEN 1 END) AS 'Admin User in Urban'",
+        "COUNT(CASE WHEN master_users.role_type = '3' AND master_users.area = 'U' THEN 1 END) AS 'PIA in Urban'",
+        "COUNT(CASE WHEN master_users.role_type = '2' AND master_users.area = 'U' THEN 1 END) AS 'Operater in Urban'",
+        "COUNT(CASE WHEN master_users.role_type = '1' AND master_users.dno_status = '1' THEN 1 END) AS 'DNO'"
+      ])
+      .groupBy('masterdepartment.departmentNo, masterdepartment.departmentName, master_users.category')
+      .orderBy('masterdepartment.departmentName', 'ASC');
+
+    if (departmentNo) {
+      queryBuilder.where('masterdepartment.departmentNo = :departmentNo', { departmentNo });
+    }
+
+    const result = await queryBuilder.getRawMany();
+    return { errorCode: 0, result: result };
+  } catch (error) {
+    return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+  }
+}
       
 }

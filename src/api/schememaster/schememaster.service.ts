@@ -761,4 +761,52 @@ export class SchememasterService {
               return { errorCode: 1, message: 'Something went wrong: ' + error.message };
             }
           }
+
+
+          async Summary_Report_on_Schemes() {
+            try {
+              const result = await this.masterSchemeRepository
+                .createQueryBuilder('master_scheme')
+                .select([
+                  "COUNT(DISTINCT master_scheme.ImplementingAgencyID) AS 'Total No of Implementing Departments'",
+                  "COUNT(DISTINCT master_scheme.ExecutingDepttID) AS 'Total No of PIAs'",
+                  "COUNT(DISTINCT master_scheme.blockcode) AS 'Total Blocks involved'",
+                  "COUNT(DISTINCT master_scheme.schemeSector) AS 'Total No of Sectors'",
+                  "COUNT(master_scheme.schemeId) AS 'Total No of Schemes entered'",
+                  "COUNT(CASE WHEN master_scheme.workorderNo != '' AND master_scheme.ControctorID != 0 THEN 1 END) AS 'Total No of Schemes for which Work Order issued'",
+                  "SUM(CASE WHEN master_scheme.workorderNo != '' AND master_scheme.ControctorID != 0 THEN master_scheme.totalprojectCost ELSE 0 END) AS 'Total Project Cost for which WO issued'",
+                  "SUM(CASE WHEN master_scheme.workorderNo != '' AND master_scheme.ControctorID != 0 THEN master_scheme.totalLabour ELSE 0 END) AS 'Total Unskilled Workers for which WO issued'",
+                  "SUM(CASE WHEN master_scheme.workorderNo != '' AND master_scheme.ControctorID != 0 THEN master_scheme_expenduture.totalWageCost ELSE 0 END) AS 'Total Wage Cost for which WO issued'",
+                  "SUM(CASE WHEN master_scheme.workorderNo != '' AND master_scheme.ControctorID != 0 THEN master_scheme_expenduture.personDaysGenerated ELSE 0 END) AS 'Total Mandays for which WO issued'"
+                ])
+                .innerJoin(MasterSchemeExpenduture, 'master_scheme_expenduture', 'master_scheme.scheme_sl = master_scheme_expenduture.schemeId')
+                .getRawOne();
+        
+              return { errorCode: 0, result: result };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+            }
+          }
+
+
+          async getSummaryReportHome() {
+            try {
+              const result = await this.masterSchemeRepository
+                .createQueryBuilder('master_scheme')
+                .select([
+                  "COUNT(DISTINCT master_scheme.schemeSector) AS 'Total Of Sectors'",
+                  "COUNT(DISTINCT master_scheme.FundingDepttID) AS 'Total No Of Funding'",
+                  "COUNT(master_scheme.schemeId) AS 'Total No Of Schemes'",
+                  "SUM(master_scheme.totalprojectCost) AS 'Total Project Cost'",
+                  "SUM(master_scheme_expenduture.totalWageCost) AS 'Total Amount Spent'",
+                  "SUM(master_scheme_expenduture.totalLabour) AS 'Total No Of Workers'"
+                ])
+                .innerJoin(MasterSchemeExpenduture, 'master_scheme_expenduture', 'master_scheme.scheme_sl = master_scheme_expenduture.schemeId')
+                .getRawOne();
+        
+              return { errorCode: 0, result: result };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+            }
+          }
 }

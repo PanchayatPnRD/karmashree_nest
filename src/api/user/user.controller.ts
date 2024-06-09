@@ -56,4 +56,10 @@ async getDnolist( @Query('created_by') created_by: number,
 async updateUser(@Body() updateUserDto: UpdateUserDto, @Param('userIndex') userIndex: number) {
   return await this.userService.updateUser(userIndex, updateUserDto);
 }
+
+@Get('userslist-by-department')
+async getUserSummaryByDepartment(@Query('departmentNo') departmentNo: number) {
+  
+  return await this.userService.getUserSummaryByDepartment(departmentNo);
+}
 }

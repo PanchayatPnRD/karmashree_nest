@@ -37,10 +37,10 @@ export class AllocationController {
    
       
       
-      @Get('demandslistforallocation/:scheme_sl')
-      async getDemandsByScheme(@Param('scheme_sl') scheme_sl: number) {
-          return this.allocationService.getDemandByScheme(scheme_sl);
-      }
+    //   @Get('demandslistforallocation/:scheme_sl')
+    //   async getDemandsByScheme(@Param('scheme_sl') scheme_sl: number) {
+    //       return this.allocationService.getDemandByScheme(scheme_sl);
+    //   }
 
       @Get('allocationempfinallist/:workAllocationID')
       async allocationempfinalliat(@Param('workAllocationID') workAllocationID: string) {
