@@ -8,6 +8,7 @@ import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment, } from 'src/entity/workrequigition.entity';
 import { In, Not, Repository } from 'typeorm';
 import { CreateWorkAllocationDto, WorkAllocationDto } from './dto/allocation.dto';
+import { EmploymentDto } from '../employment/dto/employment.dto';
 
 @Injectable()
 export class AllocationService {
@@ -30,7 +31,6 @@ export class AllocationService {
     @InjectRepository(MasterWorkerRequirement_allotment) private masterWorkerRequirementallotment: Repository<MasterWorkerRequirement_allotment>,
     @InjectRepository(MasterWorkerDemand_allotmenthistroy) private MasterWorkerDemandallotmenthistroy: Repository<MasterWorkerDemand_allotmenthistroy>,
 
-    
 ) {}
 private async generateWorkAllocationID(departmentName: number){
     const random8Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
@@ -1076,7 +1076,8 @@ async getDepatmentbyid(departmentNo: number) {
         }
     }
     
-      
-      
+  
+    
+
 
 }

@@ -49,7 +49,7 @@ export class DemandService {
                     currentWorkDate.setDate(startDate.getDate() + i);
     
                     const newMasterAllotment = this.MasterWorkerDemandallotment.create({
-                        demanduniqueID: this.generateEMPID(), // Generate a new ID for each allotment
+                        demanduniqueID: demand , // Generate a new ID for each allotment
                         schemeArea: actionDto.schemeArea,
                         departmentNo: actionDto.departmentNo,
                         districtcode: actionDto.districtcode,
@@ -82,9 +82,6 @@ export class DemandService {
             };
         }
     }
-    
-
-    
 
 
     async getdemandforallocation(blockcode: number, gpCode?: number) {
@@ -374,34 +371,60 @@ export class DemandService {
        // AND C.total_pending >= 0 AND C.workallostatus = 0
        // AND A.total_pending >= 0 AND A.workallostatus = 0
         // getDemandsforallocation(userIndex: number, districtcode: number) {
-            async getDemandsforallocation(userIndex: number, districtcode: number) {
-                try {
-                  // Manually construct the UNION query with parameters
-                  const query1 = `
-                    SELECT A.* FROM demand_master A
-                    WHERE A.userIndex = ? 
-                  `;
-                  const query2 = `
-                    SELECT C.* FROM demand_master C
-                    WHERE C.userIndex != ? AND C.districtcode = ? 
-                  `;
-                  const combinedQuery = `${query1} UNION ${query2}`;
-            
-                  // Execute the combined query with parameters
-                  const demands = await this.demandMaster.query(combinedQuery, [userIndex, userIndex, districtcode]);
-            
-                  return {
-                    errorCode: 0,
-                    result: demands,
-                  };
-                } catch (error) {
-                  return {
-                    errorCode: 1,
-                    message: 'Something went wrong: ' + error.message,
-                  };
-                }
-              }
+
         
+        
+        async getDemandsforallocation(userIndex: number, districtcode: number) {
+            try {
+              // Manually construct the UNION query with parameters
+              const query1 = `
+                SELECT A.* FROM demand_master A
+                WHERE A.userIndex = ? 
+              `;
+              const query2 = `
+                SELECT C.* FROM demand_master C
+                WHERE C.userIndex != ? AND C.districtcode = ? 
+              `;
+              const combinedQuery = `${query1} UNION ${query2}`;
+          
+              // Execute the combined query with parameters
+              const demands = await this.demandMaster.query(combinedQuery, [userIndex, userIndex, districtcode]);
+          
+              // Map through each demand to fetch additional details
+              const enrichedDemands = await Promise.all(
+                demands.map(async (demand: any) => {
+                  // Fetch and append additional details to each demand
+                  const districtDetails = await this.getAllDistricts(demand.districtcode);
+                  demand.districtName = districtDetails.result ? districtDetails.result.districtName : '';
+          
+                  const blockDetails = await this.getAllblock(demand.blockcode);
+                  demand.blockName = blockDetails.result ? blockDetails.result.blockName : '';
+          
+                  const gpDetails = await this.getAllgp(demand.gpCode);
+                  demand.gpName = gpDetails.result ? gpDetails.result.gpName : '';
+          
+                  const deptDetails = await this.getDepatmentbyid(demand.departmentNo);
+                  demand.departmentName = deptDetails.result ? deptDetails.result.departmentName : '';
+          
+                  const muniDetails = await this.getmunibyid(demand.municipalityCode);
+                  demand.municipalityName = muniDetails.result ? muniDetails.result.urbanName : '';
+          
+                  return demand;
+                })
+              );
+          
+              return {
+                errorCode: 0,
+                result: enrichedDemands,
+              };
+            } catch (error) {
+              return {
+                errorCode: 1,
+                message: 'Something went wrong: ' + error.message,
+              };
+            }
+          }
+          
 
               async getDemandStats() {
                 try {

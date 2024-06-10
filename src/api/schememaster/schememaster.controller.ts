@@ -86,4 +86,9 @@ export class SchememasterController {
     return await this.masterSchemeService.getSummaryReportHome();
   }
 
+  @Get('funding-department-wise')
+  async getFundingDepartmentWiseReport() {
+    return await this.masterSchemeService.getFundingDepartmentWiseReport();
+  }
+
 }

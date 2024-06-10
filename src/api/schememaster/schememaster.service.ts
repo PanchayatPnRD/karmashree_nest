@@ -41,10 +41,7 @@ export class SchememasterService {
         const schemeId = `KR-${departmentName}-${createMasterSchemeDto.districtcode}-${randomNum}`;
         
         masterScheme.schemeId = schemeId;
-      
-        // Generate the work allocation ID using the department name
-       
-        
+
         const savedMasterScheme = await this.masterSchemeRepository.save(masterScheme);
     
         // Create MasterSchemeExpenditure entity
@@ -73,7 +70,11 @@ export class SchememasterService {
         masterSchemeExpenditure.ActualtartDate = createMasterSchemeDto.ActualtartDate;
         masterSchemeExpenditure.ExpectedCompletionDate = createMasterSchemeDto.ExpectedCompletionDate;
         masterSchemeExpenditure.totalprojectCost = createMasterSchemeDto.totalprojectCost;
+        masterSchemeExpenditure.totalWageCost = createMasterSchemeDto.totalwagescostinvoled;
+        masterSchemeExpenditure.finYear = createMasterSchemeDto.finYear;
        
+        
+        
         masterSchemeExpenditure.totalLabour = createMasterSchemeDto.totalLabour;
         masterSchemeExpenditure.personDaysGenerated = createMasterSchemeDto.personDaysGenerated;
         masterSchemeExpenditure.totalUnskilledWorkers = createMasterSchemeDto.totalUnskilledWorkers;
@@ -804,6 +805,34 @@ export class SchememasterService {
                 .innerJoin(MasterSchemeExpenduture, 'master_scheme_expenduture', 'master_scheme.scheme_sl = master_scheme_expenduture.schemeId')
                 .getRawOne();
         
+              return { errorCode: 0, result: result };
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong: ' + error.message };
+            }
+          }
+
+
+          async getFundingDepartmentWiseReport() {
+            try {
+              const result = await this.masterdepartment
+              .createQueryBuilder('masterdepartment')
+              .leftJoin('master_scheme', 'master_scheme', 'masterdepartment.departmentNo = master_scheme.FundingDepttID')
+              .leftJoin('master_scheme_expenduture', 'master_scheme_expenduture', 'master_scheme.scheme_sl = master_scheme_expenduture.schemeId AND masterdepartment.departmentNo = master_scheme_expenduture.FundingDepttID')
+              .select([
+                "masterdepartment.departmentName AS departmentName",
+                "masterdepartment.departmentNo AS departmentCode",
+                "COUNT(master_scheme.schemeId) AS Total_scheme",
+                "COUNT(master_scheme.schemeSector) AS Total_sector",
+                "SUM(master_scheme.totalprojectCost) AS Total_Cost",
+                "SUM(master_scheme_expenduture.totalWageCost) AS Total_Spent",
+                "SUM(master_scheme_expenduture.totalUnskilledWorkers) AS Total_worker",
+                "SUM(master_scheme_expenduture.personDaysGenerated) AS Total_Mandays",
+              ])
+              .groupBy('masterdepartment.departmentName, masterdepartment.departmentNo')
+              .orderBy('masterdepartment.departmentName', 'ASC')
+              .getRawMany();
+            
+              
               return { errorCode: 0, result: result };
             } catch (error) {
               return { errorCode: 1, message: 'Something went wrong: ' + error.message };
