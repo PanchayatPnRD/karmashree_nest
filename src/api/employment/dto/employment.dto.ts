@@ -265,6 +265,16 @@ export class CreateEmploymentDto {
     attandance:string;
 
 
+    @ApiProperty({
+        description: 'Date of payment',
+        example: '2023-05-15'
+    })
+    @IsDate()
+    @IsNotEmpty()
+    dateOfApplicationForWork:Date;
+
+
+    noOfDaysWorkDemanded:number;
    
    
     @IsNotEmpty()
@@ -303,6 +313,9 @@ export class EmploymentDto {
           totalWagePaid: 11,
           dateOfPayment:  "2024-05-20",
           attandance:"as",
+          noOfDaysWorkDemanded:1,
+          dateOfApplicationForWork: "2024-05-20",
+          
           empProvidedfrom:"2024-05-20",
           empProvidedto: "2024-05-20",
           demandid:"5",

@@ -154,6 +154,13 @@ export class MasterWorkerRequirement_allotment {
   FundingDeptname:string;
 
   @Column({ type: 'int', nullable: true })
+  ImplementingAgencyID: number;
+
+
+  @Column({ type: 'varchar',  nullable: true })
+  ImplementingAgencyName: string;
+
+  @Column({ type: 'int', nullable: true })
   currentMonthWork: number;
 
   @Column({ type: 'int', nullable: true })

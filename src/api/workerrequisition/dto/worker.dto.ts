@@ -106,7 +106,16 @@ export class MasterWorkerRequirementDto {
   @IsString()
   FundingDeptname:string;
 
+  @ApiProperty({ example: 1 })
+    @IsNotEmpty()
+    @IsNumber()
+    ImplementingAgencyID: number;
 
+
+    @ApiProperty({ example: 'implementing agency name' })
+    @IsNotEmpty()
+    @IsString()
+    ImplementingAgencyName: string;
 
   @ApiProperty({ example: 1 })
   @IsNotEmpty()
