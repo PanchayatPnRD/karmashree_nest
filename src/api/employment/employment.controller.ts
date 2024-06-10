@@ -36,4 +36,10 @@ export class EmploymentController {
          
       }
 
+      @Post('creatediretemp')
+      async   creatediretemp(@Body() createDto: EmploymentDto) {
+          return this.employmentService.creatediretemp(createDto);
+        }
+    
+
 }

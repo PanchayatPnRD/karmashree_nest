@@ -306,7 +306,7 @@ async viewUserById(userIndex: number) {
       const districtDetails = await this.getAllDistricts(user.districtcode);
       const districtName = districtDetails.result ? districtDetails.result.districtName : '';
       const subDetails = await this.getAllsub(user.subDivision);
-      const subDivisionName = subDetails.result ? subDetails.result.subDivisionName : '';
+      const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
       const blockDetails = await this.getAllblock(user.blockCode);
       const blockname = blockDetails.result ? blockDetails.result.blockName : '';
       const gpDetails = await this.getAllgp(user.gpCode);

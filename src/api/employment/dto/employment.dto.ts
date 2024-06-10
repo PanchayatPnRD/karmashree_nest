@@ -222,6 +222,15 @@ export class CreateEmploymentDto {
     @IsNotEmpty()
     currentYear: number;
 
+
+    @ApiProperty({
+        description: 'Current year',
+        example: 2024
+    })
+    @IsInt()
+    @IsNotEmpty()
+    totalUnskilledWorkers:number;
+
     @ApiProperty({
         description: 'Financial year',
         example: '2024-2025'
