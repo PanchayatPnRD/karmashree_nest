@@ -1050,23 +1050,31 @@ async getDepatmentbyid(departmentNo: number) {
             }
     
             // Combine allocation and demand master data into a structured response
-            const result = allocations.map(allocation => {
+            const result = await Promise.all(allocations.map(async allocation => {
                 const relatedDemandMasters = demandMasterRecords.filter(demandMaster =>
                     demanduniqueIDs.includes(demandMaster.demanduniqueID)
                 );
+    
+                // Retrieve scheme details using schemeId from allocation
+                const schemeIdResult = await this.getschemeid(parseInt(allocation.schemeId));
+                const schemeId = schemeIdResult.result.schemeId;
     
                 // Merge the allocation data with the related demand master data
                 const mergedData = relatedDemandMasters.map(demandMaster => ({
                     ...allocation,
                     demandMaster,
+                    schemeId,
                 }));
     
                 return mergedData;
-            }).flat(); // Flatten the array to avoid nested arrays
+            }));
+    
+            // Flatten the array to avoid nested arrays
+            const flattenedResult = result.flat();
     
             return {
                 errorCode: 0,
-                result,
+                result: flattenedResult,
             };
         } catch (error) {
             return {
@@ -1075,8 +1083,6 @@ async getDepatmentbyid(departmentNo: number) {
             };
         }
     }
-    
-  
     
 
 

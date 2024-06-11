@@ -119,7 +119,11 @@ export class SchememasterService {
               'scheme_sl', 'schemeId', 'schemeName', 'finYear', 'village', 'ControctorID',
                'workorderNo', 'workOderDate','FundingDepttID',
                'FundingDeptname','ExecutingDepttID','ExecutingDeptName',
-               'ImplementingAgencyID','ImplementingAgencyName'
+               'ImplementingAgencyID','ImplementingAgencyName',
+               'personDaysGenerated',
+               'totalUnskilledWorkers',
+               'totalSemiSkilledWorkers',
+               'totalSkilledWorkers',
             ],
             order: { scheme_sl: 'DESC' }
           });
@@ -140,8 +144,11 @@ export class SchememasterService {
               const ExecutingDepttID = scheme.ExecutingDepttID ? scheme.ExecutingDepttID : '';
               const ExecutingDeptName = scheme.ExecutingDeptName ? scheme.ExecutingDeptName : '';
 
+              const personDaysGenerated = scheme.personDaysGenerated ? scheme.personDaysGenerated : '';
+              const totalUnskilledWorkers = scheme.totalUnskilledWorkers ? scheme.totalUnskilledWorkers : '';
+              const totalSkilledWorkers = scheme.totalSkilledWorkers ? scheme.totalSkilledWorkers : '';
 
-
+const totalSemiSkilledWorkers = scheme.totalSemiSkilledWorkers ? scheme.totalSemiSkilledWorkers : '';
 
               const village = scheme.village ? scheme.village : '';
               const schemeId = scheme.schemeId ? scheme.schemeId : '';
@@ -156,7 +163,14 @@ export class SchememasterService {
                 ControctorID, 
                 FundingDeptname ,
                 FundingDepttID,
-                ExecutingDepttID
+                ExecutingDepttID,
+                ExecutingDeptName,
+
+               personDaysGenerated,
+                totalUnskilledWorkers,
+               totalSkilledWorkers,
+               totalSemiSkilledWorkers
+  
               };
       
               // Only include workOrderNo and workOderDate if they are present

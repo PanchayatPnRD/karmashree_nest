@@ -288,6 +288,33 @@ export class CreateEmploymentDto {
    
     @IsNotEmpty()
     demandid:string;
+
+    @ApiProperty({ example: 500 })
+    @IsNotEmpty()
+    @IsNumber()
+    unskilledWorkers: number;
+
+    @ApiProperty({ example: 200 })
+    @IsNotEmpty()
+    @IsNumber()
+    semiSkilledWorkers: number;
+
+    @ApiProperty({ example: 100 })
+    @IsNotEmpty()
+    @IsNumber()
+    skilledWorkers: number;
+
+    @IsNotEmpty()
+    scheme_Id:string;
+
+    @ApiProperty({ example: 100 })
+    @IsNotEmpty()
+    @IsNumber()
+    ContractorID:number;
+
+    
+    @IsNotEmpty()
+   schemeName:string;
 }
 
 export class EmploymentDto {
@@ -305,7 +332,14 @@ export class EmploymentDto {
           blockcode: 2,
           gpCode:2 ,
           schemeId:2 ,
+          scheme_Id:2,
+          schemeName:"s",
+
           schemeSector:2 ,
+          skilledWorkers:0,
+          unskilledWorkers: 2,
+          ContractorID:1,
+          semiSkilledWorkers: 0,
           FundingDepttID:2 ,
           FundingDeptname: "weudgywqb",
           ExecutingDepttID: 2,
