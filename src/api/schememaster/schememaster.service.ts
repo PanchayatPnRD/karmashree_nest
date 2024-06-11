@@ -143,12 +143,14 @@ export class SchememasterService {
               const FundingDepttID = scheme.FundingDepttID ? scheme.FundingDepttID : '';
               const ExecutingDepttID = scheme.ExecutingDepttID ? scheme.ExecutingDepttID : '';
               const ExecutingDeptName = scheme.ExecutingDeptName ? scheme.ExecutingDeptName : '';
-
+              const ImplementingAgencyID = scheme.ImplementingAgencyID ? scheme.ImplementingAgencyID : '';
+              const ImplementingAgencyName = scheme.ImplementingAgencyName ? scheme.ImplementingAgencyName : '';
+             
               const personDaysGenerated = scheme.personDaysGenerated ? scheme.personDaysGenerated : '';
               const totalUnskilledWorkers = scheme.totalUnskilledWorkers ? scheme.totalUnskilledWorkers : '';
               const totalSkilledWorkers = scheme.totalSkilledWorkers ? scheme.totalSkilledWorkers : '';
 
-const totalSemiSkilledWorkers = scheme.totalSemiSkilledWorkers ? scheme.totalSemiSkilledWorkers : '';
+             const totalSemiSkilledWorkers = scheme.totalSemiSkilledWorkers ? scheme.totalSemiSkilledWorkers : '';
 
               const village = scheme.village ? scheme.village : '';
               const schemeId = scheme.schemeId ? scheme.schemeId : '';
@@ -169,7 +171,10 @@ const totalSemiSkilledWorkers = scheme.totalSemiSkilledWorkers ? scheme.totalSem
                personDaysGenerated,
                 totalUnskilledWorkers,
                totalSkilledWorkers,
-               totalSemiSkilledWorkers
+               totalSemiSkilledWorkers,
+               ImplementingAgencyID,
+              ImplementingAgencyName,
+              
   
               };
       
