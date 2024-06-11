@@ -116,11 +116,16 @@ export class SchememasterService {
           const schemes = await this.masterSchemeRepository.find({
             where: { userIndex },
             select: [
-              'scheme_sl', 'schemeId', 'schemeName', 'finYear', 'village', 'ControctorID', 'FundingDeptname', 'workorderNo', 'workOderDate'
+              'scheme_sl', 'schemeId', 'schemeName', 'finYear', 'village', 'ControctorID',
+               'workorderNo', 'workOderDate','FundingDepttID',
+               'FundingDeptname','ExecutingDepttID','ExecutingDeptName',
+               'ImplementingAgencyID','ImplementingAgencyName'
             ],
             order: { scheme_sl: 'DESC' }
           });
-      
+        
+
+
           const concatenatedScheme = schemes
             .filter(scheme => scheme.ControctorID !== 0)
             .filter(scheme => scheme.workorderNo !== "0")
@@ -130,6 +135,14 @@ export class SchememasterService {
               const Name = scheme.schemeName ? scheme.schemeName : '';
               const ControctorID = scheme.ControctorID ? scheme.ControctorID : '';
               const FundingDeptname = scheme.FundingDeptname ? scheme.FundingDeptname : '';
+
+              const FundingDepttID = scheme.FundingDepttID ? scheme.FundingDepttID : '';
+              const ExecutingDepttID = scheme.ExecutingDepttID ? scheme.ExecutingDepttID : '';
+              const ExecutingDeptName = scheme.ExecutingDeptName ? scheme.ExecutingDeptName : '';
+
+
+
+
               const village = scheme.village ? scheme.village : '';
               const schemeId = scheme.schemeId ? scheme.schemeId : '';
               const finYear = scheme.finYear ? [scheme.finYear] : []; // Wrap finYear in []
@@ -141,7 +154,9 @@ export class SchememasterService {
                 schemename, 
                 village, 
                 ControctorID, 
-                FundingDeptname 
+                FundingDeptname ,
+                FundingDepttID,
+                ExecutingDepttID
               };
       
               // Only include workOrderNo and workOderDate if they are present
@@ -416,27 +431,24 @@ export class SchememasterService {
               }
           
               // Update MasterScheme fields
-              existingMasterScheme.schemeArea = updateMasterSchemeDto.schemeArea;
-              existingMasterScheme.departmentNo = updateMasterSchemeDto.departmentNo;
-              existingMasterScheme.districtcode = updateMasterSchemeDto.districtcode;
-              existingMasterScheme.municipalityCode = updateMasterSchemeDto.municipalityCode;
-              existingMasterScheme.blockcode = updateMasterSchemeDto.blockcode;
-              existingMasterScheme.gpCode = updateMasterSchemeDto.gpCode;
-              existingMasterScheme.sansadID = updateMasterSchemeDto.sansadID;
-              existingMasterScheme.village = updateMasterSchemeDto.village;
-              existingMasterScheme.schemeSector = updateMasterSchemeDto.schemeSector;
-              existingMasterScheme.schemeSubsector = updateMasterSchemeDto.schemeSubsector;
-              existingMasterScheme.schemeName = updateMasterSchemeDto.schemeName;
-              existingMasterScheme.FundingDepttID = updateMasterSchemeDto.FundingDepttID;
-              existingMasterScheme.FundingDeptname = updateMasterSchemeDto.FundingDeptname;
-              existingMasterScheme.ExecutingDepttID = updateMasterSchemeDto.ExecutingDepttID;
-              existingMasterScheme.ExecutingDeptName = updateMasterSchemeDto.ExecutingDeptName;
-              existingMasterScheme.ImplementingAgencyID = updateMasterSchemeDto.ImplementingAgencyID;
-              existingMasterScheme.ImplementingAgencyName = updateMasterSchemeDto.ImplementingAgencyName;
-              existingMasterScheme.StatusOfWork = updateMasterSchemeDto.StatusOfWork;
-              existingMasterScheme.tentativeStartDate = updateMasterSchemeDto.tentativeStartDate;
-              existingMasterScheme.ActualtartDate = updateMasterSchemeDto.ActualtartDate;
-              existingMasterScheme.ExpectedCompletionDate = updateMasterSchemeDto.ExpectedCompletionDate;
+              // existingMasterScheme.schemeArea = updateMasterSchemeDto.schemeArea;
+              // existingMasterScheme.departmentNo = updateMasterSchemeDto.departmentNo;
+              // existingMasterScheme.districtcode = updateMasterSchemeDto.districtcode;
+              // existingMasterScheme.municipalityCode = updateMasterSchemeDto.municipalityCode;
+              // existingMasterScheme.blockcode = updateMasterSchemeDto.blockcode;
+              // existingMasterScheme.gpCode = updateMasterSchemeDto.gpCode;
+              // existingMasterScheme.sansadID = updateMasterSchemeDto.sansadID;
+              // existingMasterScheme.village = updateMasterSchemeDto.village;
+              // existingMasterScheme.schemeSector = updateMasterSchemeDto.schemeSector;
+              // existingMasterScheme.schemeSubsector = updateMasterSchemeDto.schemeSubsector;
+              // existingMasterScheme.schemeName = updateMasterSchemeDto.schemeName;
+              // existingMasterScheme.FundingDepttID = updateMasterSchemeDto.FundingDepttID;
+              // existingMasterScheme.FundingDeptname = updateMasterSchemeDto.FundingDeptname;
+              // existingMasterScheme.ExecutingDepttID = updateMasterSchemeDto.ExecutingDepttID;
+              // existingMasterScheme.ExecutingDeptName = updateMasterSchemeDto.ExecutingDeptName;
+              // existingMasterScheme.ImplementingAgencyID = updateMasterSchemeDto.ImplementingAgencyID;
+              // existingMasterScheme.ImplementingAgencyName = updateMasterSchemeDto.ImplementingAgencyName;
+          
               existingMasterScheme.totalprojectCost = updateMasterSchemeDto.totalprojectCost;
               existingMasterScheme.totalLabour = updateMasterSchemeDto.totalLabour;
               existingMasterScheme.personDaysGenerated = updateMasterSchemeDto.personDaysGenerated;
@@ -444,6 +456,18 @@ export class SchememasterService {
               existingMasterScheme.totalSemiSkilledWorkers = updateMasterSchemeDto.totalSemiSkilledWorkers;
               existingMasterScheme.totalSkilledWorkers = updateMasterSchemeDto.totalSkilledWorkers;
            
+              existingMasterScheme.StatusOfWork = updateMasterSchemeDto.StatusOfWork;
+              existingMasterScheme.tentativeStartDate = updateMasterSchemeDto.tentativeStartDate;
+              existingMasterScheme.ActualtartDate = updateMasterSchemeDto.ActualtartDate;
+              existingMasterScheme.ExpectedCompletionDate = updateMasterSchemeDto.ExpectedCompletionDate;
+              existingMasterScheme.Remarks = updateMasterSchemeDto.Remarks;
+              existingMasterScheme.workorderNo = updateMasterSchemeDto.workorderNo;
+              existingMasterScheme.workOderDate = updateMasterSchemeDto.workOderDate;
+              existingMasterScheme.ControctorID = updateMasterSchemeDto.ControctorID;
+           
+  
+  
+          
           
               // Save the updated MasterScheme
               await this.masterSchemeRepository.save(existingMasterScheme);
