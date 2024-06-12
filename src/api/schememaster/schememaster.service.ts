@@ -419,21 +419,43 @@ export class SchememasterService {
 
           async getSchemeById(scheme_sl: number) {
             try {
-              // Find the MasterScheme by schemeId
+              // Find the MasterScheme by scheme_sl
               const masterScheme = await this.masterSchemeRepository.findOne({ where: { scheme_sl } });
               
               if (!masterScheme) {
                 return { errorCode: 1, message: 'Master Scheme not found' };
               }
-          
+              
+              // Get contractor details
               const conDetails = await this.getContractor(masterScheme.ControctorID);
-              // Find the MasterSchemeExpenditure by schemeId
+        
             
+              const result = await this.employment
+              .createQueryBuilder('employment')
+              .select([
+                'master_scheme.scheme_sl',
+                'employment.workerJobCardNo',
+                'employment.workerName',
+                'SUM(work_allocation.noOfDaysWorkDemanded) AS "NoOfDaysDemanded"',
+                'SUM(work_allocation.noOfDaysWorkAlloted) AS "NoOfDaysAllocated"',
+                'SUM(employment.noOfDaysWorProvided) AS "NoOfDaysProvided"',
+                'SUM(employment.totalWagePaid) AS "TotalWagesPaid"',
+                'SUM(employment.noOfDaysWorProvided) AS "MANDAYS"',
+                '(SUM(employment.totalWagePaid) / SUM(employment.noOfDaysWorProvided)) AS "AVERAGEWAGE"',
+              ])
+              .innerJoin('master_scheme', 'master_scheme', 'master_scheme.scheme_sl = employment.schemeId')
+              .innerJoin('work_allocation', 'work_allocation', 'master_scheme.scheme_sl = work_allocation.schemeId')
+              .where('master_scheme.scheme_sl = :scheme_sl', { scheme_sl })
+              .groupBy('master_scheme.scheme_sl, employment.workerJobCardNo, employment.workerName')
+              .getRawMany();
+          
+        
               return {
                 errorCode: 0,
                 message: 'Scheme found successfully',
                 masterScheme,
-           
+                contractorDetails: conDetails,
+                employmentSummary: result,
               };
             } catch (error) {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };
