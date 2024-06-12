@@ -112,7 +112,7 @@ export class AppModule implements NestModule {
         'api/contractor',
         'api/demand',
         'api/mastertable',
-        'api/schememaster',
+       // 'api/schememaster',
         'api/workerrequisition',
       );
   }
