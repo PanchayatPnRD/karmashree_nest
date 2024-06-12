@@ -76,7 +76,9 @@ export class SchememasterController {
         return { errorCode: 1, message: 'Something went wrong', error: error.message };
       }
     }
-
+    @ApiHeader({
+      name: 'token',
+    })
     @Get('dashboard')
   async getCounts() {
     return this.masterSchemeService.getCounts();
@@ -105,9 +107,7 @@ export class SchememasterController {
   async getSummaryReport() {
     return await this.masterSchemeService.Summary_Report_on_Schemes();
   }
-  @ApiHeader({
-    name: 'token',
-  })
+
   @Get('home_dashboard')
   async getSummaryReportHome() {
     return await this.masterSchemeService.getSummaryReportHome();
