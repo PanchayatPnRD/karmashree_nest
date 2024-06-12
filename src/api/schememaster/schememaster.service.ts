@@ -600,6 +600,11 @@ export class SchememasterService {
                 .createQueryBuilder('mse')
                 .select('SUM(mse.personDaysGenerated)', 'total')
                 .getRawOne();
+
+                const totalemp = await this.employment
+                .createQueryBuilder('mse')
+                .select('SUM(mse.totalWagePaid)', 'total')
+                .getRawOne();
         
               // Sum of totalUnskilledWorkers
               const totalUnskilledWorkers = await this.masterSchemeRepository
@@ -621,7 +626,7 @@ export class SchememasterService {
 
                 const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
 
-
+                const totalwage = totalemp.total;
 
 
               
@@ -638,6 +643,7 @@ export class SchememasterService {
                   totalUnskilledWorkers: totalUnskilledWorkers.total||0,
                   avgCostProvidedPerWorker:avgCostProvidedPerWorker||0,
                   totalscheme:scheme.count||0,
+                  totalwage:totalwage||0,
                   charts: employmentDataForLast7Days,
             
                 },
@@ -675,15 +681,15 @@ export class SchememasterService {
           
               // Query total engaged workers in the last 7 days
               const totalEngaged = await this.employment
-                .createQueryBuilder('e')
-                .select('DATE(e.submitTime)', 'day')
-                .addSelect('COUNT(DISTINCT e.workerJobCardNo)', 'totalEngaged')
-                .where('e.submitTime >= :last7Days', {
-                  last7Days: last7Days.toISOString().slice(0, 19).replace('T', ' ')
-                })
-                .groupBy('day')
-                .orderBy('day', 'ASC')
-                .getRawMany();
+              .createQueryBuilder('e')
+              .select('DATE(e.submitTime)', 'day')
+              .addSelect('COUNT(DISTINCT CONCAT(e.workerName, e.workerJobCardNo))', 'totalEngaged')
+              .where('e.submitTime >= :last7Days', {
+                last7Days: last7Days.toISOString().slice(0, 19).replace('T', ' ')
+              })
+              .groupBy('day')
+              .orderBy('day', 'ASC')
+              .getRawMany();
           
               // Create a mapping of dates with default values
               const dateMap = dateArray.reduce((map, date) => {
