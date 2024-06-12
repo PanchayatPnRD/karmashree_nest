@@ -37,7 +37,8 @@ export class DemandService {
                 const createdTreatment = this.demandMaster.create({
                     ...actionDto,
                     total_pending: actionDto.total_pending,
-                    demanduniqueID
+                    demanduniqueID,
+                    workallostatus:"0"
                 });
                 await this.demandMaster.save(createdTreatment);
                 created.push(createdTreatment);
