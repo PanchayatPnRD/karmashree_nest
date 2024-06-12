@@ -124,6 +124,9 @@ export class SchememasterService {
                'totalUnskilledWorkers',
                'totalSemiSkilledWorkers',
                'totalSkilledWorkers',
+               'schemeId',
+               'schemeSector'
+
             ],
             order: { scheme_sl: 'DESC' }
           });
@@ -149,7 +152,11 @@ export class SchememasterService {
               const personDaysGenerated = scheme.personDaysGenerated ? scheme.personDaysGenerated : '';
               const totalUnskilledWorkers = scheme.totalUnskilledWorkers ? scheme.totalUnskilledWorkers : '';
               const totalSkilledWorkers = scheme.totalSkilledWorkers ? scheme.totalSkilledWorkers : '';
+              const scheme_Id = scheme.schemeId ? scheme.schemeId : '';
+              const schemeSector = scheme.schemeSector ? scheme.schemeSector : '';
 
+
+              
              const totalSemiSkilledWorkers = scheme.totalSemiSkilledWorkers ? scheme.totalSemiSkilledWorkers : '';
 
               const village = scheme.village ? scheme.village : '';
@@ -174,7 +181,8 @@ export class SchememasterService {
                totalSemiSkilledWorkers,
                ImplementingAgencyID,
               ImplementingAgencyName,
-              
+              scheme_Id,
+              schemeSector
   
               };
       
