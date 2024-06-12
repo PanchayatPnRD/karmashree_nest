@@ -380,10 +380,12 @@ export class DemandService {
               const query1 = `
                 SELECT A.* FROM demand_master A
                 WHERE A.userIndex = ? 
+                AND A.total_pending >= 0 AND A.workallostatus = 0
               `;
               const query2 = `
                 SELECT C.* FROM demand_master C
                 WHERE C.userIndex != ? AND C.districtcode = ? 
+                AND C.total_pending >= 0 AND C.workallostatus = 0
               `;
               const combinedQuery = `${query1} UNION ${query2}`;
           

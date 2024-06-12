@@ -242,6 +242,8 @@ export class CreateEmploymentDto {
 
     
 
+    
+
     @ApiProperty({
         description: 'User index from local storage/session data',
         example: 1

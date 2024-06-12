@@ -34,10 +34,15 @@ export class EmploymentService {
     ) {}
     private generateEMPID(): string {
       const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
+      return `EMP${random6Digits}D`;
+    }
+
+    private generateEMPID22(): string {
+      const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
       return `EMP${random6Digits}`;
     }
     async create(createDto: EmploymentDto) {
-      const employmentID = this.generateEMPID();
+      const employmentID = this.generateEMPID22();
       
       const newWorkAllocations = createDto.CreateEmploymentDtos.map(CreateEmploymentDto => {
           return this.employment.create({
@@ -74,6 +79,7 @@ export class EmploymentService {
               finYear: CreateEmploymentDto.finYear,
               attandance: CreateEmploymentDto.attandance,
               userIndex: CreateEmploymentDto.userIndex,
+              directempstatus:"N"
           });
       });
   
@@ -558,7 +564,8 @@ async getDepatmentbyid(departmentNo: number) {
                   gpCode: employmentDto.gpCode,
                   workerJobCardNo: employmentDto.workerJobCardNo,
                   workerName: employmentDto.workerName,
-                  workallocstatus: "allocated",
+                  workallocstatus: "1",
+                 
                   noOfDaysWorkAlloted: employmentDto.noOfDaysWorkAlloted,
                   workAllocationFromDate: employmentDto.workAllocationFromDate,
                   workAllocationToDate: employmentDto.workAllocationToDate,
@@ -685,6 +692,7 @@ async getDepatmentbyid(departmentNo: number) {
                     finYear: employmentDto.finYear,
                     attandance: employmentDto.attandance,
                     userIndex: employmentDto.userIndex,
+                      directempstatus:"Y",
                 });
                 newWorkAllocations.push(newEmployment);
             }

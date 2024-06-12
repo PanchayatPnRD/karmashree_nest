@@ -98,6 +98,7 @@ export class Employment {
 
     @Column({ type: 'varchar', length: 9 })
     finYear: string;
+
     @Column({ type: 'varchar', length: 1, nullable: true })
     ex1: string;
 
@@ -112,6 +113,9 @@ export class Employment {
 
     @Column({ type: 'varchar', length: 1, nullable: true })
     ex5: string;
+
+    @Column({ type: 'varchar', length: 1, nullable: true })
+    directempstatus: string;
 
     @Column({ type: 'int', comment:'from Local Storage/sesion Data'})
     userIndex: number;
