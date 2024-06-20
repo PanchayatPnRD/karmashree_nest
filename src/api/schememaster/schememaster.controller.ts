@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query } from '@nestjs/common';
 import { SchememasterService } from './schememaster.service';
 import { MasterSchemeDTO } from './dto/scheme.dto';
 import { ApiExcludeEndpoint, ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -28,6 +28,20 @@ export class SchememasterController {
      
     ) {
       return this.masterSchemeService.updateMasterScheme(scheme_sl, updateMasterSchemeDto);
+    }
+
+    @Get('getAllSchemerequizition')
+    @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
+    @ApiQuery({ name: 'blockcode', required: false, type: Number }) 
+    @ApiQuery({ name: 'municipalityCode', required: false, type: Number }) 
+    async getAllSchemerequizition(@Query('districtcode') districtcode: number,@Query('blockcode') blockcode?: number, @Query('gpCode') gpCode?: number,@Query('municipalityCode' ) municipalityCode?: number){
+
+        try{
+            const scheme = await this.masterSchemeService.getAllSchemerequizition(districtcode,blockcode,gpCode,municipalityCode)
+            return scheme;
+        }catch(error){
+            return{ success:false,message:'Failed to fetch master scheme expenditrure.',error};
+        }
     }
   
     @Get('schemelist/:userIndex')
@@ -60,11 +74,30 @@ export class SchememasterController {
       }
     }
 
-    @Get('dashboard')
-  async getCounts() {
-    return this.masterSchemeService.getCounts();
-  }
+ 
 
+  @Get('dashboard')
+  @ApiQuery({ name: 'pedestal', required: false, type: String })
+  @ApiQuery({ name: 'area', required: false, type: String })
+  @ApiQuery({ name: 'dnostatus', required: false, type: String })
+  @ApiQuery({ name: 'departmentNo', required: false, type: Number })
+  async getCounts(
+      @Query('category') category: string,
+      @Query('departmentNo') departmentNo: number,
+
+      @Query('pedestal') pedestal: string,
+      @Query('area') area: string,
+   
+     
+      @Query('dnostatus') dnostatus: string,
+  ) {
+      try {
+          const result = await this.masterSchemeService.getCounts(category,departmentNo, pedestal, area, dnostatus);
+          return result;
+      } catch (error) {
+          throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+  }
   
   @Get('getactionplanreport')
   async getactionplanreport() {

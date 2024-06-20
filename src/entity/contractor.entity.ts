@@ -5,13 +5,13 @@ export class Contractor_master {
     @PrimaryGeneratedColumn()
     cont_sl: number;
 
-    @Column({ type: 'varchar', length: 255, nullable: false,comment:'C-distLgd-randam' })
+    @Column({ type: 'varchar', length: 255, nullable: true,comment:'C-distLgd-randam' })
     contractor_uniqueNo: string;
 
-    @Column({ type: 'int' ,comment:"from Dept List or Local Storage"})
+    @Column({ type: 'int' ,comment:"from Dept List or Local Storage", nullable: true})
     DepartmentNo: number;
 
-    @Column({ type: 'int',  nullable: false,comment:'from  List or Local Storage' })
+    @Column({ type: 'int',  nullable: true,comment:'from  List or Local Storage' })
     districtcode: number;
 
     @Column({ type: 'int',  nullable: true,comment:'from  List or Local Storage' })
@@ -32,7 +32,7 @@ export class Contractor_master {
     @Column({ type: 'varchar', length: 9 })
     finYear: string;
 
-    @Column({ type: 'varchar'})
+    @Column({ type: 'varchar', nullable: true})
     area: string;
 
     @Column({ type: 'varchar', length: 255, nullable: false })
@@ -50,7 +50,7 @@ export class Contractor_master {
     @Column({ type: 'varchar', length: 255, nullable: false })
     contractorAddress: string;
 
-    @Column({ type: 'varchar', length: 1, nullable: false })
+    @Column({ type: 'varchar', length: 1, nullable: true })
     contractorStatus: string;
 
     @Column({ type: 'varchar', length: 1, nullable: true })

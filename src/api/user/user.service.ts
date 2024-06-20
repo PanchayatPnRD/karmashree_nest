@@ -337,91 +337,97 @@ async viewUserById(userIndex: number) {
 }
 
 
-      async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
-        try {
-          const userToUpdate = await this.userRepository.findOne({ where: [ { userIndex: userIndex},] });
-    
-          if (!userToUpdate) {
-            return { errorCode: 1, message: 'User not found' };
-          }
-      
-          if (updateUserDto.deptWing !== undefined) {
-            userToUpdate.deptWing = updateUserDto.deptWing;
-          }
-          if (updateUserDto.districtcode !== undefined) {
-            userToUpdate.districtcode = updateUserDto.districtcode;
-          }
-          if (updateUserDto.municipalityCode !== undefined) {
-            userToUpdate.municipalityCode = updateUserDto.municipalityCode;
-          }
-          if (updateUserDto.subDivision !== undefined) {
-            userToUpdate.subDivision = updateUserDto.subDivision;
-          }
-          if (updateUserDto.blockCode !== undefined) {
-            userToUpdate.blockCode = updateUserDto.blockCode;
-          }
-          if (updateUserDto.gpCode !== undefined) {
-            userToUpdate.gpCode = updateUserDto.gpCode;
-          }
-          if (updateUserDto.area !== undefined) {
-            userToUpdate.area = updateUserDto.area;
-          }
-          if (updateUserDto.officeName_hd !== undefined) {
-            userToUpdate.officeName_hd = updateUserDto.officeName_hd;
-          }
-          if (updateUserDto.officeName_dept !== undefined) {
-            userToUpdate.officeName_dept = updateUserDto.officeName_dept;
-          }
-          if (updateUserDto.officeName_dist !== undefined) {
-            userToUpdate.officeName_dist = updateUserDto.officeName_dist;
-          }
-          if (updateUserDto.officeName_block !== undefined) {
-            userToUpdate.officeName_block = updateUserDto.officeName_block;
-          }
-          if (updateUserDto.officeName_gp !== undefined) {
-            userToUpdate.officeName_gp = updateUserDto.officeName_gp;
-          }
-          if (updateUserDto.userName !== undefined) {
-            userToUpdate.userName = updateUserDto.userName;
-          }
-          if (updateUserDto.contactNo !== undefined) {
-            userToUpdate.contactNo = updateUserDto.contactNo;
-          }
-          if (updateUserDto.email !== undefined) {
-            userToUpdate.email = updateUserDto.email;
-          }
-          if (updateUserDto.designationID !== undefined) {
-            userToUpdate.designationID = updateUserDto.designationID;
-          }
-          if (updateUserDto.UserAddress !== undefined) {
-            userToUpdate.UserAddress = updateUserDto.UserAddress;
-          }
-          if (updateUserDto.currentStatus !== undefined) {
-            userToUpdate.currentStatus = updateUserDto.currentStatus;
-          }
-          if (updateUserDto.technical_officer !== undefined) {
-            userToUpdate.technical_officer = updateUserDto.technical_officer;
-          }
-          if (updateUserDto.tech_designation_id !== undefined) {
-            userToUpdate.tech_designation_id = updateUserDto.tech_designation_id;
-          }
-          if (updateUserDto.tech_mobile !== undefined) {
-            userToUpdate.tech_mobile = updateUserDto.tech_mobile;
-          }
-          if (updateUserDto.tech_email !== undefined) {
-            userToUpdate.tech_email = updateUserDto.tech_email;
-          }
-          if (updateUserDto.role_type !== undefined) {
-            userToUpdate.role_type = updateUserDto.role_type;
-          }
-      
-          const updatedUser = await this.userRepository.save(userToUpdate);
-    
-          return { errorCode: 0, result: updatedUser };
-        } catch (error) {
-          return { errorCode: 1, message: 'Something went wrong', error: error.message };
-        }
+async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
+  try {
+    const userToUpdate = await this.userRepository.findOne({ where: { userIndex } });
+
+    if (!userToUpdate) {
+      return { errorCode: 1, message: 'User not found' };
+    }
+
+    if (updateUserDto.contactNo !== undefined) {
+      // Check if the new contact number is already in use by another user
+      const existingUser = await this.userRepository.findOne({ where: { contactNo: updateUserDto.contactNo } });
+      if (existingUser && existingUser.userIndex !== userIndex) {
+        return { errorCode: 1, message: 'Contact number is already in use by another user' };
       }
+      userToUpdate.contactNo = updateUserDto.contactNo;
+    }
+
+    if (updateUserDto.deptWing !== undefined) {
+      userToUpdate.deptWing = updateUserDto.deptWing;
+    }
+    if (updateUserDto.districtcode !== undefined) {
+      userToUpdate.districtcode = updateUserDto.districtcode;
+    }
+    if (updateUserDto.municipalityCode !== undefined) {
+      userToUpdate.municipalityCode = updateUserDto.municipalityCode;
+    }
+    if (updateUserDto.subDivision !== undefined) {
+      userToUpdate.subDivision = updateUserDto.subDivision;
+    }
+    if (updateUserDto.blockCode !== undefined) {
+      userToUpdate.blockCode = updateUserDto.blockCode;
+    }
+    if (updateUserDto.gpCode !== undefined) {
+      userToUpdate.gpCode = updateUserDto.gpCode;
+    }
+    if (updateUserDto.area !== undefined) {
+      userToUpdate.area = updateUserDto.area;
+    }
+    if (updateUserDto.officeName_hd !== undefined) {
+      userToUpdate.officeName_hd = updateUserDto.officeName_hd;
+    }
+    if (updateUserDto.officeName_dept !== undefined) {
+      userToUpdate.officeName_dept = updateUserDto.officeName_dept;
+    }
+    if (updateUserDto.officeName_dist !== undefined) {
+      userToUpdate.officeName_dist = updateUserDto.officeName_dist;
+    }
+    if (updateUserDto.officeName_block !== undefined) {
+      userToUpdate.officeName_block = updateUserDto.officeName_block;
+    }
+    if (updateUserDto.officeName_gp !== undefined) {
+      userToUpdate.officeName_gp = updateUserDto.officeName_gp;
+    }
+    if (updateUserDto.userName !== undefined) {
+      userToUpdate.userName = updateUserDto.userName;
+    }
+    if (updateUserDto.email !== undefined) {
+      userToUpdate.email = updateUserDto.email;
+    }
+    if (updateUserDto.designationID !== undefined) {
+      userToUpdate.designationID = updateUserDto.designationID;
+    }
+    if (updateUserDto.UserAddress !== undefined) {
+      userToUpdate.UserAddress = updateUserDto.UserAddress;
+    }
+    if (updateUserDto.currentStatus !== undefined) {
+      userToUpdate.currentStatus = updateUserDto.currentStatus;
+    }
+    if (updateUserDto.technical_officer !== undefined) {
+      userToUpdate.technical_officer = updateUserDto.technical_officer;
+    }
+    if (updateUserDto.tech_designation_id !== undefined) {
+      userToUpdate.tech_designation_id = updateUserDto.tech_designation_id;
+    }
+    if (updateUserDto.tech_mobile !== undefined) {
+      userToUpdate.tech_mobile = updateUserDto.tech_mobile;
+    }
+    if (updateUserDto.tech_email !== undefined) {
+      userToUpdate.tech_email = updateUserDto.tech_email;
+    }
+    if (updateUserDto.role_type !== undefined) {
+      userToUpdate.role_type = updateUserDto.role_type;
+    }
+
+    const updatedUser = await this.userRepository.save(userToUpdate);
+
+    return { errorCode: 0, result: updatedUser };
+  } catch (error) {
+    return { errorCode: 1, message: 'Something went wrong', error: error.message };
+  }
+}
 
       async getUserDetails(created_by: number) {
         try {

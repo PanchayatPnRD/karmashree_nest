@@ -73,6 +73,7 @@ private async generateWorkAllocationID(departmentName: number){
       currentYear: workAllocationDto.currentYear,
       finYear: workAllocationDto.finYear,
       userIndex: workAllocationDto.userIndex,
+      empStatus:"0"
     });
   });
 
@@ -465,6 +466,7 @@ async getallocationList(userIndex: number) {
 
 
 
+
 async getallocationListforemp(userIndex: number) {
   try {
     const allocations = await this.workallocation.find({
@@ -760,8 +762,10 @@ async getallocationListforemp(userIndex: number) {
 
 async allocationempfinalliat(workAllocationID: string) {
     try {
-        const allocations = await this.workallocation.find({ where: { workAllocationID }, order: { workallocationsl: 'DESC' } });
-
+        const allocations = await this.workallocation.find({ 
+            where: { workAllocationID, empStatus: Not("1") }, // Exclude allocations with empStatus 1
+            order: { workallocationsl: 'DESC' } 
+        });
         if (!allocations || allocations.length === 0) {
             return {
                 errorCode: 1,
