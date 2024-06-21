@@ -76,28 +76,10 @@ export class SchememasterController {
 
  
 
-  @Get('dashboard')
-  @ApiQuery({ name: 'pedestal', required: false, type: String })
-  @ApiQuery({ name: 'area', required: false, type: String })
-  @ApiQuery({ name: 'dnostatus', required: false, type: String })
-  @ApiQuery({ name: 'departmentNo', required: false, type: Number })
-  async getCounts(
-      @Query('category') category: string,
-      @Query('departmentNo') departmentNo: number,
-
-      @Query('pedestal') pedestal: string,
-      @Query('area') area: string,
-   
-     
-      @Query('dnostatus') dnostatus: string,
-  ) {
-      try {
-          const result = await this.masterSchemeService.getCounts(category,departmentNo, pedestal, area, dnostatus);
-          return result;
-      } catch (error) {
-          throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-  }
+    @Get('dashboard')
+    async getCounts() {
+      return this.masterSchemeService.getCounts();
+    }
   
   @Get('getactionplanreport')
   async getactionplanreport() {
