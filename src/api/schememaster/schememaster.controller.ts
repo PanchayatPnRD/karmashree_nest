@@ -107,4 +107,11 @@ export class SchememasterController {
     return await this.masterSchemeService.getFundingDepartmentWiseReport();
   }
 
+  @Get('masterscheme_2024_2025')
+  async masterschemeold() {
+    return await this.masterSchemeService.masterschemeold();
+  }
+ 
+
+
 }

@@ -66,19 +66,37 @@ export class MastertableService {
             };
         }
     }
-    async getAllDistrictsaction() {
-        try {
-            const dist = await this.masterzp.find({ select: ["districtName","districtCode"] });
+    async getAllDistrictsaction(): Promise<any> {
+      try {
+        const districts = await this.masterzp.find({
+          select: ['districtName', 'districtCode'],
+        });
+  
+        const results = await Promise.all(
+          districts.map(async (district) => {
+            const jobcardData = await this.jobcardformat.findOne({
+              where: { districtCode: district.districtCode },
+              select: ['nregaDistrictCode'],
+            });
+  
             return {
-                errorCode: 0,
-                result: dist
+              ...district,
+              nregaDistrictCode: jobcardData ? jobcardData.nregaDistrictCode : null,
             };
-        } catch (error) {
-            return {
-                errorCode: 1,
-                message: "Something went wrong"
-            };
-        }
+          }),
+        );
+  
+        return {
+          errorCode: 0,
+          result: results,
+        };
+      } catch (error) {
+        return {
+          errorCode: 1,
+          message: 'Something went wrong',
+          error: error.message,
+        };
+      }
     }
 
     async getAllDistricts(districtCode) {
@@ -167,24 +185,50 @@ export class MastertableService {
     
 
 
-      async getBlockaction(districtCode: number) {
-        try {
-          let blocks;
-          if (districtCode == 0 || districtCode == null) {
-            blocks = await this.masterps.find({ select: ["blockCode", "blockName"] });
-          } else {
-            blocks = await this.masterps.find({ where: { districtCode }, select: ["blockCode", "blockName"] });
-          }
-      
-          if (!blocks || blocks.length === 0) {
-            return { errorCode: 1, message: 'Blocks not found' };
-          }
-      
-          return { errorCode: 0, result: blocks };
-        } catch (error) {
-          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+    async getBlockaction(districtCode: number): Promise<any> {
+      try {
+        let blocks;
+        if (districtCode == 0 || districtCode == null) {
+          blocks = await this.masterps.find({
+            select: ['blockCode', 'blockName'],
+          });
+        } else {
+          blocks = await this.masterps.find({
+            where: { districtCode },
+            select: ['blockCode', 'blockName'],
+          });
         }
+  
+        if (!blocks || blocks.length === 0) {
+          return { errorCode: 1, message: 'Blocks not found' };
+        }
+  
+        const results = await Promise.all(
+          blocks.map(async (block) => {
+            const jobcardData = await this.jobcardformat.findOne({
+              where: { blockCode: block.blockCode },
+              select: ['nregaBlockCode'],
+            });
+  
+            return {
+              ...block,
+              nregaBlockCode: jobcardData ? jobcardData.nregaBlockCode : null,
+            };
+          }),
+        );
+  
+        return {
+          errorCode: 0,
+          result: results,
+        };
+      } catch (error) {
+        return {
+          errorCode: 1,
+          message: 'Something went wrong',
+          error: error.message,
+        };
       }
+    }
       
 
       async getBlock(districtCode: number, blockCode?: number) {
@@ -230,24 +274,50 @@ export class MastertableService {
       }
   }
 
-      async getGpaction(districtCode: number, blockCode: number) {
-        try {
-          let gps;
-          if ((districtCode == 0 || districtCode == null) && (blockCode == 0 || blockCode == null)) {
-            gps = await this.grampanchayat.find({ select: ["gpCode", "gpName"] });
-          } else {
-            gps = await this.grampanchayat.find({ where: { districtCode, blockCode }, select: ["gpCode", "gpName"] });
-          }
-      
-          if (!gps || gps.length === 0) {
-            return { errorCode: 1, message: 'Gram Panchayats not found' };
-          }
-      
-          return { errorCode: 0, result: gps };
-        } catch (error) {
-          return { errorCode: 1, message: 'Something went wrong', error: error.message };
-        }
+  async getGpaction(districtCode: number, blockCode: number): Promise<any> {
+    try {
+      let gps;
+      if ((districtCode == 0 || districtCode == null) && (blockCode == 0 || blockCode == null)) {
+        gps = await this.grampanchayat.find({
+          select: ['gpCode', 'gpName'],
+        });
+      } else {
+        gps = await this.grampanchayat.find({
+          where: { districtCode, blockCode },
+          select: ['gpCode', 'gpName'],
+        });
       }
+
+      if (!gps || gps.length === 0) {
+        return { errorCode: 1, message: 'Gram Panchayats not found' };
+      }
+
+      const results = await Promise.all(
+        gps.map(async (gp) => {
+          const jobcardData = await this.jobcardformat.findOne({
+            where: { gpCode: gp.gpCode },
+            select: ['nregaPanchCode'],
+          });
+
+          return {
+            ...gp,
+            nregaPanchCode: jobcardData ? jobcardData.nregaPanchCode : null,
+          };
+        }),
+      );
+
+      return {
+        errorCode: 0,
+        result: results,
+      };
+    } catch (error) {
+      return {
+        errorCode: 1,
+        message: 'Something went wrong',
+        error: error.message,
+      };
+    }
+  }
       
       async getGp(districtCode: number, blockCode: number, gpCode?: number) {
         try {

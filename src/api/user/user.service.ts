@@ -5,8 +5,18 @@ import { master_users } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, SendSMSDto } from './dto/user.dto';
 import * as bcrypt from "bcrypt";
+import { Express } from 'express';
+import { multerConfig } from 'src/commomn/middleware/multur.config';
 import axios from 'axios';
+
 import { UpdateUserDto } from './dto/useredit.dto';
+import { CreateLibraryDto } from './dto/library.dto';
+import { Libariry } from 'src/entity/library.entity';
+import { Multer } from 'multer';
+import { join, resolve, extname } from 'path';
+import { writeFile, mkdir } from 'fs/promises';
+import { existsSync } from 'fs';
+import { UpdateLibraryDto } from './dto/UpdateLibraryDto.dto';
 @Injectable()
 export class UserService {
 
@@ -21,6 +31,7 @@ export class UserService {
         @InjectRepository(master_ps) private masterps: Repository<master_ps>,
         @InjectRepository(masterdesignation) private masterdesignation: Repository<masterdesignation>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
+        @InjectRepository(Libariry) private libraryRepository: Repository<Libariry>,
 
         
 
@@ -692,4 +703,97 @@ async getUserSummaryByDepartment(departmentNo: number) {
   }
 }
       
+async create(createLibraryDto: CreateLibraryDto, file: Express.Multer.File) {
+  try {
+    let filename = null;
+    let uploadPath = null;
+
+    if (file && file.buffer) {
+      // Generate a unique filename for the upload
+      const randomName = Array(32)
+        .fill(null)
+        .map(() => Math.round(Math.random() * 16).toString(16))
+        .join('');
+      filename = `${randomName}${extname(file.originalname)}`;
+
+      const publicPdfDir = 'uploads';
+      // Construct the full upload path
+      uploadPath = join(publicPdfDir, filename);
+
+      // Write the file to the specified destination
+      await writeFile(uploadPath, file.buffer);
+    }
+
+    // Create a new Library entity with the provided data
+    const library = this.libraryRepository.create({
+      category: createLibraryDto.category,
+      caption: createLibraryDto.caption,
+      YoutubeLink: createLibraryDto.YoutubeLink,
+      UploadFileLink: uploadPath, // Store the file path in the database
+      status: createLibraryDto.status,
+      pedastal: createLibraryDto.pedastal,
+  
+      userIndex: createLibraryDto.userIndex,
+      originalFilename: file?.originalname || null,
+      mimeType: file?.mimetype || null,
+    });
+
+    // Save the Library entity in the database
+    await this.libraryRepository.save(library);
+
+    // Return the saved library object
+    return library;
+  } catch (error) {
+    // Handle any errors
+    throw new Error(`Failed to create library entry: ${error.message}`);
+  }
+}
+
+async update(id: number, updateLibraryDto: UpdateLibraryDto, file?: Express.Multer.File) {
+  try {
+    let uploadPath = null;
+
+    if (file && file.buffer) {
+      // Generate a unique filename for the upload
+      const randomName = Array(32)
+        .fill(null)
+        .map(() => Math.round(Math.random() * 16).toString(16))
+        .join('');
+      const filename = `${randomName}_${file.originalname}`;
+
+      // Construct the full upload path (adjust as per your folder structure)
+      const uploadDir = 'uploads'; // Adjust the path as needed
+      uploadPath = join(uploadDir, filename);
+
+      // Write the file to the specified destination
+      await writeFile(uploadPath, file.buffer);
+    }
+
+    // Find the library entry by ID
+    const library = await this.libraryRepository.findOne({ where: { doc_id: id } });
+    if (!library) {
+      throw new Error(`Library entry with id ${id} not found`);
+    }
+
+    // Update the library entity with the provided data
+    library.category = updateLibraryDto.category || library.category;
+    library.caption = updateLibraryDto.caption || library.caption;
+    library.YoutubeLink = updateLibraryDto.YoutubeLink || library.YoutubeLink;
+    library.status = updateLibraryDto.status || library.status;
+    library.pedastal = updateLibraryDto.pedastal || library.pedastal;
+    library.userIndex = updateLibraryDto.userIndex || library.userIndex;
+    library.UploadFileLink = uploadPath || library.UploadFileLink;
+    library.originalFilename = file?.originalname || library.originalFilename;
+    library.mimeType = file?.mimetype || library.mimeType;
+
+    // Save the updated Library entity in the database
+    await this.libraryRepository.save(library);
+
+    // Return the updated library object
+    return library;
+  } catch (error) {
+    // Handle any errors
+    throw new Error(`Failed to update library entry: ${error.message}`);
+  }
+}
 }

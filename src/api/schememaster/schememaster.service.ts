@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MasterSchemeDTO } from './dto/scheme.dto';
-import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
+import { MasterScheme, masterscheme_2024_2025, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
@@ -26,6 +26,9 @@ export class SchememasterService {
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
         @InjectRepository(DemandMaster) private demandMaster: Repository<DemandMaster>,
         @InjectRepository(Employment)private  employment: Repository<Employment>,
+        @InjectRepository(masterscheme_2024_2025)private  masterscheme_2024_2025: Repository<masterscheme_2024_2025>,
+
+        
     ) {}
 
     async create(createMasterSchemeDto: MasterSchemeDTO) {
@@ -1009,6 +1012,20 @@ export class SchememasterService {
               return { errorCode: 1, message: 'Something went wrong: ' + error.message };
             }
           }
+
+          async masterschemeold() {
+            let dept; // Declare dept before the try block
+          
+         
+                dept = await this.masterscheme_2024_2025.find();
+            
+          
+           
+          
+              return { errorCode: 0, result: dept };
+        
+             
+            }
 }
 
 

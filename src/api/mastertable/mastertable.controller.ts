@@ -25,6 +25,7 @@ export class MastertableController {
     async getAllRole() {
       return await this.mastertableService.getAllRoles();
     }
+
        
     @Get('getAllDistrictsaction')
     async getAllDistrictsaction() {
@@ -35,6 +36,7 @@ export class MastertableController {
     async getAllDistricts(@Param('districtCode') districtCode: number) {
       return await this.mastertableService.getAllDistricts(districtCode);
     }
+    
     // @Get('getSubdivison/:districtCode') 
     // async getSubdivison(@Param('districtCode') districtCode: string) {
     //   return this.mastertableService.getSubdivison(districtCode); 

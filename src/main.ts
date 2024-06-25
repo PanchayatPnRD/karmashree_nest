@@ -35,7 +35,7 @@ async function bootstrap() {
 
   app.use('/api/public', express.static(join(__dirname, '..', 'public')));
 
-
+  app.use('/api/uploads', express.static(join(__dirname, '..', 'uploads')));
   const config = new DocumentBuilder()
     .setTitle('Karmashree')
     .setDescription('Karmashree API description')

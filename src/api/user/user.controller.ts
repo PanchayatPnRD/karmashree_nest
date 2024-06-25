@@ -1,8 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiHeader, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { ApiBody, ApiConsumes, ApiHeader, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto, SendSMSDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/useredit.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateLibraryDto } from './dto/library.dto';
+import { multerConfig } from 'src/commomn/middleware/multur.config';
+import { UpdateLibraryDto } from './dto/UpdateLibraryDto.dto';
 
 @ApiTags("User")
 @ApiHeader({
@@ -61,5 +65,31 @@ async updateUser(@Body() updateUserDto: UpdateUserDto, @Param('userIndex') userI
 async getUserSummaryByDepartment(@Query('departmentNo') departmentNo: number) {
   
   return await this.userService.getUserSummaryByDepartment(departmentNo);
+}
+@Post('createfileupload')
+@UseInterceptors(FileInterceptor('file'))
+@ApiConsumes('multipart/form-data')
+
+async create(
+  @Body() createLibraryDto: CreateLibraryDto,
+  @UploadedFile() file: Express.Multer.File,
+) {
+  return this.userService.create(createLibraryDto, file);
+}
+
+@Post('updatefileupload/:id')
+@UseInterceptors(FileInterceptor('file')) // 'file' should match the field name in the form-data
+@ApiConsumes('multipart/form-data')
+@ApiParam({ name: 'id', type: Number })
+@ApiBody({
+  description: 'Update a library entry',
+  type: UpdateLibraryDto,
+})
+async update(
+  @Param('id') id: number,
+  @Body() updateLibraryDto: UpdateLibraryDto,
+  @UploadedFile() file: Express.Multer.File,
+) {
+  return this.userService.update(id, updateLibraryDto, file);
 }
 }

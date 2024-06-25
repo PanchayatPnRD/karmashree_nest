@@ -23,7 +23,7 @@ import { Actionplan_master } from './entity/actionplan.entity';
 import { ActionplanModule } from './api/actionplan/actionplan.module';
 import { Contractor_master } from './entity/contractor.entity';
 import { ContractorModule } from './api/contractor/contractor.module';
-import { MasterScheme, MasterSchemeExpenduture } from './entity/scheme.entity';
+import { MasterScheme, masterscheme_2024_2025, MasterSchemeExpenduture } from './entity/scheme.entity';
 import { SchememasterModule } from './api/schememaster/schememaster.module';
 import * as dotenv from 'dotenv';
 
@@ -44,6 +44,7 @@ import { AllocationModule } from './api/allocation/allocation.module';
 import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.middleware';
 import { Employment } from './entity/employment.entity';
 import { EmploymentModule } from './api/employment/employment.module';
+import { Libariry } from './entity/library.entity';
 dotenv.config();
 
 @Module({
@@ -80,6 +81,8 @@ dotenv.config();
         WorkAllocation,
         Employment,
         MasterWorkerDemand_allotmenthistroy,
+        masterscheme_2024_2025,
+        Libariry
       ],
       synchronize: true,
     }),
@@ -107,13 +110,13 @@ export class AppModule implements NestModule {
         'api/schememaster/home_dashboard'
       )
       .forRoutes(
-      //   'api/Actionplan',
-      //   'api/allocation',
-      //   'api/contractor',
-      //   'api/demand',
-      //   'api/mastertable',
-      //   'api/schememaster',
-      //   'api/workerrequisition',
+        // 'api/Actionplan',
+        // 'api/allocation',
+        // 'api/contractor',
+        // 'api/demand',
+        // 'api/mastertable',
+        // 'api/schememaster',
+        // 'api/workerrequisition',
       );
   }
 }
