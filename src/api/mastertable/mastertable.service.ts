@@ -78,10 +78,12 @@ export class MastertableService {
               where: { districtCode: district.districtCode },
               select: ['nregaDistrictCode'],
             });
-  
+            const concatenatedName = `${district.districtName} (${jobcardData ? jobcardData.nregaDistrictCode : 'N/A'})`;
+
             return {
               ...district,
               nregaDistrictCode: jobcardData ? jobcardData.nregaDistrictCode : null,
+              concatenatedName:concatenatedName,
             };
           }),
         );
@@ -209,10 +211,12 @@ export class MastertableService {
               where: { blockCode: block.blockCode },
               select: ['nregaBlockCode'],
             });
-  
+            const concatenatedName = `${block.blockName} (${jobcardData ? jobcardData.nregaBlockCode : 'N/A'})`;
+
             return {
               ...block,
               nregaBlockCode: jobcardData ? jobcardData.nregaBlockCode : null,
+              concatenatedName:concatenatedName
             };
           }),
         );
@@ -298,10 +302,13 @@ export class MastertableService {
             where: { gpCode: gp.gpCode },
             select: ['nregaPanchCode'],
           });
+          const concatenatedName = `${gp.gpName} (${jobcardData ? jobcardData.nregaPanchCode : 'N/A'})`;
 
           return {
             ...gp,
             nregaPanchCode: jobcardData ? jobcardData.nregaPanchCode : null,
+            concatenatedName:concatenatedName
+
           };
         }),
       );
