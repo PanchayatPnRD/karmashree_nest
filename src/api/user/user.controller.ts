@@ -92,4 +92,12 @@ async update(
 ) {
   return this.userService.update(id, updateLibraryDto, file);
 }
+
+@Get('list-by-category')
+@ApiQuery({ name: 'category', required: false, type: String })
+
+@ApiResponse({ status: 200, description: 'Filtered list of library entries by category' })
+async listByCategory(@Query('category') category?: string) {
+  return this.userService.listByCategory(category);
+}
 }

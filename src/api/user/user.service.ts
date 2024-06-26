@@ -304,8 +304,7 @@ export class UserService {
     throw error;
   }
 }
-      
-      
+
 async viewUserById(userIndex: number) {
   try {
       const user = await this.userRepository.findOne({ where: { userIndex } });
@@ -796,4 +795,35 @@ async update(id: number, updateLibraryDto: UpdateLibraryDto, file?: Express.Mult
     throw new Error(`Failed to update library entry: ${error.message}`);
   }
 }
+
+async listByCategory(category?: string): Promise<any> {
+  try {
+    // Query to find library entries by category
+    const libraries = await this.libraryRepository.find({
+      where: { category },
+      select: [
+        'doc_id',
+        'category',
+        'caption',
+        'YoutubeLink',
+        'UploadFileLink',
+        'status',
+    
+      
+      ]
+    });
+
+    return {
+      errorCode: 0,
+      result: libraries,
+    };
+  } catch (error) {
+    return {
+      errorCode: 1,
+      message: 'Something went wrong',
+      error: error.message,
+    };
+  }
+}
+
 }
