@@ -28,6 +28,13 @@ export class Libariry {
     
     @Column({  nullable: true  })
     base64: string;
+
+    @Column({  nullable: true  })
+    orderno: string;
+    
+ 
+    @Column({  nullable: true  })
+    orderDate: Date;
  
 
     @Column({ type: 'varchar', nullable: true  })

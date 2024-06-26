@@ -971,7 +971,7 @@ export class SchememasterService {
                 .select([
                   "COUNT(DISTINCT master_scheme.schemeSector) AS 'Total Of Sectors'",
                   "COUNT(DISTINCT master_scheme.FundingDepttID) AS 'Total No Of Funding'",
-                  "COUNT(master_scheme.schemeId) AS 'Total No Of Schemes'",
+                  "COUNT(master_scheme.scheme_sl) AS 'Total No Of Schemes'",
                   "SUM(master_scheme.totalprojectCost) AS 'Total Project Cost'",
                   "SUM(master_scheme_expenduture.totalWageCost) AS 'Total Amount Spent'",
                   "SUM(master_scheme_expenduture.totalLabour) AS 'Total No Of Workers'"

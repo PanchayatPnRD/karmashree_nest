@@ -78,8 +78,14 @@ export class MastertableService {
               where: { districtCode: district.districtCode },
               select: ['nregaDistrictCode'],
             });
-            const concatenatedName = `${district.districtName} (${jobcardData ? jobcardData.nregaDistrictCode : 'N/A'})`;
+            const trimmedNregaDistrictCode = jobcardData && jobcardData.nregaDistrictCode
+          ? String(String(jobcardData.nregaDistrictCode).substring(2))
+          : 'N/A';
 
+        const concatenatedName = `${district.districtName}-[${trimmedNregaDistrictCode}]`;
+  
+         // const concatenatedName = `${district.districtName} (${trimmedNregaDistrictCode})`;
+     
             return {
               ...district,
               nregaDistrictCode: jobcardData ? jobcardData.nregaDistrictCode : null,
@@ -211,7 +217,14 @@ export class MastertableService {
               where: { blockCode: block.blockCode },
               select: ['nregaBlockCode'],
             });
-            const concatenatedName = `${block.blockName} (${jobcardData ? jobcardData.nregaBlockCode : 'N/A'})`;
+
+
+            const trimmedNregaBlockCode = jobcardData && jobcardData.nregaBlockCode
+            ? (String(jobcardData.nregaBlockCode).substring(4))
+            : 'N/A';
+  
+          const concatenatedName = `${block.blockName}-[${trimmedNregaBlockCode}]`;
+          
 
             return {
               ...block,
@@ -302,8 +315,13 @@ export class MastertableService {
             where: { gpCode: gp.gpCode },
             select: ['nregaPanchCode'],
           });
-          const concatenatedName = `${gp.gpName} (${jobcardData ? jobcardData.nregaPanchCode : 'N/A'})`;
 
+          const trimmedNregagpCode = jobcardData && jobcardData.nregaPanchCode
+          ? (String(jobcardData.nregaPanchCode).substring(7))
+          : 'N/A';
+
+        const concatenatedName = `${gp.gpName}-[${trimmedNregagpCode}]`;
+         
           return {
             ...gp,
             nregaPanchCode: jobcardData ? jobcardData.nregaPanchCode : null,
