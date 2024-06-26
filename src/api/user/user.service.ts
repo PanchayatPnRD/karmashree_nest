@@ -733,6 +733,7 @@ async create(createLibraryDto: CreateLibraryDto, file: Express.Multer.File) {
 
     return {
       errorCode: 0,
+      message: 'Successfully Created',
       result: library,
     }; 
   } catch (error) {
