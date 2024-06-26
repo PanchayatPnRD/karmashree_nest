@@ -34,6 +34,15 @@ export class CreateLibraryDto {
     @IsString()
     @IsOptional()
     pedastal: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    orderno: string;
+    
+    @ApiProperty()
+  
+    orderDate: Date;
   
   
   
