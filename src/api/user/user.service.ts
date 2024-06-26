@@ -730,8 +730,11 @@ async create(createLibraryDto: CreateLibraryDto, file: Express.Multer.File) {
     // Save the Library entity in the database
     await this.libraryRepository.save(library);
 
-    // Return the saved library object
-    return library;
+
+    return {
+      errorCode: 0,
+      result: library,
+    }; 
   } catch (error) {
     // Handle any errors
     throw new Error(`Failed to create library entry: ${error.message}`);
