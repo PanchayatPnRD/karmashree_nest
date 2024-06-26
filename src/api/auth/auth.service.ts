@@ -107,21 +107,21 @@ export class AuthService {
         },
       );
 
-      const response2 = await axios.post(
-        'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
-        {
-          feedid: 392809,
-          username: 9831519878,
-          password: 'Sub1kar#',
-          mobile: '8001073023',
-          messages: message,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      // const response2 = await axios.post(
+      //   'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
+      //   {
+      //     feedid: 392809,
+      //     username: 9831519878,
+      //     password: 'Sub1kar#',
+      //     mobile: '8001073023',
+      //     messages: message,
+      //   },
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   },
+      // );
 
       // const response3 = await axios.post(
       //   'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
@@ -150,23 +150,24 @@ export class AuthService {
       //     'Content-Type': 'application/json'
       //   }
       // });
-      const response5 = await axios.post(
-        'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
-        {
-          feedid: 392809,
-          username: 9831519878,
-          password: 'Sub1kar#',
-          mobile: '8642945662',
-          messages: message,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
+      // const response5 = await axios.post(
+      //   'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
+      //   {
+      //     feedid: 392809,
+      //     username: 9831519878,
+      //     password: 'Sub1kar#',
+      //     mobile: '8642945662',
+      //     messages: message,
+      //   },
+      //   {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   },
+      // );
 
-      return [response1, response2, response5];
+     // return [response1, response2, response5];
+      return [response1];
     } catch (error) {
       throw new Error(error.response.data);
     }

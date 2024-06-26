@@ -252,52 +252,6 @@ export class UserService {
     });
 
    
-    const response2 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
-      "feedid": 392809,
-      "username": 9831519878,
-      "password": "Sub1kar#",
-      "mobile": "8001073023", 
-      "messages": message
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    // const response3 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
-    //   "feedid": 392809,
-    //   "username": 9831519878,
-    //   "password": "Sub1kar#",
-    //   "mobile": "8335050997", 
-    //   "messages": message
-    // }, {
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // });
-    // const response4 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
-    //   "feedid": 392809,
-    //   "username": 9831519878,
-    //   "password": "Sub1kar#",
-    //   "mobile": "8240341461",
-    //   "messages": message
-    // }, {
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // });
-    const response5 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
-      "feedid": 392809,
-      "username": 9831519878,
-      "password": "Sub1kar#",
-      "mobile": "8642945662", 
-      "messages": message
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    return [response1, response2,response5];
   } catch (error) {
    
     console.error("Error sending SMS:", error);
@@ -327,7 +281,38 @@ async viewUserById(userIndex: number) {
       const designationDetails = await this.getDesignationbyid(user.designationID);
       const designationName = designationDetails.result ? designationDetails.result.designation : '';
       const userDetails = {
-        ...user,
+        userIndex: user.userIndex,
+        category: user.category,
+        departmentNo: user.departmentNo,
+        area: user.area,
+        deptWing: user.deptWing,
+        districtcode: user.districtcode,
+        municipalityCode: user.municipalityCode,
+        subDivision: user.subDivision,
+        blockCode: user.blockCode,
+        gpCode: user.gpCode,
+        userType: user.userType,
+        role_type: user.role_type,
+     
+ 
+        officeName_hd: user.officeName_hd,
+        officeName_dept: user.officeName_dept,
+        officeName_dist: user.officeName_dist,
+        officeName_block: user.officeName_block,
+        officeName_gp: user.officeName_gp,
+        dno_status: user.dno_status,
+      
+        technical_officer: user.technical_officer,
+        tech_designation_id: user.tech_designation_id,
+        tech_mobile: user.tech_mobile,
+        tech_email: user.tech_email,
+        designationID: user.designationID,
+        UserAddress: user.UserAddress,
+     
+        currentStatus: user.currentStatus,
+      
+       
+        is_passwordreset: user.is_passwordreset,
         districtName: districtName,
         subDivisionName: subDivisionName,
         blockname: blockname,
@@ -335,6 +320,7 @@ async viewUserById(userIndex: number) {
         deptName:deptName,
         designationName:designationName
     };
+
 
     return {
         errorCode: 0,
