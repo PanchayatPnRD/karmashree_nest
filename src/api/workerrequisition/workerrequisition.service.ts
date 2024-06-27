@@ -8,6 +8,7 @@ import { random } from 'lodash'; // Import the random function from lodash
 import { MasterWorkerRequirementDto } from './dto/worker.dto';
 import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { Contractor_master } from 'src/entity/contractor.entity';
+import { master_users } from 'src/entity/user.entity';
 @Injectable()
 export class WorkerrequisitionService {
     constructor(
@@ -24,7 +25,8 @@ export class WorkerrequisitionService {
         private  masterSchemeRepository: Repository<MasterScheme>,
         @InjectRepository(MasterSchemeExpenduture) private  MasterSchemeExpendutureRepository: Repository<MasterSchemeExpenduture>,
         @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
-        
+        @InjectRepository(master_users) private userRepository: Repository<master_users>,
+
     ) {}
 
     async create(createWorkerRequirementDto: MasterWorkerRequirementDto) {
@@ -195,11 +197,30 @@ export class WorkerrequisitionService {
     // }
     async getallrequztion(userIndex: number) {
       try {
-          // Find worker requirements by user index
-          const workRequirements = await this.masterWorkerRequirement.find({
-              where: { userIndex },
-              order: { workersl: 'DESC' }
-          });
+        
+        const user = await this.userRepository.findOne({ where: { userIndex } });
+  
+        // Ensure user exists before attempting to access its properties
+        if (!user) {
+          return {
+            errorCode: 1,
+            message: 'User not found',
+          };
+        }
+    
+        const query = this.masterWorkerRequirement.createQueryBuilder('masterWorkerRequirement')
+        .where('masterWorkerRequirement.districtcode = :districtcode', { districtcode: user.districtcode })
+        .orWhere('masterWorkerRequirement.userIndex = :userIndex', { userIndex: user.userIndex });
+  
+      // If blockcode is present, add it to the query object
+      if (user.blockCode) {
+        query.andWhere('masterWorkerRequirement.blockcode = :blockcode', { blockcode: user.blockCode });
+      }
+  
+      query.orderBy('masterWorkerRequirement.workersl', 'DESC');
+  
+      // Execute the query
+      const workRequirements = await query.getMany();
   
           if (!workRequirements || workRequirements.length === 0) {
               return {

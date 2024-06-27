@@ -110,13 +110,13 @@ export class AppModule implements NestModule {
         'api/schememaster/home_dashboard'
       )
       .forRoutes(
-        // 'api/Actionplan',
-        // 'api/allocation',
-        // 'api/contractor',
-        // 'api/demand',
-        // 'api/mastertable',
-        // 'api/schememaster',
-        // 'api/workerrequisition',
+        'api/Actionplan',
+        'api/allocation',
+        'api/contractor',
+        'api/demand',
+        'api/mastertable',
+        'api/schememaster',
+        'api/workerrequisition',
       );
   }
 }

@@ -104,6 +104,10 @@ export class WorkAllocation {
   @Column()
   userIndex: number;
 
+  
+  @Column({nullable: true })
+  requzitionuserIndex: number;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   submitTime: Date;
 

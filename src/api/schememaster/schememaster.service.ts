@@ -667,12 +667,15 @@ export class SchememasterService {
             }
           } 
 
-          async getCounts() {
+          async getCounts(category: string, dno_status?: string, departmentNo?: number, districtCode?: number,blockcode?:number,gpCode?:number) {
             try {
-                let condition = '';
-                let userIndexCondition = '';
+              let userIndexCondition = '';
+              let condition = '';
+              let districtCondition = '';
         
-              
+              if (category === 'HQ') {
+                // No additional conditions, fetch all data
+            
                     const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
                         .createQueryBuilder('mse')
                         .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
@@ -722,21 +725,665 @@ export class SchememasterService {
                     const totalwage = totalemp.total;
         
                     const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
-        
                     return {
-                        errorCode: 0,
-                        result: {
-                            ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
-                            DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
-                            FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
-                            totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
-                            totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
-                            avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
-                            totalscheme: scheme.count || 0,
-                            totalwage: totalwage || 0,
-                            charts: employmentDataForLast7Days,
-                        },
-                    };
+                      errorCode: 0,
+                      result: {
+                          ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+                          DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+                          FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+                          totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+                          totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+                          avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+                          totalscheme: scheme.count || 0,
+                          totalwage: totalwage || 0,
+                          charts: employmentDataForLast7Days,
+                      },
+                  };
+                  } else if  (category === 'HD' && dno_status === '0') {
+                    condition = ``;
+
+                    const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const uniqueDepartmentNoCount = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const scheme = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const totalPersonDaysGenerated = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.personDaysGenerated)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const totalemp = await this.employment
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.totalWagePaid)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const totalUnskilledWorkers = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.totalUnskilledWorkers)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                    const totalAvgMandays = await this.demandMaster
+                    .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+                    .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+                    .where('dm.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+
+                const totalCostProvided = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.totalCostprovided)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .getRawOne();
+    
+                const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+                const totalwage = totalemp.total;
+    
+                const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+                  
+                  return {
+                    errorCode: 0,
+                    result: {
+                        ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+                        DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+                        FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+                        totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+                        totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+                        avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+                        totalscheme: scheme.count || 0,
+                        totalwage: totalwage || 0,
+                        charts: employmentDataForLast7Days,
+                    },
+                };
+              }
+            else if  (category === 'DIST' && dno_status === '0') {
+                      condition = ' AND msc.district = :district'; // Assuming dno also has district information
+                      // Replace :district with actual district value or pass it as a parameter
+                      const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const uniqueDepartmentNoCount = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const scheme = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const totalPersonDaysGenerated = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.personDaysGenerated)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const totalemp = await this.employment
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.totalWagePaid)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const totalUnskilledWorkers = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.totalUnskilledWorkers)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                    const totalAvgMandays = await this.demandMaster
+                    .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+                    .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+                    .where('dm.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('dm.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+
+                const totalCostProvided = await this.masterSchemeRepository
+                    .createQueryBuilder('mse')
+                    .select('SUM(mse.totalCostprovided)', 'total')
+                    .where('mse.departmentNo = :departmentNo', { departmentNo })
+                    .andWhere('mse.districtcode = :districtCode', { districtCode })
+                    .getRawOne();
+    
+                const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+                const totalwage = totalemp.total;
+    
+                const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+                  
+                  return {
+                    errorCode: 0,
+                    result: {
+                        ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+                        DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+                        FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+                        totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+                        totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+                        avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+                        totalscheme: scheme.count || 0,
+                        totalwage: totalwage || 0,
+                        charts: employmentDataForLast7Days,
+                    },
+                };
+              }  else if  (category === 'SUB' && dno_status === '0') {
+                condition = ' AND msc.district = :district'; // Assuming dno also has district information
+                // Replace :district with actual district value or pass it as a parameter
+                const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const uniqueDepartmentNoCount = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const scheme = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const totalPersonDaysGenerated = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('SUM(mse.personDaysGenerated)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const totalemp = await this.employment
+              .createQueryBuilder('mse')
+              .select('SUM(mse.totalWagePaid)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const totalUnskilledWorkers = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('SUM(mse.totalUnskilledWorkers)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+              const totalAvgMandays = await this.demandMaster
+              .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+              .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+              .where('dm.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('dm.districtcode = :districtCode', { districtCode })
+              .andWhere('dm.blockcode = :blockcode', { blockcode })
+              .andWhere('dm.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+
+          const totalCostProvided = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('SUM(mse.totalCostprovided)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .andWhere('mse.gpCode = :gpCode', { gpCode })
+              .getRawOne();
+
+          const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+          const totalwage = totalemp.total;
+
+          const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+            
+            return {
+              errorCode: 0,
+              result: {
+                  ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+                  DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+                  FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+                  totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+                  totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+                  avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+                  totalscheme: scheme.count || 0,
+                  totalwage: totalwage || 0,
+                  charts: employmentDataForLast7Days,
+              },
+          };
+        }
+              else if  (category === 'BLOCK' && dno_status === '0') {
+                condition = ' AND msc.district = :district'; // Assuming dno also has district information
+                // Replace :district with actual district value or pass it as a parameter
+                const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const uniqueDepartmentNoCount = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const scheme = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const totalPersonDaysGenerated = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('SUM(mse.personDaysGenerated)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const totalemp = await this.employment
+              .createQueryBuilder('mse')
+              .select('SUM(mse.totalWagePaid)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const totalUnskilledWorkers = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('SUM(mse.totalUnskilledWorkers)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+              const totalAvgMandays = await this.demandMaster
+              .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+              .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+              .where('dm.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('dm.districtcode = :districtCode', { districtCode })
+              .andWhere('dm.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+
+          const totalCostProvided = await this.masterSchemeRepository
+              .createQueryBuilder('mse')
+              .select('SUM(mse.totalCostprovided)', 'total')
+              .where('mse.departmentNo = :departmentNo', { departmentNo })
+              .andWhere('mse.districtcode = :districtCode', { districtCode })
+              .andWhere('mse.blockcode = :blockcode', { blockcode })
+              .getRawOne();
+
+          const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+          const totalwage = totalemp.total;
+
+          const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+            
+            return {
+              errorCode: 0,
+              result: {
+                  ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+                  DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+                  FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+                  totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+                  totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+                  avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+                  totalscheme: scheme.count || 0,
+                  totalwage: totalwage || 0,
+                  charts: employmentDataForLast7Days,
+              },
+          };
+        }  else if  (category === 'DIST' && dno_status === '1') {
+          condition = ' AND msc.district = :district'; // Assuming dno also has district information
+          // Replace :district with actual district value or pass it as a parameter
+          const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+        
+        .where('mse.districtcode = :districtCode', { districtCode })
+      
+        .getRawOne();
+
+    const uniqueDepartmentNoCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+        .where('mse.districtcode = :districtCode', { districtCode })
+      
+        .getRawOne();
+
+    const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+        .where('mse.districtcode = :districtCode', { districtCode })
+      
+        .getRawOne();
+
+    const scheme = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+        .where('mse.districtcode = :districtCode', { districtCode })
+      
+        .getRawOne();
+
+    const totalPersonDaysGenerated = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.personDaysGenerated)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+
+        .getRawOne();
+
+    const totalemp = await this.employment
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalWagePaid)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+
+        .getRawOne();
+
+    const totalUnskilledWorkers = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalUnskilledWorkers)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+
+        .getRawOne();
+
+        const totalAvgMandays = await this.demandMaster
+        .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+        .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+        .where('dm.districtcode = :districtCode', { districtCode })
+        .andWhere('dm.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+
+    const totalCostProvided = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalCostprovided)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+
+        .getRawOne();
+
+    const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+    const totalwage = totalemp.total;
+
+    const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+      
+      return {
+        errorCode: 0,
+        result: {
+            ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+            DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+            FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+            totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+            totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+            avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+            totalscheme: scheme.count || 0,
+            totalwage: totalwage || 0,
+            charts: employmentDataForLast7Days,
+        },
+    };
+  }  else if  (category === 'BLOCK' && dno_status === '1') {
+          condition = ' AND msc.district = :district'; // Assuming dno also has district information
+          // Replace :district with actual district value or pass it as a parameter
+          const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+        
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const uniqueDepartmentNoCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const scheme = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const totalPersonDaysGenerated = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.personDaysGenerated)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const totalemp = await this.employment
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalWagePaid)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const totalUnskilledWorkers = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalUnskilledWorkers)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+        const totalAvgMandays = await this.demandMaster
+        .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+        .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+        .where('dm.districtcode = :districtCode', { districtCode })
+        .andWhere('dm.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+
+    const totalCostProvided = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalCostprovided)', 'total')
+        .where('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+    const totalwage = totalemp.total;
+
+    const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+      
+      return {
+        errorCode: 0,
+        result: {
+            ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+            DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+            FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+            totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+            totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+            avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+            totalscheme: scheme.count || 0,
+            totalwage: totalwage || 0,
+            charts: employmentDataForLast7Days,
+        },
+    };
+  }  else if  (category === 'GP' && dno_status === '0') {
+          condition = ' AND msc.district = :district'; // Assuming dno also has district information
+          // Replace :district with actual district value or pass it as a parameter
+          const uniqueExecutingDepttIDCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.ExecutingDepttID)', 'count')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .andWhere('mse.gpCode = :gpCode', { gpCode })
+        .getRawOne();
+
+    const uniqueDepartmentNoCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.departmentNo)', 'count')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const uniqueFundingDepttIDCount = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.FundingDepttID)', 'count')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const scheme = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('COUNT(DISTINCT mse.scheme_sl)', 'count')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const totalPersonDaysGenerated = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.personDaysGenerated)', 'total')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const totalemp = await this.employment
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalWagePaid)', 'total')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const totalUnskilledWorkers = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalUnskilledWorkers)', 'total')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+        const totalAvgMandays = await this.demandMaster
+        .createQueryBuilder('dm') // Changed alias to 'dm' for clarity
+        .select('COUNT(DISTINCT dm.workerJobCardNo)', 'count')
+        .where('dm.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('dm.districtcode = :districtCode', { districtCode })
+        .andWhere('dm.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+
+    const totalCostProvided = await this.masterSchemeRepository
+        .createQueryBuilder('mse')
+        .select('SUM(mse.totalCostprovided)', 'total')
+        .where('mse.departmentNo = :departmentNo', { departmentNo })
+        .andWhere('mse.districtcode = :districtCode', { districtCode })
+        .andWhere('mse.blockcode = :blockcode', { blockcode })
+        .getRawOne();
+
+    const avgCostProvidedPerWorker = totalCostProvided.total / totalAvgMandays.count;
+    const totalwage = totalemp.total;
+
+    const employmentDataForLast7Days = await this.getEmploymentDataForLast7Days();
+
+      
+      return {
+        errorCode: 0,
+        result: {
+            ExecutingDepttIDCount: uniqueExecutingDepttIDCount.count || 0,
+            DepartmentNoCount: uniqueDepartmentNoCount.count || 0,
+            FundingDepttIDCount: uniqueFundingDepttIDCount.count || 0,
+            totalPersonDaysGenerated: totalPersonDaysGenerated.total || 0,
+            totalUnskilledWorkers: totalUnskilledWorkers.total || 0,
+            avgCostProvidedPerWorker: avgCostProvidedPerWorker || 0,
+            totalscheme: scheme.count || 0,
+            totalwage: totalwage || 0,
+            charts: employmentDataForLast7Days,
+        },
+    };
+  }
+              else {
+                      return { errorCode: 1, message: 'Invalid category provided' };
+                    }
         
                
                       

@@ -9,6 +9,7 @@ import { MasterWorkerRequirement, MasterWorkerRequirement_allotment, } from 'src
 import { In, Not, Repository } from 'typeorm';
 import { CreateWorkAllocationDto, WorkAllocationDto } from './dto/allocation.dto';
 import { EmploymentDto } from '../employment/dto/employment.dto';
+import { master_users } from 'src/entity/user.entity';
 
 @Injectable()
 export class AllocationService {
@@ -19,6 +20,8 @@ export class AllocationService {
     @InjectRepository(MasterWorkerDemand_allotmenthistroy) private  Demandallotmenthistroy:Repository<MasterWorkerDemand_allotmenthistroy>,
     @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
     @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
+    @InjectRepository(master_users) private userRepository: Repository<master_users>,
+
     @InjectRepository(master_subdivision) private subdivision: Repository<master_subdivision>,
     @InjectRepository(master_ps) private masterps: Repository<master_ps>,
     @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
@@ -73,6 +76,7 @@ private async generateWorkAllocationID(departmentName: number){
       currentYear: workAllocationDto.currentYear,
       finYear: workAllocationDto.finYear,
       userIndex: workAllocationDto.userIndex,
+      requzitionuserIndex:workAllocationDto.requzitionuserIndex,
       empStatus:"0"
     });
   });
@@ -468,11 +472,30 @@ async getallocationList(userIndex: number) {
 
 
 async getallocationListforemp(userIndex: number) {
-  try {
-    const allocations = await this.workallocation.find({
-      where: { userIndex },
-      order: { workallocationsl: 'DESC' }
-    });
+    try {
+      // Fetch the user details for the given userIndex
+      const user = await this.userRepository.findOne({ where: { userIndex } });
+  
+      // Ensure user exists before attempting to access its properties
+      if (!user) {
+        return {
+          errorCode: 1,
+          message: 'User not found',
+        };
+      }
+  
+      // Fetch the allocations for the given userIndex and user's location details
+      
+        const allocations1 = this.workallocation.createQueryBuilder('workallocation')
+       // .where('workallocation.districtcode = :districtcode', { districtcode: user.districtcode })
+        .orWhere('workallocation.userIndex = :userIndex', { userIndex: user.userIndex });
+  
+    
+        allocations1.orderBy('workallocation.workallocationsl', 'DESC');
+  
+      // Execute the query
+      const allocations = await allocations1.getMany();
+     // requzitionuserIndex
 
     if (!allocations || allocations.length === 0) {
       return {

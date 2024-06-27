@@ -103,6 +103,10 @@ export class WorkAllocationDto {
   userIndex: number;
 
 
+  @ApiProperty({ example: 1 })
+  requzitionuserIndex:number;
+
+
 }
 
 export class CreateWorkAllocationDto {
@@ -130,7 +134,8 @@ export class CreateWorkAllocationDto {
       currentMonth: 5,
       currentYear: 2024,
       finYear: '2023-2024',
-      userIndex: 1
+      userIndex: 1,
+      requzitionuserIndex:1,
     }],
     required: true
   })

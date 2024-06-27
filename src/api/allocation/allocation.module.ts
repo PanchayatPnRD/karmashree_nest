@@ -8,6 +8,7 @@ import { Contractor_master } from 'src/entity/contractor.entity';
 import { WorkAllocation } from 'src/entity/workallocation.entity';
 import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/entity/workrequigition.entity';
+import { master_users } from 'src/entity/user.entity';
 
 @Module({  imports: [
 
@@ -18,7 +19,7 @@ import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/
         MasterScheme,MasterSchemeExpenduture,master_urban,
         WorkAllocation,DemandMaster,
         MasterWorkerDemand_allotment,MasterWorkerRequirement,
-        MasterWorkerRequirement_allotment,MasterWorkerDemand_allotmenthistroy]),
+        MasterWorkerRequirement_allotment,MasterWorkerDemand_allotmenthistroy,master_users]),
    
   ],
 

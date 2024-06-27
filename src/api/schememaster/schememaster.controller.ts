@@ -77,8 +77,25 @@ export class SchememasterController {
  
 
     @Get('dashboard')
-    async getCounts() {
-      return this.masterSchemeService.getCounts();
+    @ApiQuery({ name: 'dno_status', required: false, type: String }) 
+    @ApiQuery({ name: 'departmentNo', required: false, type: Number }) 
+    @ApiQuery({ name: 'districtCode', required: false, type: Number }) 
+    async getCounts(
+      @Query('category') category: string,
+      @Query('dno_status') dno_status: string,
+@Query('departmentNo') departmentNo: number,
+      @Query('districtCode') districtCode: number,
+      @Query('blockcode')blockcode:number,
+      @Query('gpCode')gpCode:number
+
+      
+    ) {
+      try {
+        const result = await this.masterSchemeService.getCounts(category, dno_status, departmentNo, districtCode,blockcode,gpCode);
+        return result;
+      } catch (error) {
+        return { errorCode: 1, message: 'Failed to fetch counts', error: error.message };
+      }
     }
   
   @Get('getactionplanreport')
