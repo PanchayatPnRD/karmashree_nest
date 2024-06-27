@@ -806,6 +806,8 @@ async listByCategory(category?: string): Promise<any> {
         'category',
         'caption',
         'YoutubeLink',
+        'orderno',
+        'orderDate',
         'UploadFileLink',
         'status',
     

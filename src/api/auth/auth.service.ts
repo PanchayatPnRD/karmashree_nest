@@ -42,8 +42,8 @@ export class AuthService {
       }
 
       if (userDetails) {
-        console.log('Data:', data);
-        console.log('User Details:', userDetails);
+       // console.log('Data:', data);
+       // console.log('User Details:', userDetails);
 
         const isMatch = await bcrypt.compare(
           data.password,
@@ -75,7 +75,7 @@ export class AuthService {
         };
       }
     } catch (error) {
-      console.error(error);
+     // console.error(error);
       return {
         errorCode: 1,
         message: 'Something went wrong',
@@ -107,67 +107,67 @@ export class AuthService {
         },
       );
 
-      // const response2 = await axios.post(
-      //   'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
-      //   {
-      //     feedid: 392809,
-      //     username: 9831519878,
-      //     password: 'Sub1kar#',
-      //     mobile: '8001073023',
-      //     messages: message,
-      //   },
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   },
-      // );
+      const response2 = await axios.post(
+        'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
+        {
+          feedid: 392809,
+          username: 9831519878,
+          password: 'Sub1kar#',
+          mobile: '8001073023',
+          messages: message,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-      // const response3 = await axios.post(
-      //   'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
-      //   {
-      //     feedid: 392809,
-      //     username: 9831519878,
-      //     password: 'Sub1kar#',
-      //     mobile: '8335050997',
-      //     messages: message,
-      //   },
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   },
-      // );
+      const response3 = await axios.post(
+        'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
+        {
+          feedid: 392809,
+          username: 9831519878,
+          password: 'Sub1kar#',
+          mobile: '8335050997',
+          messages: message,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-      // const response4 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
-      //   "feedid": 392809,
-      //   "username": 9831519878,
-      //   "password": "Sub1kar#",
-      //   "mobile": "8240341461",
-      //   "messages": message
-      // }, {
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   }
-      // });
-      // const response5 = await axios.post(
-      //   'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
-      //   {
-      //     feedid: 392809,
-      //     username: 9831519878,
-      //     password: 'Sub1kar#',
-      //     mobile: '8642945662',
-      //     messages: message,
-      //   },
-      //   {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //   },
-      // );
+      const response4 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+        "feedid": 392809,
+        "username": 9831519878,
+        "password": "Sub1kar#",
+        "mobile": "8240341461",
+        "messages": message
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const response5 = await axios.post(
+        'https://bulkpush.mytoday.com/BulkSms/JsonSingleApi',
+        {
+          feedid: 392809,
+          username: 9831519878,
+          password: 'Sub1kar#',
+          mobile: '8642945662',
+          messages: message,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-     // return [response1, response2, response5];
-      return [response1];
+     return [response1,response3, response2,response4, response5];
+     // return [response1];
     } catch (error) {
       throw new Error(error.response.data);
     }
@@ -191,8 +191,8 @@ export class AuthService {
 
   generateOTP() {
     // Generate a random 4-digit OTP
-    const otp = '6666';
-    // const otp = Math.floor(1000 + Math.random() * 9000).toString();
+   // const otp = '6666';
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
     return otp;
   }
   async verifyOTP(data: VerifyOtpdto): Promise<any> {
@@ -293,7 +293,7 @@ export class AuthService {
       }
 
       // Use the payload data here if needed
-      console.log(payload);
+    //  console.log(payload);
 
       return {
         errorCode: 0,
