@@ -289,7 +289,7 @@ export class AuthService {
 
       // Check if the token has expired
       if (this.isTokenExpired(payload.exp)) {
-        throw new Error('Token has expired');
+        throw new Error('Protocol has expired');
       }
 
       // Use the payload data here if needed

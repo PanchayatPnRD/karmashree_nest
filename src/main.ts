@@ -19,19 +19,27 @@ import { EmploymentModule } from './api/employment/employment.module';
 
 
 async function bootstrap() {
-  // const basePath = process.cwd(); // This points to the root directory of your project
-  // const httpsOptions = {
-  //   key: fs.readFileSync(path.join(basePath, 'keys', 'key.pem')),
-  //   cert: fs.readFileSync(path.join(basePath, 'keys', 'cert.pem')),
-  // };
-  
+
+ 
+  // Express middleware
   const app = await NestFactory.create(AppModule, {
-    // httpsOptions,
+    httpsOptions: {
+      key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'key.pem')),
+      cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
+    },
   });
 
+  const expressApp = app.getHttpAdapter().getInstance();
 
+  expressApp.use(express.urlencoded({ extended: true }));
+  expressApp.use(express.json());
+  expressApp.disable('x-powered-by');
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    // CORS HTTP methods
+    methods: ["GET", "POST","PUT"],
+  });
 
   app.use('/api/public', express.static(join(__dirname, '..', 'public')));
 
