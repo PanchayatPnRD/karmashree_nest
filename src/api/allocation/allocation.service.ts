@@ -487,8 +487,8 @@ async getallocationListforemp(userIndex: number) {
       // Fetch the allocations for the given userIndex and user's location details
       
         const allocations1 = this.workallocation.createQueryBuilder('workallocation')
-       // .where('workallocation.districtcode = :districtcode', { districtcode: user.districtcode })
-        .orWhere('workallocation.userIndex = :userIndex', { userIndex: user.userIndex });
+        .where('workallocation.requzitionuserIndex = :requzitionuserIndex', { requzitionuserIndex: userIndex})
+        .orWhere('workallocation.userIndex = :userIndex', { userIndex: userIndex });
   
     
         allocations1.orderBy('workallocation.workallocationsl', 'DESC');
@@ -503,6 +503,7 @@ async getallocationListforemp(userIndex: number) {
         message: 'Allocations not found for the provided user index'
       };
     }
+
 
     // Group allocations by workAllocationID
     const allocationGroups = allocations.reduce((groups, allocation) => {
@@ -539,6 +540,7 @@ async getallocationListforemp(userIndex: number) {
         const schemeDetails = await this.masterSchemeRepository.findOne({
           where: { scheme_sl: group.schemeId }
         });
+      //  console.log(group.schemeId)
         if (!schemeDetails) {
           throw new Error(`Scheme details not found for schemeId ${group.schemeId}`);
         }
@@ -633,8 +635,6 @@ async getallocationListforemp(userIndex: number) {
           totalCostprovided: schemeDetails.totalCostprovided,
           personDaysGeneratedprovided: schemeDetails.personDaysGeneratedprovided,
           totalLabourprovided: schemeDetails.totalLabourprovided,
-
-        
           ...requirementData
         });
       } catch (error) {
@@ -979,7 +979,7 @@ async getDepatmentbyid(departmentNo: number) {
 
     return { errorCode: 0, result: dept };
 
-   
+
   }
 
   async getschemeid(scheme_sl: number) {
@@ -998,44 +998,25 @@ async getDepatmentbyid(departmentNo: number) {
 
     async getschemeidforallocation(schemeId: string) {
       let dept; // Declare dept before the try block
-    
-    
+
           dept = await this.masterSchemeRepository.find({ where: { schemeId },  select: ["schemeName","scheme_sl","schemeId","personDaysGenerated","workorderNo","totalprojectCost","ExecutingDeptName","schemeSector"] });
-      
-    
-     
-    
         return { errorCode: 0, result: dept };
-    
-       
+
       }
-    
+
     async getsconid(cont_sl: number) {
       let dept; // Declare dept before the try block
-    
-    
           dept = await this.Contractor.findOne({ where: { cont_sl },  select: ["contractorName","cont_sl"] });
-      
-    
-     
-    
         return { errorCode: 0, result: dept };
-    
-       
       }
 
   async getmunibyid(urbanCode: number) {
       let dept; // Declare dept before the try block
-    
-   
+
           dept = await this.masterurban.findOne({ where: { urbanCode },  select: ["urbanName","urbanCode"] });
-      
-    
-     
-    
+
         return { errorCode: 0, result: dept };
-  
-       
+
       }
 
     
