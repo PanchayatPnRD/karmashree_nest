@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { SchememasterService } from './schememaster.service';
 import { MasterSchemeDTO } from './dto/scheme.dto';
 import { ApiExcludeEndpoint, ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UpdateMasterSchemeDTO } from './dto/updateschem.dto';
+import { ApiKeyGuard } from '../auth/api-key.guard';
 
 
 @ApiTags('schememaster')
@@ -113,7 +114,8 @@ export class SchememasterController {
     return await this.masterSchemeService.Summary_Report_on_Schemes();
   }
 
-  //@ApiHeader({ name: 'token', required: false })
+  @UseGuards(ApiKeyGuard)
+  @ApiHeader({ name: 'x-api-key' })
   @Get('home_dashboard')
   async getSummaryReportHome() {
     return await this.masterSchemeService.getSummaryReportHome();
