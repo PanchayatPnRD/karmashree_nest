@@ -23,10 +23,10 @@ async function bootstrap() {
  
   // Express middleware
   const app = await NestFactory.create(AppModule, {
-    httpsOptions: {
-      key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'key.pem')),
-      cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
-    },
+    // httpsOptions: {
+    //   key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'key.pem')),
+    //   cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
+    // },
   });
 
   const expressApp = app.getHttpAdapter().getInstance();
