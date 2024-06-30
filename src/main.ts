@@ -15,7 +15,7 @@ import { AllocationModule } from './api/allocation/allocation.module';
 import * as fs from 'fs';
 import * as path from 'path';
 import { EmploymentModule } from './api/employment/employment.module';
-
+import 'reflect-metadata';
 
 
 async function bootstrap() {
