@@ -293,7 +293,7 @@ async viewUserById(userIndex: number) {
         gpCode: user.gpCode,
         userType: user.userType,
         role_type: user.role_type,
-     
+        userName: user.userName,
  
         officeName_hd: user.officeName_hd,
         officeName_dept: user.officeName_dept,
