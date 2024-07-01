@@ -16,7 +16,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EmploymentModule } from './api/employment/employment.module';
 import 'reflect-metadata';
-
+import { ForbiddenException } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
 
@@ -28,6 +29,7 @@ async function bootstrap() {
     //   cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
     // },
   });
+  const logger = new Logger('CORS');
 
   const expressApp = app.getHttpAdapter().getInstance();
 
@@ -36,9 +38,12 @@ async function bootstrap() {
   expressApp.disable('x-powered-by');
 
   app.enableCors({
-    origin: true,
+    origin: ['http://localhost:5173'],
+    // origin:true,
     // CORS HTTP methods
-    methods: ["GET", "POST","PUT"],
+    methods: ['GET', 'POST', 'PUT'],
+    allowedHeaders: ['Content-Type', 'Authorization', "x-api-key","token"],
+    credentials: true,
   });
 
   app.use('/api/public', express.static(join(__dirname, '..', 'public')));
