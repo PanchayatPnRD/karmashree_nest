@@ -15,6 +15,9 @@ export class MasterScheme {
     @Column({type: 'int'} )
     departmentNo: number;
 
+    @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true  })
+    deptWing: string;
+
     @Column({ type: 'int', nullable: true  })
     districtcode: number;
 
@@ -179,6 +182,10 @@ export class MasterSchemeExpenduture {
 
     @Column({type: 'int', nullable: true} )
     departmentNo: number;
+
+
+    @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true  })
+    deptWing: string;
 
     @Column({ type: 'int', nullable: true })
     districtcode: number;

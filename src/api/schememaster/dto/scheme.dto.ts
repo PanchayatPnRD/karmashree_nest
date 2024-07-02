@@ -16,6 +16,13 @@ export class MasterSchemeDTO {
     @IsNumber()
     departmentNo: number;
 
+
+
+    @ApiProperty({ example: '1' })
+    @IsNotEmpty()
+    @IsString()
+    deptWing:string
+
     @ApiProperty({ example: 'district code' })
     @IsNotEmpty()
    

@@ -77,6 +77,10 @@ export class SchememasterService {
         masterSchemeExpenditure.totalprojectCost = createMasterSchemeDto.totalprojectCost;
         masterSchemeExpenditure.totalWageCost = createMasterSchemeDto.totalwagescostinvoled;
         masterSchemeExpenditure.finYear = createMasterSchemeDto.finYear;
+        masterSchemeExpenditure.deptWing = createMasterSchemeDto.deptWing;
+
+
+        
        
         
         
@@ -518,7 +522,10 @@ export class SchememasterService {
               existingMasterScheme.workorderNo = updateMasterSchemeDto.workorderNo;
               existingMasterScheme.workOderDate = updateMasterSchemeDto.workOderDate;
               existingMasterScheme.ControctorID = updateMasterSchemeDto.ControctorID;
+              existingMasterScheme.deptWing = updateMasterSchemeDto.deptWing;
            
+
+              
   
   
           
@@ -561,8 +568,11 @@ export class SchememasterService {
               existingMasterSchemeExpenditure.totalUnskilledWorkers = updateMasterSchemeDto.totalUnskilledWorkers;
               existingMasterSchemeExpenditure.totalSemiSkilledWorkers = updateMasterSchemeDto.totalSemiSkilledWorkers;
               existingMasterSchemeExpenditure.totalSkilledWorkers = updateMasterSchemeDto.totalSkilledWorkers;
+              existingMasterSchemeExpenditure.deptWing = updateMasterSchemeDto.deptWing;
             
           
+
+              
               // Save the updated MasterSchemeExpenditure
               await this.MasterSchemeExpendutureRepository.save(existingMasterSchemeExpenditure);
           
