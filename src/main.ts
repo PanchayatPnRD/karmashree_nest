@@ -38,7 +38,7 @@ async function bootstrap() {
   expressApp.disable('x-powered-by');
 
   app.enableCors({
-    origin: ['http://localhost:5173'],
+    origin: true,
     // origin:true,
     // CORS HTTP methods
     methods: ['GET', 'POST', 'PUT'],
