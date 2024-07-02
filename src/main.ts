@@ -42,9 +42,12 @@ async function bootstrap() {
     // origin:true,
     // CORS HTTP methods
     methods: ['GET', 'POST', 'PUT'],
-    allowedHeaders: ['Content-Type', 'Authorization', "x-api-key","token"],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'token'],
+    exposedHeaders: ['Authorization'],
     credentials: true,
   });
+
+ 
 
   app.use('/api/public', express.static(join(__dirname, '..', 'public')));
 
