@@ -18,55 +18,71 @@ import { EmploymentModule } from './api/employment/employment.module';
 import 'reflect-metadata';
 import { ForbiddenException } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
+const cluster = require('cluster');
+import { cpus } from 'os';
+import * as basicAuth from 'express-basic-auth';
 
-async function bootstrap() {
+if (cluster.isPrimary ) {
+  console.log(`Primary ${process.pid} is running`);
+
+  // Fork workers.
+  cpus().forEach(() => cluster.fork());
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+  });
+} else {
+  async function bootstrap() {
 
  
-  // Express middleware
-  const app = await NestFactory.create(AppModule, {
-    // httpsOptions: {
-    //   key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'key.pem')),
-    //   cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
-    // },
-  });
-  const logger = new Logger('CORS');
-
-  const expressApp = app.getHttpAdapter().getInstance();
-
-  expressApp.use(express.urlencoded({ extended: true }));
-  expressApp.use(express.json());
-  expressApp.disable('x-powered-by');
-
-  app.enableCors({
-    origin: true,
-    // origin:true,
-    // CORS HTTP methods
-    methods: ['GET', 'POST', 'PUT'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'token'],
-    exposedHeaders: ['Authorization'],
-    credentials: true,
-  });
-
- 
-
-  app.use('/api/public', express.static(join(__dirname, '..', 'public')));
-
-  app.use('/api/uploads', express.static(join(__dirname, '..', 'uploads')));
-  const config = new DocumentBuilder()
-    .setTitle('Karmashree')
-    .setDescription('Karmashree API description')
-    .setVersion('1.0')
-    .build();
+    // Express middleware
+    const app = await NestFactory.create(AppModule, {
+      // httpsOptions: {
+      //   key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'key.pem')),
+      //   cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
+      // },
+    });
+    const logger = new Logger('CORS');
   
+    const expressApp = app.getHttpAdapter().getInstance();
+  
+    expressApp.use(express.urlencoded({ extended: true }));
+    expressApp.use(express.json());
+    expressApp.disable('x-powered-by');
+  
+    app.enableCors({
+      origin: true,
+      // origin:true,
+      // CORS HTTP methods
+      methods: ['GET', 'POST', 'PUT'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'token'],
+      exposedHeaders: ['Authorization'],
+      credentials: true,
+    });
+  
+    app.use(['/api'], basicAuth({
+      users: { 'admin': 'bolbona' },
+      challenge: true,
+    }));
+  
+    app.use('/api/public', express.static(join(__dirname, '..', 'public')));
+  
+    app.use('/api/uploads', express.static(join(__dirname, '..', 'uploads')));
+    const config = new DocumentBuilder()
+      .setTitle('Karmashree')
+      .setDescription('Karmashree API description')
+      .addBearerAuth()
+      .setVersion('1.0')
+      .build();
     
-  const document = SwaggerModule.createDocument(app, config, {
-    include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule,WorkerrequisitionModule,DemandModule,AllocationModule,EmploymentModule],
-  });
-  
-  SwaggerModule.setup('api', app, document);
-  
-  await app.listen(8094);
+      
+    const document = SwaggerModule.createDocument(app, config, {
+      include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule,WorkerrequisitionModule,DemandModule,AllocationModule,EmploymentModule],
+    });
+    
+    SwaggerModule.setup('api', app, document);
+    
+    await app.listen(8094);
+  }
+  bootstrap();
 }
-
-
-bootstrap();
