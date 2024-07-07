@@ -308,10 +308,9 @@ async viewUserById(userIndex: number) {
         tech_email: user.tech_email,
         designationID: user.designationID,
         UserAddress: user.UserAddress,
-     
+
         currentStatus: user.currentStatus,
-      
-       
+
         is_passwordreset: user.is_passwordreset,
         districtName: districtName,
         subDivisionName: subDivisionName,
@@ -426,10 +425,12 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 }
 
       async getUserDetails(created_by: number) {
+
         try {
             const queryBuilder = this.userRepository.createQueryBuilder('user');
     
             // Apply createdBy filtering if provided
+
             if (created_by !== undefined) {
               queryBuilder.andWhere('user.created_by = :created_by', { created_by });
           }
@@ -479,8 +480,658 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             };
         }
     }
-    
+
+    async getuserlistbycatagory(category: string,
+       dno_status?: string,
+        departmentNo?: number, 
+        districtCode?: number,
+         blockcode?: number,
+         subDivision?:number,
+          gpCode?: number,
+           deptWing?: string,
+           role?:number,
+           userIndex?:number) {
+      try {
+
+        if (category === 'HQ') {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        // Use the andWhere method properly for dno_status
+        queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+        queryBuilder .orderBy('user.userIndex', 'DESC');
+        // Get users
+        const users = await queryBuilder.getMany();
+  
+          // Fetch districtName for each user
+          const userDetails = await Promise.all(users.map(async (user) => {
+            const districtDetails = await this.getAllDistricts(user.districtcode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+            const subDetails = await this.getAllsub(user.subDivision);
+            const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+            const blockDetails = await this.getAllblock(user.blockCode);
+            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+            const gpDetails = await this.getAllgp(user.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+            const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+            const designationDetails = await this.getDesignationbyid(user.designationID);
+            const designationName = designationDetails.result ? designationDetails.result.designation : '';
+            return {
+                ...user,
+                districtName: districtName,
+                subDivisionName: subDivisionName,
+                blockname: blockname,
+                gpName: gpName,
+                deptName:deptName,
+                designationName:designationName
+
+            };
+          }));
+
+        } else if (category === 'HD' && dno_status === '0'&& role===1) {
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        // Use the andWhere method properly for dno_status
+        queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+        queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+        // queryBuilder.andWhere('user.role = :   role', { role });
+
+
      
+        queryBuilder .orderBy('user.userIndex', 'DESC');
+        // Get users
+        const users = await queryBuilder.getMany();
+  
+          // Fetch districtName for each user
+          const userDetails = await Promise.all(users.map(async (user) => {
+            const districtDetails = await this.getAllDistricts(user.districtcode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+            const subDetails = await this.getAllsub(user.subDivision);
+            const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+            const blockDetails = await this.getAllblock(user.blockCode);
+            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+            const gpDetails = await this.getAllgp(user.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+            const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+            const designationDetails = await this.getDesignationbyid(user.designationID);
+            const designationName = designationDetails.result ? designationDetails.result.designation : '';
+            return {
+                ...user,
+                districtName: districtName,
+                subDivisionName: subDivisionName,
+                blockname: blockname,
+                gpName: gpName,
+                deptName:deptName,
+                designationName:designationName
+
+            };
+          }));
+
+              } else if (category === 'HD' && dno_status === '0'&& role===2) {
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        // Use the andWhere method properly for dno_status
+        queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+        queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+        queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+
+
+     
+        queryBuilder .orderBy('user.userIndex', 'DESC');
+        // Get users
+        const users = await queryBuilder.getMany();
+  
+          // Fetch districtName for each user
+          const userDetails = await Promise.all(users.map(async (user) => {
+            const districtDetails = await this.getAllDistricts(user.districtcode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+            const subDetails = await this.getAllsub(user.subDivision);
+            const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+            const blockDetails = await this.getAllblock(user.blockCode);
+            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+            const gpDetails = await this.getAllgp(user.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+            const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+            const designationDetails = await this.getDesignationbyid(user.designationID);
+            const designationName = designationDetails.result ? designationDetails.result.designation : '';
+            return {
+                ...user,
+                districtName: districtName,
+                subDivisionName: subDivisionName,
+                blockname: blockname,
+                gpName: gpName,
+                deptName:deptName,
+                designationName:designationName
+
+            };
+          }));
+
+        } else if (category === 'HD' && dno_status === '0'&& role===3) {
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        // Use the andWhere method properly for dno_status
+        queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+        queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+        queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+
+
+     
+        queryBuilder .orderBy('user.userIndex', 'DESC');
+        // Get users
+        const users = await queryBuilder.getMany();
+  
+          // Fetch districtName for each user
+          const userDetails = await Promise.all(users.map(async (user) => {
+            const districtDetails = await this.getAllDistricts(user.districtcode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+            const subDetails = await this.getAllsub(user.subDivision);
+            const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+            const blockDetails = await this.getAllblock(user.blockCode);
+            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+            const gpDetails = await this.getAllgp(user.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+            const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+            const designationDetails = await this.getDesignationbyid(user.designationID);
+            const designationName = designationDetails.result ? designationDetails.result.designation : '';
+            return {
+                ...user,
+                districtName: districtName,
+                subDivisionName: subDivisionName,
+                blockname: blockname,
+                gpName: gpName,
+                deptName:deptName,
+                designationName:designationName
+
+            };
+          }));
+         } else if (category === 'DIST' && dno_status === '0'&& role===1) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+        } else if (category === 'DIST' && dno_status === '0'&& role===3) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+        }
+        
+        else if (category === 'SUB' && dno_status === '0'&& role===1) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          queryBuilder.andWhere('user.subDivision = :subDivision', { subDivision });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+        } else if (category === 'SUB' && dno_status === '0'&& role===2) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          // queryBuilder.andWhere('user.subDivision = :subDivision', { subDivision });
+
+          queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+        } else if (category === 'SUB' && dno_status === '0'&& role===3) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          // queryBuilder.andWhere('user.subDivision = :subDivision', { subDivision });
+
+          queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+        } else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          queryBuilder.andWhere('user.blockcode = :blockcode', { blockcode });
+
+         // queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+
+        }
+        else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          // queryBuilder.andWhere('user.blockcode = :blockcode', { blockcode });
+
+         queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+
+        }else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+          queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          // queryBuilder.andWhere('user.blockcode = :blockcode', { blockcode });
+
+         queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+
+        } else if (category === 'DIST' && dno_status === '1') {
+
+ const queryBuilder = this.userRepository.createQueryBuilder('user');
+    
+        
+          // Use the andWhere method properly for dno_status
+          queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '1' });
+ 
+          queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+          // queryBuilder.andWhere('user.blockcode = :blockcode', { blockcode });
+
+        //  queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+          queryBuilder .orderBy('user.userIndex', 'DESC');
+          // Get users
+          const users = await queryBuilder.getMany();
+    
+            // Fetch districtName for each user
+            const userDetails = await Promise.all(users.map(async (user) => {
+              const districtDetails = await this.getAllDistricts(user.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+              const subDetails = await this.getAllsub(user.subDivision);
+              const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+              const blockDetails = await this.getAllblock(user.blockCode);
+              const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+              const gpDetails = await this.getAllgp(user.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+              const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+              const designationDetails = await this.getDesignationbyid(user.designationID);
+              const designationName = designationDetails.result ? designationDetails.result.designation : '';
+              return {
+                  ...user,
+                  districtName: districtName,
+                  subDivisionName: subDivisionName,
+                  blockname: blockname,
+                  gpName: gpName,
+                  deptName:deptName,
+                  designationName:designationName
+  
+              };
+            }));
+
+
+        
+
+
+        } else if (category === 'BLOCK' && dno_status === '1') {
+        
+
+            const queryBuilder = this.userRepository.createQueryBuilder('user');
+               
+                   
+                     // Use the andWhere method properly for dno_status
+                     queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '1' });
+            
+                     queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+                     queryBuilder.andWhere('user.blockcode = :blockcode', { blockcode });
+           
+                   //  queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+                     queryBuilder .orderBy('user.userIndex', 'DESC');
+                     // Get users
+                     const users = await queryBuilder.getMany();
+               
+                       // Fetch districtName for each user
+                       const userDetails = await Promise.all(users.map(async (user) => {
+                         const districtDetails = await this.getAllDistricts(user.districtcode);
+                         const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+                         const subDetails = await this.getAllsub(user.subDivision);
+                         const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+                         const blockDetails = await this.getAllblock(user.blockCode);
+                         const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+                         const gpDetails = await this.getAllgp(user.gpCode);
+                         const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+                         const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+                         const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+                         const designationDetails = await this.getDesignationbyid(user.designationID);
+                         const designationName = designationDetails.result ? designationDetails.result.designation : '';
+                         return {
+                             ...user,
+                             districtName: districtName,
+                             subDivisionName: subDivisionName,
+                             blockname: blockname,
+                             gpName: gpName,
+                             deptName:deptName,
+                             designationName:designationName
+
+                         };
+                       }));
+
+
+        } else if (category === 'GP' && dno_status === '1') {
+        
+
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+                   // Use the andWhere method properly for dno_status
+                   queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '1' });
+
+                   queryBuilder.andWhere('user.districtCode = :districtCode', { districtCode });
+                   queryBuilder.andWhere('user.blockcode = :blockcode', { blockcode });
+                
+                  queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+                   queryBuilder .orderBy('user.userIndex', 'DESC');
+                   // Get users
+                   const users = await queryBuilder.getMany();
+             
+                     // Fetch districtName for each user
+                     const userDetails = await Promise.all(users.map(async (user) => {
+                       const districtDetails = await this.getAllDistricts(user.districtcode);
+                       const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+                       const subDetails = await this.getAllsub(user.subDivision);
+                       const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+                       const blockDetails = await this.getAllblock(user.blockCode);
+                       const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+                       const gpDetails = await this.getAllgp(user.gpCode);
+                       const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+                       const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+                       const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+                       const designationDetails = await this.getDesignationbyid(user.designationID);
+                       const designationName = designationDetails.result ? designationDetails.result.designation : '';
+                       return {
+                           ...user,
+                           districtName: districtName,
+                           subDivisionName: subDivisionName,
+                           blockname: blockname,
+                           gpName: gpName,
+                           deptName:deptName,
+                           designationName:designationName
+           
+                       };
+                     }));
+
+
+      }else if (category === 'GP' && dno_status === '0') {
+
+
+        } else {
+          return { errorCode: 1, message: 'Invalid category provided' };
+        }
+
+        return { errorCode: 0, message: 'Success' };
+      } catch (error) {
+        return { errorCode: 1, message: 'Something went wrong', error: error.message };
+      }
+    }
+    
+
+
+
     async getDnolist(created_by: number) {
       try {
           const queryBuilder = this.userRepository.createQueryBuilder('user');

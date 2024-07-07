@@ -60,10 +60,7 @@ if (cluster.isPrimary ) {
       credentials: true,
     });
   
-    app.use(['/api'], basicAuth({
-      users: { 'admin': 'bolbona' },
-      challenge: true,
-    }));
+  
   
     app.use('/api/public', express.static(join(__dirname, '..', 'public')));
   
@@ -71,7 +68,7 @@ if (cluster.isPrimary ) {
     const config = new DocumentBuilder()
       .setTitle('Karmashree')
       .setDescription('Karmashree API description')
-      .addBearerAuth()
+     // .addApiKey({type: 'apiKey', name: 'Authorisation', in: 'header'})
       .setVersion('1.0')
       .build();
     
@@ -80,7 +77,7 @@ if (cluster.isPrimary ) {
       include: [AuthModule,MastertableModule,UserModule,ActionplanModule,ContractorModule,SchememasterModule,WorkerrequisitionModule,DemandModule,AllocationModule,EmploymentModule],
     });
     
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('api-doc', app, document);
     
     await app.listen(8094);
   }

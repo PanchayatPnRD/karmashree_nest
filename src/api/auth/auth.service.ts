@@ -19,6 +19,7 @@ import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'NODEAPI';
 @Injectable()
+
 export class AuthService {
   constructor(
     @InjectRepository(master_users) private user: Repository<master_users>,

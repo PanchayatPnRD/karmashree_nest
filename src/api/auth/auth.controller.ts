@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags,ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
 import { Headers } from '@nestjs/common';
@@ -15,12 +15,12 @@ import { ApiKeyGuard } from './api-key.guard';
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
     @UseGuards(ApiKeyGuard)
+ 
     @ApiHeader({ name: 'x-api-key' })
     @Post('User_login')
     async login(@Body() userLoginDto: userLoginDto) {
       return await this.authService.login(userLoginDto);
     }
-   
     @Get('getMe')
     @ApiHeader({
       name: 'token',
@@ -36,6 +36,7 @@ export class AuthController {
     async verifyOTP(@Body() data: VerifyOtpdto) {
     
       return    await this.authService.verifyOTP(data);
+      
       
         }
         @UseGuards(ApiKeyGuard)
