@@ -277,7 +277,81 @@ export class SchememasterService {
               throw new Error('Failed to fetch schemes from the database.');
           }
       }
+
+      async getDnoUserListByCategory(
+        category: string,
+        dno_status?: string,
+        departmentNo?: number,
+        districtCode?: number,
+        blockcode?: number,
+        subDivision?: number,
+        gpCode?: number,
+        deptWing?: string,
+        role?: number,
+        userIndex?: number,
+      ) {
+        try {
+          if (category === 'HQ') {
+            const schemes = await this.masterSchemeRepository.createQueryBuilder('scheme')
+              .where('scheme.userIndex = :userIndex', { userIndex })
+              .orderBy('scheme.SubmitTime', 'DESC')
+              .addOrderBy('scheme.scheme_sl', 'DESC')
+              .getMany();
       
+            if (!schemes || schemes.length === 0) {
+              return {
+                errorCode: 1,
+                message: 'Schemes not found for the provided user index',
+              };
+            }
+      
+            const schemesWithDetails = [];
+      
+            await Promise.all(schemes.map(async (scheme) => {
+              const districtDetails = await this.getAllDistricts(scheme.districtcode);
+              const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+      
+              const blockDetails = await this.getAllblock(scheme.blockcode);
+              const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+      
+              const gpDetails = await this.getAllgp(scheme.gpCode);
+              const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+      
+              const deptDetails = await this.getDepatmentbyid(scheme.departmentNo);
+              const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+      
+              const muniDetails = await this.getmunibyid(scheme.municipalityCode);
+              const muniName = muniDetails.result ? muniDetails.result.urbanName : '';
+      
+              schemesWithDetails.push({
+                ...scheme,
+                districtName,
+                blockName,
+                gpName,
+                deptName,
+                muniName,
+              });
+            }));
+      
+            return {
+              errorCode: 0,
+              message: 'Success',
+              data: schemesWithDetails,
+            };
+          }else if (category === 'BLOCK' && dno_status === '1') {
+
+          }
+          
+          else {
+            return { errorCode: 1, message: 'Invalid category provided' };
+          }
+        } catch (error) {
+          return { errorCode: 1, message: 'Something went wrong', error: error.message };
+        }
+      }
+      
+
+ 
 
     async getAllDistricts(districtCode: number) {
         try {
@@ -324,6 +398,8 @@ export class SchememasterService {
           };
       }
     }
+
+
     async getAllblock(blockCode: number) {
     try {
         let districtDetails;
@@ -346,7 +422,7 @@ export class SchememasterService {
         };
     }
     }
-    
+
     async getAllgp(gpCode: number) {
     try {
       let districtDetails;
@@ -362,7 +438,6 @@ export class SchememasterService {
       }
 
 
-    
       return districtDetails ? { errorCode: 0, result: districtDetails } : { errorCode: 1, message: 'District not found' };
     } catch (error) {
       return {
@@ -372,7 +447,7 @@ export class SchememasterService {
     }
     }
 
-    
+
   async getDepatmentbyid(departmentNo: number) {
     let dept; // Declare dept before the try block
   

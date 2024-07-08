@@ -10,6 +10,7 @@ import { ApiKeyGuard } from '../auth/api-key.guard';
 @ApiHeader({
     name: 'token',
   })
+  
 @Controller('api/schememaster')
 export class SchememasterController {
     constructor(private readonly masterSchemeService: SchememasterService) {}
@@ -45,6 +46,9 @@ export class SchememasterController {
         }
     }
   
+
+
+
     @Get('schemelist/:userIndex')
     async getMasterSchemeExpendituresByUserIndex(@Param('userIndex') userIndex: number) {
         try {
@@ -55,6 +59,8 @@ export class SchememasterController {
         }
     }
 
+
+    
     @Get('getAllScheme/:userIndex')
     async getAllScheme(@Param('userIndex') userIndex: number){
         try{

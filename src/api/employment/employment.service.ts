@@ -43,7 +43,7 @@ export class EmploymentService {
     }
     async create(createDto: EmploymentDto) {
       const employmentID = this.generateEMPID22();
-      
+  
       const newWorkAllocations = createDto.CreateEmploymentDtos.map(CreateEmploymentDto => {
           return this.employment.create({
               employmentID: employmentID,
@@ -69,17 +69,16 @@ export class EmploymentService {
               workAllocationToDate: CreateEmploymentDto.workAllocationToDate,
               noOfDaysWorkAlloted: CreateEmploymentDto.noOfDaysWorkAlloted,
               totalWagePaid: CreateEmploymentDto.totalWagePaid,
-              empProvidedfrom:CreateEmploymentDto.empProvidedfrom,
+              empProvidedfrom: CreateEmploymentDto.empProvidedfrom,
               empProvidedto: CreateEmploymentDto.empProvidedto,
               dateOfPayment: CreateEmploymentDto.dateOfPayment,
-              noOfDaysWorProvided:CreateEmploymentDto.noOfDaysWorProvided,
-              
+              noOfDaysWorProvided: CreateEmploymentDto.noOfDaysWorProvided,
               currentMonth: CreateEmploymentDto.currentMonth,
               currentYear: CreateEmploymentDto.currentYear,
               finYear: CreateEmploymentDto.finYear,
               attandance: CreateEmploymentDto.attandance,
               userIndex: CreateEmploymentDto.userIndex,
-              directempstatus:"N"
+              directempstatus: "N"
           });
       });
   
@@ -91,27 +90,54 @@ export class EmploymentService {
       const schemeIds = createDto.CreateEmploymentDtos.map(dto => dto.schemeId);
   
       const totalWagePaid = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalWagePaid, 0);
-
-
-     // const totalUnskilledWorkers = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalUnskilledWorkers, 0);
-      //const totalLabourProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalLabourprovided, 0);
       const personDaysGeneratedProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.noOfDaysWorkAlloted, 0);
-      const totalLabourProvided = createDto.CreateEmploymentDtos.map(_ => 1).reduce((sum, count) => sum + count, 0);
-
+      const totalLabourProvided = createDto.CreateEmploymentDtos.length;
+  
       // Fetch existing values from masterSchemeRepository
       const schemes = await this.masterSchemeRepository.findByIds(schemeIds);
   
       // Calculate new values
       const updates = schemes.map(scheme => ({
-        scheme_sl:scheme.scheme_sl,
+          scheme_sl: scheme.scheme_sl,
           schemeId: scheme.schemeId,
-          //totalUnskilledWorkers: scheme.totalUnskilledWorkers + totalUnskilledWorkers,
+          schemeArea: scheme.schemeArea,
+          
+          departmentNo: scheme.departmentNo,
+          districtcode: scheme.districtcode,
+          municipalityCode: scheme.municipalityCode,
+          blockcode: scheme.blockcode,
+          gpCode: scheme.gpCode,
+          sansadID: scheme.sansadID,
+          village: scheme.village,
+          schemeSector: scheme.schemeSector,
+          schemeSubsector: scheme.schemeSubsector,
+          schemeName: scheme.schemeName,
+          FundingDepttID: scheme.FundingDepttID,
+          FundingDeptname: scheme.FundingDeptname,
+          ExecutingDepttID: scheme.ExecutingDepttID,
+          ExecutingDeptName: scheme.ExecutingDeptName,
+          ImplementingAgencyID: scheme.ImplementingAgencyID,
+          ImplementingAgencyName: scheme.ImplementingAgencyName,
+          StatusOfWork: scheme.StatusOfWork,
+          tentativeStartDate: scheme.tentativeStartDate,
+          ActualtartDate: scheme.ActualtartDate,
+          ExpectedCompletionDate: scheme.ExpectedCompletionDate,
+          totalprojectCost: scheme.totalprojectCost,
+          totalWageCost: scheme.totalwagescostinvoled,
+          finYear: scheme.finYear,
+          deptWing: scheme.deptWing,
+          totalLabour: scheme.totalLabour,
+          personDaysGenerated: scheme.personDaysGenerated,
+          totalUnskilledWorkers: scheme.totalUnskilledWorkers,
+          totalSemiSkilledWorkers: scheme.totalSemiSkilledWorkers,
+          totalSkilledWorkers: scheme.totalSkilledWorkers,
+          userIndex: scheme.userIndex,
           totalCostprovided: scheme.totalCostprovided + totalWagePaid,
           totalLabourprovided: scheme.totalLabourprovided + totalLabourProvided,
           personDaysGeneratedprovided: scheme.personDaysGeneratedprovided + personDaysGeneratedProvided,
       }));
   
-      // Update WorkAllocation, Demandallotmenthistroy and masterSchemeRepository records
+      // Update WorkAllocation, Demandallotmenthistroy, and masterSchemeRepository records
       await Promise.all([
           this.workallocation.update(
               { workAllocationID: In(workAllocationIDs) },
@@ -130,30 +156,66 @@ export class EmploymentService {
                       personDaysGeneratedprovided: update.personDaysGeneratedprovided,
                   }
               )
-              
-          )   ,   
-          ...updates.map(update => 
-          this.MasterSchemeExpendutureRepository.update(
-            { schemeId: update.scheme_sl },
-            {
-
-              
-  
-    totalWageCost: update.totalCostprovided,
-
-
-    totalLabour:update.totalLabourprovided,
-
- 
-    personDaysGenerated:update.personDaysGeneratedprovided,
-
-  
-    totalUnskilledWorkers: update.totalLabourprovided,
-
-            }
-        )
-      )
+          )
       ]);
+  
+      // Update or create records in MasterSchemeExpendutureRepository
+      const currentFinYear = createDto.CreateEmploymentDtos[0].finYear;
+      await Promise.all(updates.map(async update => {
+          const existingExpenditureRecord = await this.MasterSchemeExpendutureRepository.findOne({
+              where: { schemeId: update.scheme_sl, finYear: currentFinYear },
+          });
+  
+          if (existingExpenditureRecord) {
+              // Update existing record
+              return this.MasterSchemeExpendutureRepository.update(
+                  { schemeId: update.scheme_sl, finYear: currentFinYear },
+                  {
+                      totalWageCost: existingExpenditureRecord.totalWageCost + update.totalCostprovided,
+                      totalLabour: existingExpenditureRecord.totalLabour + update.totalLabourprovided,
+                      personDaysGenerated: existingExpenditureRecord.personDaysGenerated + update.personDaysGeneratedprovided,
+                      totalUnskilledWorkers: existingExpenditureRecord.totalUnskilledWorkers + update.totalLabourprovided,
+                  }
+              );
+          } else {
+              // Create a new record for a new financial year
+              return this.MasterSchemeExpendutureRepository.save({
+                  schemeId: update.scheme_sl,
+                  totalWageCost: update.totalCostprovided,
+                  totalLabour: update.totalLabourprovided,
+                  personDaysGenerated: update.personDaysGeneratedprovided,
+                  totalUnskilledWorkers: update.totalLabourprovided,
+                  finYear: currentFinYear,
+                  schemeArea: update.schemeArea,
+                  departmentNo: update.departmentNo,
+                  districtcode: update.districtcode,
+                  municipalityCode: update.municipalityCode,
+                  blockcode: update.blockcode,
+                  gpCode: update.gpCode,
+                  sansadID: update.sansadID,
+                  village: update.village,
+                  schemeSector: update.schemeSector,
+                  schemeSubsector: update.schemeSubsector,
+                  schemeName: update.schemeName,
+                  FundingDepttID: update.FundingDepttID,
+                  FundingDeptname: update.FundingDeptname,
+                  ExecutingDepttID: update.ExecutingDepttID,
+                  ExecutingDeptName: update.ExecutingDeptName,
+                  ImplementingAgencyID: update.ImplementingAgencyID,
+                  ImplementingAgencyName: update.ImplementingAgencyName,
+                  StatusOfWork: update.StatusOfWork,
+                  tentativeStartDate: update.tentativeStartDate,
+                  ActualtartDate: update.ActualtartDate,
+                  ExpectedCompletionDate: update.ExpectedCompletionDate,
+                  totalprojectCost: update.totalprojectCost,
+                
+                  deptWing: update.deptWing,
+                  totalSemiSkilledWorkers: update.totalSemiSkilledWorkers,
+                  totalSkilledWorkers: update.totalSkilledWorkers,
+                  userIndex: update.userIndex,
+              });
+          }
+      }));
   
       return {
           errorCode: 0,
@@ -161,6 +223,7 @@ export class EmploymentService {
           employment,
       };
   }
+  
   
 
     async listWorkAllocations(districtcode?: number,blockcode?: number, gpCode?: number,municipalityCode?: number, schemeId?: number){
