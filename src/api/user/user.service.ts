@@ -528,8 +528,16 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 
             };
           }));
+          return {
+            errorCode: 0,
+            message: 'Success',
+            result: {
+               userDetails,
+            },
+          };
 
         } else if (category === 'HD' && dno_status === '0'&& role===1) {
+          
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
         // Use the andWhere method properly for dno_status
@@ -568,7 +576,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 
             };
           }));
-
+          return {
+            errorCode: 0,
+            message: 'Success',
+            result: {
+               userDetails,
+            },
+          };
               } else if (category === 'HD' && dno_status === '0'&& role===2) {
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -608,7 +622,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 
             };
           }));
-
+          return {
+            errorCode: 0,
+            message: 'Success',
+            result: {
+               userDetails,
+            },
+          };
         } else if (category === 'HD' && dno_status === '0'&& role===3) {
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -648,6 +668,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 
             };
           }));
+          return {
+            errorCode: 0,
+            message: 'Success',
+            result: {
+               userDetails,
+            },
+          };
          } else if (category === 'DIST' && dno_status === '0'&& role===1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -686,7 +713,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                 userDetails,
+              },
+            };
         } else if (category === 'DIST' && dno_status === '0'&& role===3) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -726,7 +759,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                 userDetails,
+              },
+            };
         }
         
         else if (category === 'SUB' && dno_status === '0'&& role===1) {
@@ -768,7 +807,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                 userDetails,
+              },
+            };
         } else if (category === 'SUB' && dno_status === '0'&& role===2) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -810,7 +855,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                userDetails,
+              },
+            };
         } else if (category === 'SUB' && dno_status === '0'&& role===3) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -852,7 +903,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                 userDetails,
+              },
+            };
         } else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -894,7 +951,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                userDetails,
+              },
+            };
 
         }
         else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
@@ -938,7 +1001,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                 userDetails,
+              },
+            };
 
         }else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
 
@@ -981,7 +1050,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
   
               };
             }));
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                userDetails,
+              },
+            };
 
         } else if (category === 'DIST' && dno_status === '1') {
 
@@ -1027,7 +1102,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 
 
         
-
+            return {
+              errorCode: 0,
+              message: 'Success',
+              result: {
+                 userDetails,
+              },
+            };
 
         } else if (category === 'BLOCK' && dno_status === '1') {
         
@@ -1072,7 +1153,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                          };
                        }));
 
-
+                       return {
+                        errorCode: 0,
+                        message: 'Success',
+                        result: {
+                           userDetails,
+                        },
+                      };
         } else if (category === 'GP' && dno_status === '1') {
         
 
@@ -1114,7 +1201,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
            
                        };
                      }));
-
+                     return {
+                      errorCode: 0,
+                      message: 'Success',
+                      result: {
+                        userDetails,
+                      },
+                    };
 
       }else if (category === 'GP' && dno_status === '0') {
 
@@ -1123,7 +1216,8 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
           return { errorCode: 1, message: 'Invalid category provided' };
         }
 
-        return { errorCode: 0, message: 'Success' };
+      
+        
       } catch (error) {
         return { errorCode: 1, message: 'Something went wrong', error: error.message };
       }
