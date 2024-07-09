@@ -68,6 +68,7 @@ async getUserSummaryByDepartment(@Query('departmentNo') departmentNo: number) {
 }
 
 @Get('User_list-by-category')
+
   async getUserListByCategory(
     @Query('category') category: string,
     @Query('dno_status') dno_status?: string,
@@ -93,10 +94,8 @@ async getUserSummaryByDepartment(@Query('departmentNo') departmentNo: number) {
         role,
         userIndex,
       );
-      return {
-        errorCode: 0,
-        result: users,
-      };
+      return users
+      
     } catch (error) {
       return {
         errorCode: 1,
@@ -132,10 +131,8 @@ async getUserSummaryByDepartment(@Query('departmentNo') departmentNo: number) {
         role,
         userIndex,
       );
-      return {
-        errorCode: 0,
-        result: users,
-      };
+      return  users
+     
     } catch (error) {
       return {
         errorCode: 1,
