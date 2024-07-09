@@ -1270,7 +1270,13 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
 
            };
          }));
-
+         return {
+          errorCode: 0,
+          message: 'Success',
+          result: {
+            userDetails,
+          },
+        };
        } else if (category === 'DIST' && dno_status === '1') {
 
 const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -1313,7 +1319,13 @@ const queryBuilder = this.userRepository.createQueryBuilder('user');
              };
            }));
 
-
+           return {
+            errorCode: 0,
+            message: 'Success',
+            result: {
+              userDetails,
+            },
+          };
        
 
 
@@ -1359,7 +1371,13 @@ const queryBuilder = this.userRepository.createQueryBuilder('user');
 
                         };
                       }));
-
+                      return {
+                        errorCode: 0,
+                        message: 'Success',
+                        result: {
+                          userDetails,
+                        },
+                      };
 
        } else if (category === 'GP' && dno_status === '1') {
        
@@ -1402,13 +1420,19 @@ const queryBuilder = this.userRepository.createQueryBuilder('user');
           
                       };
                     }));
-
+                    return {
+                      errorCode: 0,
+                      message: 'Success',
+                      result: {
+                        userDetails,
+                      },
+                    };
 
      } else {
          return { errorCode: 1, message: 'Invalid category provided' };
        }
 
-       return { errorCode: 0, message: 'Success' };
+     
      } catch (error) {
        return { errorCode: 1, message: 'Something went wrong', error: error.message };
      }
