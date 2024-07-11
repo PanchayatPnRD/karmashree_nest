@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiHeader, ApiTags,ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
+import { TokenDto, VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
 import { Headers } from '@nestjs/common';
 import { Verify } from 'crypto';
 import { ForgetDto, ForgetpasswordResetDto, passwordcDto } from './dto/dto/forgot-password.dto';
@@ -21,6 +21,11 @@ export class AuthController {
     async login(@Body() userLoginDto: userLoginDto) {
       return await this.authService.login(userLoginDto);
     }
+
+    @Post('resend-otp')
+  async resendOtp(@Body() tokenDto: TokenDto) {
+    return this.authService.resendOtp(tokenDto);
+  }
     @Get('getMe')
     @ApiHeader({
       name: 'token',

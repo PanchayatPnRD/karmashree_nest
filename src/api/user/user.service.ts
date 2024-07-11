@@ -251,7 +251,41 @@ export class UserService {
       }
     });
 
+
+    const response2 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+      "feedid": 392809,
+      "username": 9831519878,
+      "password": "Sub1kar#",
+      "mobile": 8697748391,
+      "messages": message
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
    
+    const response3 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+      "feedid": 392809,
+      "username": 9831519878,
+      "password": "Sub1kar#",
+      "mobile": 8697748386,
+      "messages": message
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    const response12 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+      "feedid": 392809,
+      "username": 9831519878,
+      "password": "Sub1kar#",
+      "mobile": 8697748012,
+      "messages": message
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   } catch (error) {
    
     console.error("Error sending SMS:", error);

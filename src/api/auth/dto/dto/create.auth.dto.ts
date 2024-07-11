@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty,Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty,IsString,Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class userLoginDto {
 
@@ -49,3 +49,8 @@ export class userLoginDto {
 
         }
 
+        export class TokenDto {
+            @IsString()
+            @ApiProperty({ default: "11" })
+            token: string;
+        }

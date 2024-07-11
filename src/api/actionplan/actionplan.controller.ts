@@ -58,4 +58,43 @@ export class ActionplanController {
        const response = await this.actionplanService.getAggregatedData2();
        return response;
      }
+
+
+     @Get('getactionplanlist_1')
+
+  async getactionplanlist_1(
+    @Query('category') category: string,
+    @Query('dno_status') dno_status?: string,
+    @Query('departmentNo') departmentNo?: number,
+    @Query('districtCode') districtCode?: number,
+    @Query('blockcode') blockcode?: number,
+    @Query('subDivision') subDivision?: number,
+    @Query('gpCode') gpCode?: number,
+    @Query('deptWing') deptWing?: string,
+    @Query('role') role?: number,
+    @Query('userIndex') userIndex?: number,
+  ) {
+    try {
+      const users = await this.actionplanService.getactionplanlist_1(
+        category,
+        dno_status,
+        departmentNo,
+        districtCode,
+        blockcode,
+        subDivision,
+        gpCode,
+        deptWing,
+        role,
+        userIndex,
+      );
+      return users
+      
+    } catch (error) {
+      return {
+        errorCode: 1,
+        message: 'Something went wrong',
+        error: error.message,
+      };
+    }
+  }
 }

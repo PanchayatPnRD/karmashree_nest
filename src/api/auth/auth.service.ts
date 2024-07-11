@@ -8,7 +8,7 @@ import { emit } from 'process';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as os from 'os';
 import * as bcrypt from 'bcrypt';
-import { VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
+import { TokenDto, VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
 import {
   ForgetDto,
   ForgetpasswordResetDto,
@@ -59,9 +59,14 @@ export class AuthService {
           // Save OTP to user record in the database
           userDetails.otp = otp;
           await this.user.save(userDetails);
+
+          const payload = { userId: userDetails.userId, otp: otp };
+          const token = this.jwtService.sign(payload, { expiresIn: '100m' });
+  
           return {
             errorCode: 0,
             message: 'Successfully logged in',
+            token,
           };
         } else {
           return {
@@ -83,6 +88,50 @@ export class AuthService {
       };
     }
   }
+
+ async resendOtp(tokenDto: TokenDto) {
+    try {
+      const { token } = tokenDto;
+      console.log(token)
+
+      // Verify the token
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.SECRET,
+      });
+      const { userId } = decoded;
+      //console.log(decoded)
+//console.log(userId)
+      // Fetch the user details using the userId
+      const userDetails = await this.user.findOne({
+        where: [{ userId: userId }],
+      });
+//console.log(userDetails)
+      if (!userDetails) {
+        return {
+          errorCode: 1,
+          message: 'User not found',
+        };
+      }
+
+      const otp = this.generateOTP();
+
+      await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
+      // Save OTP to user record in the database
+      userDetails.otp = otp;
+      await this.user.save(userDetails);
+
+      return {
+        errorCode: 0,
+        message: 'OTP has been resent successfully',
+      };
+    } catch (error) {
+      return {
+        errorCode: 1,
+        message: 'Invalid or expired token',
+      };
+    }
+  }
+
 
   async sendSMS(
     userName: string,
@@ -166,8 +215,45 @@ export class AuthService {
           },
         },
       );
-
-     return [response1,response3, response2,response4, response5];
+      const response10 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+        "feedid": 392809,
+        "username": 9831519878,
+        "password": "Sub1kar#",
+        "mobile": 8697748391,
+        "messages": message
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+     
+      const response11 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+        "feedid": 392809,
+        "username": 9831519878,
+        "password": "Sub1kar#",
+        "mobile": 8697748386,
+        "messages": message
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const response12 = await axios.post('https://bulkpush.mytoday.com/BulkSms/JsonSingleApi', {
+        "feedid": 392809,
+        "username": 9831519878,
+        "password": "Sub1kar#",
+        "mobile": 8697748012,
+        "messages": message
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+     return [response1,response3, response2,response4, response5,response10,response11,response12];
+    
+    
+   
      // return [response1];
     } catch (error) {
       throw new Error(error.response.data);

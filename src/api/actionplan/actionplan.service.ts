@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateActionPlanDto } from './dto/actionplan.dto';
 import { UpdateActionPlanDto } from './dto/actionplanupdate.dto';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
+import { MasterScheme, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 @Injectable()
 export class ActionplanService {
     constructor(
@@ -418,5 +419,105 @@ async getAggregatedData() {
 
 
   
+
+
+  async getactionplanlist_1(category: string,
+    dno_status?: string,
+     departmentNo?: number, 
+     districtCode?: number,
+      blockcode?: number,
+      subDivision?:number,
+       gpCode?: number,
+        deptWing?: string,
+        role?:number,
+        userIndex?:number) {
+   try {
+
+     if (category === 'HQ') {
+
+        const query = this.masterdepartment
+        .createQueryBuilder('masterdepartment')
+        .select('masterdepartment.departmentName', 'departmentName')
+        .addSelect('masterdepartment.departmentNo', 'departmentCode')
+        .addSelect('COUNT(master_scheme.schemeId)', 'Total_scheme')
+        .addSelect('COUNT(master_scheme.schemeSector)', 'Total_sector')
+        .addSelect('SUM(master_scheme.totalprojectCost)', 'Total_Cost')
+        .addSelect('SUM(master_scheme_expenditure.totalWageCost)', 'Total_Spent')
+        .addSelect('SUM(master_scheme_expenditure.totalUnskilledWorkers)', 'Total_worker')
+        .addSelect('SUM(master_scheme_expenditure.personDaysGenerated)', 'Total_Mandays')
+        .leftJoin(MasterScheme, 'master_scheme', 'masterdepartment.departmentNo = master_scheme.fundingDeptId')
+        .leftJoin(MasterSchemeExpenduture, 'master_scheme_expenditure', 'master_scheme.schemeId = master_scheme_expenditure.schemeId AND masterdepartment.departmentNo = master_scheme_expenditure.fundingDeptId')
+        .groupBy('masterdepartment.departmentName')
+        .addGroupBy('masterdepartment.departmentNo')
+        .orderBy('masterdepartment.departmentName', 'ASC')
+        .getRawMany();
+  
+    
+
+      return { errorCode: 0, result: query };
+
+
+
+     } else if (category === 'HD' && deptWing !== '0') {
+       
+        const query = this.masterdepartment
+        .createQueryBuilder('masterdepartment')
+        .select('masterdepartment.departmentName', 'departmentName')
+        .addSelect('masterdepartment.departmentNo', 'departmentCode')
+        .addSelect('pedestal_master.pedestalName', 'pedestalName')
+        .addSelect('COUNT(master_scheme.schemeId)', 'Total_scheme')
+        .addSelect('COUNT(master_scheme.schemeSector)', 'Total_sector')
+        .addSelect('SUM(master_scheme.totalprojectCost)', 'Total_Cost')
+        .addSelect('SUM(master_scheme_expenditure.totalWageCost)', 'Total_Spent')
+        .addSelect('SUM(master_scheme_expenditure.totalUnskilledWorkers)', 'Total_worker')
+        .addSelect('SUM(master_scheme_expenditure.personDaysGenerated)', 'Total_Mandays')
+        .innerJoin('masterdepartment.pedestals', 'pedestal_master')
+        .leftJoin('masterdepartment.schemes', 'master_scheme')
+        .leftJoin('master_scheme.expenditures', 'master_scheme_expenditure')
+        .groupBy('masterdepartment.departmentName')
+        .addGroupBy('masterdepartment.departmentNo')
+        .addGroupBy('pedestal_master.pedestalName')
+        .orderBy('masterdepartment.departmentName', 'ASC')
+        .getRawMany();
+  
+        return { errorCode: 0, result: query };
+
+      
+           } else if (category === 'HD' && deptWing === '0') {
+            const query = this.masterzp
+            .createQueryBuilder('master_zp')
+            .leftJoinAndSelect('master_zp.master_scheme', 'master_scheme')
+            .leftJoinAndSelect('master_scheme.master_scheme_expenduture', 'master_scheme_expenduture')
+            .select('master_zp.districtCode', 'districtCode')
+            .addSelect('master_zp.districtName', 'districtName')
+            .addSelect('COUNT(master_scheme.schemeId)', 'Total_scheme')
+            .addSelect('COUNT(master_scheme.schemeSector)', 'Total_sector')
+            .addSelect('SUM(master_scheme.totalprojectCost)', 'Total_Cost')
+            .addSelect('SUM(master_scheme_expenduture.totalWageCost)', 'Total_Spent')
+            .addSelect('SUM(master_scheme_expenduture.totalUnskilledWorkers)', 'Total_worker')
+            .addSelect('SUM(master_scheme_expenduture.personDaysGenerated)', 'Total_Mandays')
+            .groupBy('master_zp.districtCode')
+            .addGroupBy('master_zp.districtName')
+            .orderBy('master_zp.districtName', 'ASC')
+            .getRawMany();
+            return { errorCode: 0, result: query };
+        }
+  
+    
+
+   
+
+
+     else {
+       return { errorCode: 1, message: 'Invalid category provided' };
+     }
+
+   
+     
+   } catch (error) {
+     return { errorCode: 1, message: 'Something went wrong', error: error.message };
+   }
+ }
+ 
 
 }
