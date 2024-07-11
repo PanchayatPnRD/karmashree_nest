@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_zp, masterdepartment, masterdesignation, user_role } from 'src/entity/mastertable.enity';
 import { master_users } from 'src/entity/user.entity';
@@ -221,7 +221,10 @@ export class UserService {
       //
             // Trigger sendSMS after saving the user
            await this.sendSMS(savedUser.userId, savedUser.contactNo, password);
-      
+           await this.sendMessage(savedUser.userId, savedUser.contactNo, password);
+  
+
+           
             return { errorCode: 0,
               message: `You have successfully been registered in Karmashree portal, your user id is ${savedUser.userId} and details have been sent to your registered mobile number. Please change your password in first login`,
                result: savedUser.userId };
@@ -233,7 +236,41 @@ export class UserService {
         }
       }
 
- 
+
+
+
+      async sendMessage(userId: string, contactNo: string, password: string) : Promise<any>{
+       
+      const gupshupUrl = 'https://media.smsgupshup.com/GatewayAPI/rest';
+    const userid = '2000239790';
+    const  password2 = 'Zp7K!CZe';
+    const  header = 'Karmashree Login Information';
+      const footer = 'State Karmashree Team';
+      const msg=`Congratulations! Your user ID in Karmashree portal is ${userId} and default password is ${password}. Please change your password in the first login.`
+        const postData = {
+          userid: userid,
+          password: password2,
+          send_to: contactNo,
+          v: '1.1',
+          format: 'json',
+          msg_type: 'TEXT',
+          method: 'SENDMESSAGE',
+          msg: msg,
+          isTemplate: 'true',
+          header: header,
+          footer: footer,
+        };
+    
+        try {
+          const response = await axios.post(gupshupUrl, postData);
+          return response.data;
+        } catch (error) {
+          throw new HttpException(
+            'Failed to send message',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
 
       async sendSMS(userId: string, contactNo: string, password: string): Promise<any> {
         try {

@@ -7,6 +7,7 @@ import { Verify } from 'crypto';
 import { ForgetDto, ForgetpasswordResetDto, passwordcDto } from './dto/dto/forgot-password.dto';
 import { ApiKeyGuard } from './api-key.guard';
 import { Cron } from '@nestjs/schedule';
+import { SendMessageDto } from './dto/dto/whatsapp.dto';
 @ApiTags("Authentication")
 
 
@@ -28,6 +29,16 @@ export class AuthController {
     return this.authService.resendOtp(tokenDto);
   }
 
+  // @Post('send')
+  // async sendMessage(@Body() sendMessageDto: SendMessageDto) {
+  //   try {
+  //     const response = await this.authService.sendMessage(sendMessageDto);
+  //     return response;
+  //   } catch (error) {
+  //     throw new HttpException('Failed to send message', HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
+  
 
     @Get('getMe')
     @ApiHeader({

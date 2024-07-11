@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { master_users } from 'src/entity/user.entity';
@@ -17,6 +17,7 @@ import {
 import { masterdepartment } from 'src/entity/mastertable.enity';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 import { Cron } from '@nestjs/schedule';
+import { SendMessageDto } from './dto/dto/whatsapp.dto';
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'NODEAPI';
 @Injectable()
@@ -90,7 +91,37 @@ export class AuthService {
       };
     }
   }
+  private readonly gupshupUrl = 'https://media.smsgupshup.com/GatewayAPI/rest';
+  private readonly userid = '2000239790';
+  private readonly password = 'Zp7K!CZe';
 
+  async sendMessage(sendMessageDto: SendMessageDto) {
+    const { sendTo, msg, header, footer } = sendMessageDto;
+
+    const postData = {
+      userid: this.userid,
+      password: this.password,
+      send_to: sendTo,
+      v: '1.1',
+      format: 'json',
+      msg_type: 'TEXT',
+      method: 'SENDMESSAGE',
+      msg: msg,
+      isTemplate: 'true',
+      header: header,
+      footer: footer,
+    };
+
+    try {
+      const response = await axios.post(this.gupshupUrl, postData);
+      return response.data;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to send message',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
   @Cron('*/5 * * * * *') // Run every 5 seconds
   async handleCron() {
 
