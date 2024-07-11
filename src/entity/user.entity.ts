@@ -119,6 +119,10 @@ export class master_users{
   @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true })
   otp: string;
 
+  @Column({ type: 'timestamp', nullable: true })
+  otpCreatedAt:Date;
+
+
   @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true })
   resetotp: string;
 

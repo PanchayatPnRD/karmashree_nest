@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { DemandService } from './demand.service';
 import { ApiHeader, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { CreateDemandMasterDto } from './dto/demand.entity';
+import { CreateDemandMasterDto, SearchDemandDto } from './dto/demand.entity';
 
 @ApiTags("demand")
 @ApiHeader({
@@ -16,6 +16,10 @@ export class DemandController {
         return await this.demandService.createDemand(createDto);
     }
 
+    @Post('search_demand')
+    async searchDemand(@Body() searchDto: SearchDemandDto) {
+      return await this.demandService.searchDemand(searchDto);
+    }
     @Get('getDemandforAllocation')
     @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
     async getdemandforallocation(@Query('blockcode') blockcode: number, @Query('gpCode') gpCode?: number) {

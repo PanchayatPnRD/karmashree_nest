@@ -189,3 +189,11 @@ export class CreateDemandMasterDto {
     })
     DemandMasterDto: DemandMasterDto[];
 }
+
+
+export class SearchDemandDto {
+  @ApiProperty({ example: 'Nearest Landmark' })
+  workerJobCardNo: string;
+    @ApiProperty({ example: 'Nearest Landmark' })
+  workerName: string;
+}

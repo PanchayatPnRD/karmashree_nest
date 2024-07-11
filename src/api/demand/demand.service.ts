@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 import { Repository } from 'typeorm';
-import { CreateDemandMasterDto } from './dto/demand.entity';
+import { CreateDemandMasterDto, SearchDemandDto } from './dto/demand.entity';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
 
 @Injectable()
@@ -84,6 +84,17 @@ export class DemandService {
         }
     }
 
+
+    async searchDemand(searchDto: SearchDemandDto) {
+        const { workerJobCardNo, workerName } = searchDto;
+    
+        const results = await this.demandMaster.createQueryBuilder('demand')
+          .where('demand.workerJobCardNo = :workerJobCardNo', { workerJobCardNo })
+          .andWhere('CONCAT(demand.workerName, " ", demand.workerName) LIKE :workerName', { workerName: `%${workerName}%` })
+          .getMany();
+    
+        return results;
+      }
 
     async getdemandforallocation(blockcode: number, gpCode?: number) {
         try {
@@ -458,4 +469,10 @@ export class DemandService {
                   return { errorCode: 1, message: 'Something went wrong: ' + error.message };
                 }
               }
+
+
+
+
+
+
 }

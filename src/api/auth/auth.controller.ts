@@ -6,6 +6,7 @@ import { Headers } from '@nestjs/common';
 import { Verify } from 'crypto';
 import { ForgetDto, ForgetpasswordResetDto, passwordcDto } from './dto/dto/forgot-password.dto';
 import { ApiKeyGuard } from './api-key.guard';
+import { Cron } from '@nestjs/schedule';
 @ApiTags("Authentication")
 
 
@@ -26,6 +27,8 @@ export class AuthController {
   async resendOtp(@Body() tokenDto: TokenDto) {
     return this.authService.resendOtp(tokenDto);
   }
+
+
     @Get('getMe')
     @ApiHeader({
       name: 'token',

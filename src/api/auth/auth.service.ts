@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { master_users } from 'src/entity/user.entity';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { emit } from 'process';
 
 import axios, { AxiosRequestConfig } from 'axios';
@@ -16,6 +16,7 @@ import {
 } from './dto/dto/forgot-password.dto';
 import { masterdepartment } from 'src/entity/mastertable.enity';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
+import { Cron } from '@nestjs/schedule';
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = 'NODEAPI';
 @Injectable()
@@ -58,6 +59,7 @@ export class AuthService {
           await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
           // Save OTP to user record in the database
           userDetails.otp = otp;
+          userDetails.otpCreatedAt = new Date();
           await this.user.save(userDetails);
 
           const payload = { userId: userDetails.userId, otp: otp };
@@ -89,6 +91,20 @@ export class AuthService {
     }
   }
 
+  @Cron('*/5 * * * * *') // Run every 5 seconds
+  async handleCron() {
+
+
+   // console.log('Checking for expired OTPs');
+
+    const fortyFiveSecondsAgo = new Date(Date.now() - 60 * 1000);
+    await this.user.update(
+      { otpCreatedAt: LessThan(fortyFiveSecondsAgo) },
+      { otp: null, otpCreatedAt: null },
+    );
+
+   // console.log('Expired OTPs invalidated');
+  }
  async resendOtp(tokenDto: TokenDto) {
     try {
       const { token } = tokenDto;
