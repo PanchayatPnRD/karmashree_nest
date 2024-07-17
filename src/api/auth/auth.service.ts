@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { master_users } from 'src/entity/user.entity';
 import { LessThan, Repository } from 'typeorm';
 import { emit } from 'process';
+import axios from 'axios';
 
-import axios, { AxiosRequestConfig } from 'axios';
 import * as os from 'os';
 import * as bcrypt from 'bcrypt';
 import { TokenDto, VerifyOtpdto, userLoginDto } from './dto/dto/create.auth.dto';
@@ -28,7 +28,16 @@ export class AuthService {
     @InjectRepository(masterdepartment)
     private masterdepartment: Repository<masterdepartment>,
     private jwtService: JwtService,
+
+ 
   ) {}
+
+  private readonly url = 'https://api.gupshup.io/wa/api/v1/template/msg';
+  private readonly headers = {
+    'Cache-Control': 'no-cache',
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'apikey': 'psloncgl2r2h6xbjbgqsuqlrzcyllydc'
+  };
 
   async login(data: userLoginDto) {
     try {
@@ -58,6 +67,7 @@ export class AuthService {
           const otp = this.generateOTP();
 
           await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
+          await this.sendMessage(userDetails.userName, userDetails.contactNo, otp);
           // Save OTP to user record in the database
           userDetails.otp = otp;
           userDetails.otpCreatedAt = new Date();
@@ -91,37 +101,82 @@ export class AuthService {
       };
     }
   }
-  private readonly gupshupUrl = 'https://media.smsgupshup.com/GatewayAPI/rest';
-  private readonly userid = '2000239790';
-  private readonly password = 'Zp7K!CZe';
 
-  async sendMessage(sendMessageDto: SendMessageDto) {
-    const { sendTo, msg, header, footer } = sendMessageDto;
 
-    const postData = {
-      userid: this.userid,
-      password: this.password,
-      send_to: sendTo,
-      v: '1.1',
-      format: 'json',
-      msg_type: 'TEXT',
-      method: 'SENDMESSAGE',
-      msg: msg,
-      isTemplate: 'true',
-      header: header,
-      footer: footer,
+
+  async sendSMSresetwp(userName: string, contactNo: string, otp: string): Promise<any> {
+    const data = {
+      channel: 'whatsapp',
+      source: '916291265854',
+      destination: contactNo,
+      'src.name': 'dYI42JSUNDeli2TqB6moGbHY',
+      template: JSON.stringify({
+        id: '1ff43a39-649c-4fcc-ae9e-7d9008cf3e73',
+        params: [userName, otp, 1]
+      })
     };
-
+  
     try {
-      const response = await axios.post(this.gupshupUrl, postData);
+      const response = await axios.post(this.url, new URLSearchParams(data).toString(), {
+        headers: {
+          ...this.headers,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
       return response.data;
     } catch (error) {
-      throw new HttpException(
-        'Failed to send message',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (axios.isAxiosError(error)) {
+        throw new HttpException(
+          `Error sending template message: ${error.response?.data || error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      } else {
+        throw new HttpException(
+          `Unexpected error: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
     }
   }
+
+
+  async sendMessage(userName: string, contactNo: string, otp: string): Promise<any> {
+    const data = {
+      channel: 'whatsapp',
+      source: '916291265854',
+      destination: contactNo,
+      'src.name': 'dYI42JSUNDeli2TqB6moGbHY',
+      template: JSON.stringify({
+        id: '2943de2d-cdef-498b-923d-64dfc15d4826',
+        params: [userName, otp, 1]
+      })
+    };
+  
+
+
+    try {
+      const response = await axios.post(this.url, new URLSearchParams(data).toString(), {
+        headers: {
+          ...this.headers,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new HttpException(
+          `Error sending template message: ${error.response?.data || error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      } else {
+        throw new HttpException(
+          `Unexpected error: ${error.message}`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
   @Cron('*/5 * * * * *') // Run every 5 seconds
   async handleCron() {
 
@@ -163,6 +218,7 @@ export class AuthService {
       const otp = this.generateOTP();
 
       await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
+      await this.sendMessage(userDetails.userName, userDetails.contactNo, otp);
       // Save OTP to user record in the database
       userDetails.otp = otp;
       await this.user.save(userDetails);
@@ -528,7 +584,7 @@ export class AuthService {
       // Generate OTP
       const otp = this.generateOTP();
 
-      await this.sendSMSreset(userDetails.userName, userDetails.contactNo, otp);
+      await this.sendSMSresetwp(userDetails.userName, userDetails.contactNo, otp);
       // Save OTP to user record in the database
       userDetails.resetotp = otp;
       await this.user.save(userDetails);
@@ -545,6 +601,8 @@ export class AuthService {
       };
     }
   }
+
+
 
   async sendSMSreset(userName: string, contactNo: string, otp: string) {
     try {
