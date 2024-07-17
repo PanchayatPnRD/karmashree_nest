@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { master_users } from 'src/entity/user.entity';
@@ -39,6 +39,7 @@ export class AuthService {
     'apikey': 'psloncgl2r2h6xbjbgqsuqlrzcyllydc'
   };
 
+ 
   async login(data: userLoginDto) {
     try {
       const userId = data.userId.toLowerCase();
@@ -53,33 +54,70 @@ export class AuthService {
         };
       }
 
-      if (userDetails) {
-       // console.log('Data:', data);
-       // console.log('User Details:', userDetails);
+      // Check if the user is temporarily locked out
+      const maxLoginAttempts = 3;
+      const lockoutDuration = 60 * 1000; // 1 minute in milliseconds
 
-        const isMatch = await bcrypt.compare(
-          data.password,
-          userDetails.encryptpassword,
-        );
+      if (userDetails.loginAttempts >= maxLoginAttempts) {
+        const lastLoginAttempt = userDetails.lastLoginAttempt.getTime();
+        const now = new Date().getTime();
+        const timeSinceLastAttempt = now - lastLoginAttempt;
 
-        if (isMatch) {
-          // Generate OTP}
-          const otp = this.generateOTP();
-
-          await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
-          await this.sendMessage(userDetails.userName, userDetails.contactNo, otp);
-          // Save OTP to user record in the database
-          userDetails.otp = otp;
-          userDetails.otpCreatedAt = new Date();
-          await this.user.save(userDetails);
-
-          const payload = { userId: userDetails.userId, otp: otp };
-          const token = this.jwtService.sign(payload, { expiresIn: '100m' });
-  
+        if (timeSinceLastAttempt < lockoutDuration) {
+          const waitTimeSeconds = Math.ceil((lockoutDuration - timeSinceLastAttempt) / 1000);
           return {
-            errorCode: 0,
-            message: 'Successfully logged in',
-            token,
+            errorCode: 1,
+            message: { errorCode: 1, mes: 'Too many requests for OTP resend from this IP, please try again later' },
+          
+          };
+        } else {
+          // Reset failed login attempts
+          userDetails.loginAttempts = 0;
+          await this.user.save(userDetails);
+        }
+      }
+
+      // Check password
+      const isMatch = await bcrypt.compare(data.password, userDetails.encryptpassword);
+
+      if (isMatch) {
+        // Reset failed login attempts on successful login
+        userDetails.loginAttempts = 0;
+        userDetails.lastLoginAttempt = null;
+        await this.user.save(userDetails);
+
+        // Generate OTP
+        const otp = this.generateOTP();
+
+        // Send OTP via SMS and/or other methods
+        await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
+        await this.sendMessage(userDetails.userName, userDetails.contactNo, otp);
+
+        // Save OTP and timestamp to user record
+        userDetails.otp = otp;
+        userDetails.otpCreatedAt = new Date();
+        await this.user.save(userDetails);
+
+        // Generate JWT token
+        const payload = { userId: userDetails.userId, otp: otp };
+        const token = this.jwtService.sign(payload, { expiresIn: '100m' });
+
+        return {
+          errorCode: 0,
+          message: 'Successfully logged in',
+          token,
+        };
+      } else {
+        // Increment failed login attempts
+        userDetails.loginAttempts++;
+        userDetails.lastLoginAttempt = new Date();
+        await this.user.save(userDetails);
+
+        // Check if user is now locked out
+        if (userDetails.loginAttempts >= maxLoginAttempts) {
+          return {
+            errorCode: 1,
+            message: `Too many failed attempts. Please wait 1 minute before trying again.`,
           };
         } else {
           return {
@@ -87,21 +125,12 @@ export class AuthService {
             message: 'Password is incorrect',
           };
         }
-      } else {
-        return {
-          errorCode: 1,
-          message: 'You are not authorized to login as an admin',
-        };
       }
     } catch (error) {
-     // console.error(error);
-      return {
-        errorCode: 1,
-        message: 'Something went wrong',
-      };
+      console.error(error);
+      throw new BadRequestException('Something went wrong');
     }
   }
-
 
 
   async sendSMSresetwp(userName: string, contactNo: string, otp: string): Promise<any> {
@@ -194,7 +223,7 @@ export class AuthService {
  async resendOtp(tokenDto: TokenDto) {
     try {
       const { token } = tokenDto;
-      console.log(token)
+    //  console.log(token)
 
       // Verify the token
       const decoded = this.jwtService.verify(token, {
@@ -448,7 +477,7 @@ export class AuthService {
 
       return response;
     } catch (error) {
-      console.error(error);
+     // console.error(error);
       return {
         errorCode: 1,
         message: 'Something went wrong',
@@ -578,8 +607,8 @@ export class AuthService {
         };
       }
 
-      console.log('Data:', data);
-      console.log('User Details:', userDetails);
+     // console.log('Data:', data);
+      //console.log('User Details:', userDetails);
 
       // Generate OTP
       const otp = this.generateOTP();

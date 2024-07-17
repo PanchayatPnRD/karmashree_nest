@@ -45,10 +45,13 @@ import { ApiTokenCheckMiddleware } from './commomn/middleware/apiTokenCheck.midd
 import { Employment } from './entity/employment.entity';
 import { EmploymentModule } from './api/employment/employment.module';
 import { Libariry } from './entity/library.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { RateLimitMiddleware } from './commomn/rate-limit.middleware';
 dotenv.config();
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -104,6 +107,10 @@ dotenv.config();
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    consumer
+    .apply(RateLimitMiddleware)
+    .forRoutes('api/auth/resend-otp'); // Apply RateLimitMiddleware to 'auth/resend-otp' route
+
     consumer
       .apply(ApiTokenCheckMiddleware)
       .exclude(

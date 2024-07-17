@@ -129,6 +129,12 @@ export class master_users{
   @Column({ type: 'varchar', length: 2, collation: 'utf8mb4_unicode_ci', nullable: true })
   is_passwordreset: string;
 
+  @Column({ default: 0 })
+  loginAttempts: number;
+
+  @Column({ nullable: true })
+  lastLoginAttempt: Date;
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   submitTime: Date;
 
