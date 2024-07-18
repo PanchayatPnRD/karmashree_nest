@@ -67,7 +67,7 @@ export class AuthService {
           const waitTimeSeconds = Math.ceil((lockoutDuration - timeSinceLastAttempt) / 1000);
           return {
             errorCode: 1,
-            message: { errorCode: 1, mes: 'Too many requests for OTP resend from this IP, please try again later' },
+            message: 'Too many requests for OTP resend from this IP, please try again later' ,
           
           };
         } else {
