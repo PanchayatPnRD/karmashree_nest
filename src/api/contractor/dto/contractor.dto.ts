@@ -84,7 +84,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
         contractor_uniqueNo:string
     
-    
+            
+        @ApiProperty({ example: '1' })
+    is_draft:string
   
     }
               

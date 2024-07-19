@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Contractor_master } from 'src/entity/contractor.entity';
+import { Contractor_master, Contractor_master_draft } from 'src/entity/contractor.entity';
 import { Repository } from 'typeorm';
 import { CreateContractorDto } from './dto/contractor.dto';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector } from 'src/entity/mastertable.enity';
@@ -17,10 +17,11 @@ export class ContractorService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
     
-
+        @InjectRepository(Contractor_master_draft) private Contractormasterdraft: Repository<Contractor_master_draft>,
+    
     
        
-    
+        
 
       ) {}
 
@@ -35,7 +36,21 @@ export class ContractorService {
                 const rand = Math.round(range.min + Math.random() * delta)
                 return rand.toString(); 
               }
+if(createContractorDto.is_draft==="1"){
+    const contractorUniqueNo = `C${createContractorDto.DepartmentNo}${createContractorDto.districtcode}${generateRandomNumber()}`;
+    
+            
+    createContractorDto.contractor_uniqueNo = contractorUniqueNo;
 
+
+    const contractor = this.Contractormasterdraft.create(createContractorDto);
+
+   
+    await this.Contractormasterdraft.save(contractor);
+
+    
+}
+else{
          
             const contractorUniqueNo = `C${createContractorDto.DepartmentNo}${createContractorDto.districtcode}${generateRandomNumber()}`;
     
@@ -44,14 +59,50 @@ export class ContractorService {
     
         
             const contractor = this.Contractor.create(createContractorDto);
+
+           
             await this.Contractor.save(contractor);
+
+            await this.Contractormasterdraft.delete({ userIndex: createContractorDto.userIndex });
+
+            // Create new draft entry
+            // const contractorDraft = this.Contractormasterdraft.create(createContractorDto);
+            // await this.Contractormasterdraft.save(contractorDraft);
+}
+            
             return { errorCode: 0, message: 'Contractor plan created successfully' };
         } catch (error) {
             return { errorCode: 1, message: 'Failed to create contractor', error: error.message };
         }
     }
 
+    async get_draft_Details(userIndex: number) {
+        try {
+            const contractors = await this.Contractor.findOne({ where: { userIndex } });
     
+            if (!contractors) {
+                return {
+                    errorCode: 1,
+                    message: 'Contractor not found'
+                };
+            }
+    
+            const contractorDetails = {
+                ...contractors,
+            };
+    
+          //  const lastElement = Object.values(contractorDetails).pop();
+    
+            return {
+                errorCode: 0,
+                result: contractorDetails
+            };
+        } catch (error) {
+            throw new Error('Failed to fetch contractors from the database.');
+        }
+    }
+    
+
     async getAllContractors(){
         try {
             const contractors = await this.Contractor.find({ select: ['cont_sl', 'contractorGSTIN', 'contractorName'] });

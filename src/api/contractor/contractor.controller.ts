@@ -51,5 +51,15 @@ export class ContractorController {
             return  contractors 
        
     }
+
+
+    @Get('get_draft_Details/:userIndex')
+    async get_draft_Details(@Param('userIndex') userIndex: number) {
+    
+            const contractors = await this.ContractorService.get_draft_Details(userIndex);
+            return  contractors 
+       
+    }
+    
   
 }
