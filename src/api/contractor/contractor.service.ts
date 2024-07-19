@@ -78,7 +78,7 @@ else{
 
     async get_draft_Details(userIndex: number) {
         try {
-            const contractors = await this.Contractor.findOne({ where: { userIndex } });
+            const contractors = await this.Contractormasterdraft.findOne({ where: { userIndex } });
     
             if (!contractors) {
                 return {
