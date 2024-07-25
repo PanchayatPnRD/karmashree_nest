@@ -129,6 +129,8 @@ export class DemandMasterDto {
   remark: string;
 
 
+  @ApiProperty({ example: '1' })
+  is_draft:string;
 }
 
 export class CreateDemandMasterDto {
@@ -184,10 +186,14 @@ export class CreateDemandMasterDto {
                 finYear: 2024,
 
                 userIndex: 1,
+
+
+                is_draft:'1'
             }
         ]
     })
     DemandMasterDto: DemandMasterDto[];
+    static is_draft: string;
 }
 
 

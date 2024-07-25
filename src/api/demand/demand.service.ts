@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DemandMaster, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
+import { DemandMaster, DemandMaster_draft, MasterWorkerDemand_allotment, MasterWorkerDemand_allotmenthistroy } from 'src/entity/demandmaster.entity';
 import { Repository } from 'typeorm';
 import { CreateDemandMasterDto, SearchDemandDto } from './dto/demand.entity';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
@@ -19,6 +19,7 @@ export class DemandService {
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
         @InjectRepository(MasterWorkerDemand_allotmenthistroy) private  Demandallotmenthistroy:Repository<MasterWorkerDemand_allotmenthistroy>,
         
+        @InjectRepository(DemandMaster_draft) private DemandMasterDraft: Repository<DemandMaster_draft>,
         
     ) {}
 
@@ -29,6 +30,10 @@ export class DemandService {
     
     async createDemand(createDto: CreateDemandMasterDto) {
         try {
+
+            if(CreateDemandMasterDto.is_draft ==="0"){
+
+
             const created: DemandMaster[] = [];
             const masterAllotment: MasterWorkerDemand_allotment[] = [];
             let demand: string;
@@ -76,6 +81,34 @@ export class DemandService {
                 result: created,
                 demand
             };
+
+        }else{
+            const created: DemandMaster[] = [];
+            const masterAllotment: MasterWorkerDemand_allotment[] = [];
+            let demand: string;
+            for (const actionDto of createDto.DemandMasterDto) {
+                const demanduniqueID = this.generateEMPID();
+                const createdTreatment = this.DemandMasterDraft.create({
+                    ...actionDto,
+                    total_pending: actionDto.total_pending,
+                    demanduniqueID,
+                    workallostatus:"0"
+                });
+                await this.DemandMasterDraft.save(createdTreatment);
+                created.push(createdTreatment);
+                demand = demanduniqueID;
+                const startDate = new Date(actionDto.dateOfApplicationForWork);
+        
+            }
+            
+            return {
+                errorCode: 0,
+                message: "Demand Created Successfully",
+                result: created,
+                demand
+            };
+
+        }
         } catch (error) {
             return {
                 errorCode: 1,

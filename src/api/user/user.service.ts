@@ -565,7 +565,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
            userIndex?:number) {
       try {
 
-        if (category === 'HQ' && dno_status === '0'&& role===0) {
+        if (category === 'HQ' && dno_status === '0') {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -608,7 +608,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             },
           };
 
-        } else if (category === 'HD' && dno_status === '0'&& role===1) {
+        } else if (category === 'HD' && dno_status === '0' && role == 1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -653,53 +653,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                userDetails,
             },
           };
-              } else if (category === 'HD' && dno_status === '0'&& role===2) {
-          const queryBuilder = this.userRepository.createQueryBuilder('user');
-
-        // Use the andWhere method properly for dno_status
-        queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
-        queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
-        queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
-
-
-     
-        queryBuilder .orderBy('user.userIndex', 'DESC');
-        // Get users
-        const users = await queryBuilder.getMany();
-  
-          // Fetch districtName for each user
-          const userDetails = await Promise.all(users.map(async (user) => {
-            const districtDetails = await this.getAllDistricts(user.districtcode);
-            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
-            const subDetails = await this.getAllsub(user.subDivision);
-            const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
-            const blockDetails = await this.getAllblock(user.blockCode);
-            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
-            const gpDetails = await this.getAllgp(user.gpCode);
-            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
-            const deptDetails = await this.getDepatmentbyid(user.departmentNo);
-            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
-            const designationDetails = await this.getDesignationbyid(user.designationID);
-            const designationName = designationDetails.result ? designationDetails.result.designation : '';
-            return {
-                ...user,
-                districtName: districtName,
-                subDivisionName: subDivisionName,
-                blockname: blockname,
-                gpName: gpName,
-                deptName:deptName,
-                designationName:designationName
-
-            };
-          }));
-          return {
-            errorCode: 0,
-            message: 'Success',
-            result: {
-               userDetails,
-            },
-          };
-        } else if (category === 'HD' && dno_status === '0'&& role===3) {
+              } else if (category === 'HD' && dno_status === '0' && role == 2) {
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
         // Use the andWhere method properly for dno_status
@@ -745,7 +699,53 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                userDetails,
             },
           };
-         } else if (category === 'DIST' && dno_status === '0'&& role===1) {
+        } else if (category === 'HD' && dno_status === '0' && role == 3) {
+          const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        // Use the andWhere method properly for dno_status
+        queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
+        queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
+        queryBuilder.andWhere('user.userIndex = :   userIndex', { userIndex });
+
+
+     
+        queryBuilder .orderBy('user.userIndex', 'DESC');
+        // Get users
+        const users = await queryBuilder.getMany();
+  
+          // Fetch districtName for each user
+          const userDetails = await Promise.all(users.map(async (user) => {
+            const districtDetails = await this.getAllDistricts(user.districtcode);
+            const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+            const subDetails = await this.getAllsub(user.subDivision);
+            const subDivisionName = subDetails.result ? subDetails.result.subdivName : '';
+            const blockDetails = await this.getAllblock(user.blockCode);
+            const blockname = blockDetails.result ? blockDetails.result.blockName : '';
+            const gpDetails = await this.getAllgp(user.gpCode);
+            const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+            const deptDetails = await this.getDepatmentbyid(user.departmentNo);
+            const deptName = deptDetails.result ? deptDetails.result.departmentName : '';
+            const designationDetails = await this.getDesignationbyid(user.designationID);
+            const designationName = designationDetails.result ? designationDetails.result.designation : '';
+            return {
+                ...user,
+                districtName: districtName,
+                subDivisionName: subDivisionName,
+                blockname: blockname,
+                gpName: gpName,
+                deptName:deptName,
+                designationName:designationName
+
+            };
+          }));
+          return {
+            errorCode: 0,
+            message: 'Success',
+            result: {
+               userDetails,
+            },
+          };
+         } else if (category === 'DIST' && dno_status === '0' && role == 1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -790,7 +790,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                  userDetails,
               },
             };
-        } else if (category === 'DIST' && dno_status === '0'&& role===3) {
+        } else if (category === 'DIST' && dno_status === '0' && role == 3) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -838,7 +838,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             };
         }
         
-        else if (category === 'SUB' && dno_status === '0'&& role===1) {
+        else if (category === 'SUB' && dno_status === '0' && role == 1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -884,7 +884,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                  userDetails,
               },
             };
-        } else if (category === 'SUB' && dno_status === '0'&& role===2) {
+        } else if (category === 'SUB' && dno_status === '0' && role == 2) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -932,7 +932,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                 userDetails,
               },
             };
-        } else if (category === 'SUB' && dno_status === '0'&& role===3) {
+        } else if (category === 'SUB' && dno_status === '0' && role == 3) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -980,7 +980,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                  userDetails,
               },
             };
-        } else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
+        } else if (category === 'BLOCK' && dno_status === '0' && role == 1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -1030,7 +1030,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             };
 
         }
-        else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
+        else if (category === 'BLOCK' && dno_status === '0' && role == 1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     
@@ -1079,7 +1079,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               },
             };
 
-        }else if (category === 'BLOCK' && dno_status === '0'&&role===1) {
+        }else if (category === 'BLOCK' && dno_status === '0' && role == 1) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
     

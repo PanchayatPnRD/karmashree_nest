@@ -280,3 +280,119 @@ export class MasterWorkerDemand_allotmenthistroy {
     @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
     UpdateTime: Date;
 }
+
+@Entity()
+export class DemandMaster_draft {
+    @PrimaryGeneratedColumn()
+    demandsl: number;
+
+    @Column()
+    demanduniqueID: string;
+
+    @Column({  nullable: true })
+    schemeArea: string;
+
+    @Column({ nullable: true })
+    departmentNo: number;
+
+    @Column({ type: 'int', nullable: true  })
+    districtcode: number;
+
+    @Column({ type: 'int', nullable: true  })
+    municipalityCode: number;
+
+    @Column({ type: 'int', nullable: true  })
+    blockcode: number;
+
+    @Column({ type: 'int', nullable: true  })
+    gpCode: number;
+
+    @Column({ length: 100, nullable: true })
+    workerJobCardNo: string;
+
+    @Column({ length: 255, nullable: true })
+    workerName: string;
+
+    @Column({ length: 5, nullable: true })
+    gender: string;
+
+    @Column({ length: 6, nullable: true })
+    caste: string;
+
+    @Column({ length: 1, nullable: true })
+    whetherMinority: string;
+
+    @Column({ length: 1, nullable: true })
+    whetherMigrantWorker: string;
+
+    @Column({ length: 10, nullable: true })
+    mobileNo: string;
+
+    
+    @Column({ length: 15, nullable: true })
+    workallostatus: string;
+
+    @Column({  nullable: true })
+    total_pending: number;
+
+    @Column({ type: 'date', nullable: true })
+    dateoflastallocation: Date;
+
+    @Column({ length: 16, nullable: true })
+    aadhaarNo: string;
+
+    @Column({ length: 15, nullable: true })
+    typeOfWorkers: string;
+
+    @Column({ length: 15, nullable: true })
+    workerdemandstatus: string;
+
+    @Column({ type: 'date', nullable: true })
+    dateOfApplicationForWork: Date;
+
+    @Column({ nullable: true })
+    noOfDaysWorkDemanded: number;
+
+    @Column({ nullable: true })
+    currentMonth: number;
+
+    @Column({ nullable: true })
+    currentYear: number;
+
+    @Column({ nullable: true })
+    age: number;
+
+    
+    @Column({  nullable: true })
+    remark: string;
+
+    @Column({ length: 9, nullable: true })
+    finYear: string;
+
+    @Column({ length: 1, nullable: true })
+    ex1: string;
+
+    @Column({ length: 1, nullable: true })
+    ex2: string;
+
+    @Column({ length: 1, nullable: true, default: '0' })
+    ex3: string;
+
+    @Column({ length: 1, nullable: true })
+    ex4: string;
+
+    @Column({ length: 1, nullable: true })
+    ex5: string;
+
+    @Column({ nullable: false })
+    userIndex: number;
+
+   
+    
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    submitTime: Date;
+  
+    @Column({ type: 'timestamp', nullable: true, onUpdate: 'CURRENT_TIMESTAMP' })
+    UpdateTime: Date;
+
+}

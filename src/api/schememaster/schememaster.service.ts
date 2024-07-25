@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MasterSchemeDTO } from './dto/scheme.dto';
-import { MasterScheme, masterscheme_2024_2025, MasterScheme_Draft, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
+import { MasterScheme, masterscheme_2024_2025, MasterScheme_draft, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
@@ -27,7 +27,7 @@ export class SchememasterService {
         @InjectRepository(DemandMaster) private demandMaster: Repository<DemandMaster>,
         @InjectRepository(Employment)private  employment: Repository<Employment>,
         @InjectRepository(masterscheme_2024_2025)private  masterscheme_2024_2025: Repository<masterscheme_2024_2025>,
-        @InjectRepository(MasterScheme_Draft)private  MasterSchemeDraft: Repository<MasterScheme_Draft>,
+        @InjectRepository(MasterScheme_draft)private  MasterSchemeDraft: Repository<MasterScheme_draft>,
 
          
     ) {}

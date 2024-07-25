@@ -411,7 +411,8 @@ export class masterscheme_2024_2025 {
 }
 
 
-export class MasterScheme_Draft {
+@Entity()
+export class MasterScheme_draft {
   @PrimaryGeneratedColumn()
   scheme_sl: number;
 
