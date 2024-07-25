@@ -23,7 +23,7 @@ import { Actionplan_master } from './entity/actionplan.entity';
 import { ActionplanModule } from './api/actionplan/actionplan.module';
 import { Contractor_master, Contractor_master_draft } from './entity/contractor.entity';
 import { ContractorModule } from './api/contractor/contractor.module';
-import { MasterScheme, masterscheme_2024_2025, MasterSchemeExpenduture } from './entity/scheme.entity';
+import { MasterScheme, masterscheme_2024_2025, MasterScheme_Draft, MasterSchemeExpenduture } from './entity/scheme.entity';
 import { SchememasterModule } from './api/schememaster/schememaster.module';
 import * as dotenv from 'dotenv';
 
@@ -86,7 +86,8 @@ dotenv.config();
         MasterWorkerDemand_allotmenthistroy,
         masterscheme_2024_2025,
         Libariry,
-        Contractor_master_draft
+        Contractor_master_draft,
+        MasterScheme_Draft
       ],
       synchronize: true,
     }),

@@ -552,7 +552,8 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
         }
     }
 
-    async getuserlistbycatagory(category: string,
+    async getuserlistbycatagory(
+      category: string,
        dno_status?: string,
         departmentNo?: number, 
         districtCode?: number,
@@ -564,7 +565,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
            userIndex?:number) {
       try {
 
-        if (category === 'HQ') {
+        if (category === 'HQ' && dno_status === '0'&& role===0) {
 
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -608,13 +609,11 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
           };
 
         } else if (category === 'HD' && dno_status === '0'&& role===1) {
-          
+
           const queryBuilder = this.userRepository.createQueryBuilder('user');
 
-        // Use the andWhere method properly for dno_status
         queryBuilder.andWhere('user.dno_status = :dno_status', { dno_status: '0' });
         queryBuilder.andWhere('user.departmentNo = :departmentNo', { departmentNo });
-        // queryBuilder.andWhere('user.role = :   role', { role });
 
 
      
@@ -1283,7 +1282,8 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
       }else if (category === 'GP' && dno_status === '0') {
 
 
-        } else {
+        }
+         else {
           return { errorCode: 1, message: 'Invalid category provided' };
         }
 
@@ -1294,7 +1294,8 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
       }
     }
     
-    async getdnouserlistbycatagory(category: string,
+    async getdnouserlistbycatagory(
+      category: string,
       dno_status?: string,
        departmentNo?: number, 
        districtCode?: number,

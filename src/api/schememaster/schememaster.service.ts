@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MasterSchemeDTO } from './dto/scheme.dto';
-import { MasterScheme, masterscheme_2024_2025, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
+import { MasterScheme, masterscheme_2024_2025, MasterScheme_Draft, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
@@ -27,14 +27,20 @@ export class SchememasterService {
         @InjectRepository(DemandMaster) private demandMaster: Repository<DemandMaster>,
         @InjectRepository(Employment)private  employment: Repository<Employment>,
         @InjectRepository(masterscheme_2024_2025)private  masterscheme_2024_2025: Repository<masterscheme_2024_2025>,
+        @InjectRepository(MasterScheme_Draft)private  MasterSchemeDraft: Repository<MasterScheme_Draft>,
 
-        
+         
     ) {}
 
     async create(createMasterSchemeDto: MasterSchemeDTO) {
 
         try{
         // Create MasterScheme entity from DTO
+
+        
+if(createMasterSchemeDto.is_draft==="0"){
+
+
         const masterScheme = this.masterSchemeRepository.create(createMasterSchemeDto);
 
         // Generate a random number (assuming lodash is available)
@@ -101,6 +107,23 @@ export class SchememasterService {
         const schemeid =  masterScheme.schemeId;
 //result: savedMasterScheme
         return { errorCode: 0  ,message:"Scheme created successfully",schemeid };
+
+}else{
+
+  const masterScheme = this.MasterSchemeDraft.create(createMasterSchemeDto);
+
+  // Generate a random number (assuming lodash is available)
+  const randomNum = random(1000, 9999); // Generates a random number between 1000 and 9999
+  
+  // Construct the schemeId using 'S', departmentNo, and the random number
+  const department = await this.getDepatmentbyid(createMasterSchemeDto.departmentNo);
+  const departmentName = department.result?.deptshort || '';
+  const schemeId = `KR-${departmentName}-${createMasterSchemeDto.districtcode}-${randomNum}`;
+  
+  masterScheme.schemeId = schemeId;
+
+  const savedMasterScheme = await this.MasterSchemeDraft.save(masterScheme);
+}
     } catch (error) {
       return { errorCode: 1, message: 'Something went wrong', error: error.message };
     }
@@ -657,6 +680,33 @@ export class SchememasterService {
             }
           }
         
+          //draft
+
+           async get_draft_Details(userIndex: number) {
+        try {
+            const MasterSchemeDraft = await this.MasterSchemeDraft.findOne({ where: { userIndex },order:{scheme_sl:'DESC'} });
+    
+            if (!MasterSchemeDraft) {
+                return {
+                    errorCode: 1,
+                    message: 'Contractor not found'
+                };
+            }
+    
+            const MasterSchemeDraftDetails = {
+                ...MasterSchemeDraft,
+            };
+    
+          //  const lastElement = Object.values(contractorDetails).pop();
+    
+            return {
+                errorCode: 0,
+                result: MasterSchemeDraftDetails
+            };
+        } catch (error) {
+            throw new Error('Failed to fetch contractors from the database.');
+        }
+    }
           async getAllSchemerequizition(districtcode: number,blockcode?: number,gpCode?:number,municipalityCode?:number) {
             try {
               const schemes = await this.masterSchemeRepository.find({
@@ -1745,19 +1795,27 @@ export class SchememasterService {
             }
           }
 
-          async masterschemeold() {
-            let dept; // Declare dept before the try block
+          async masterschemeold(page: number = 1, limit: number = 100) {
+            try {
+              // Calculate the number of records to skip
+              const skip = (page - 1) * limit;
           
-         
-                dept = await this.masterscheme_2024_2025.find();
-            
+              // Find records with pagination
+              const dept = await this.masterscheme_2024_2025.find({
+                skip: skip,
+                take: limit,
+                order: {
+                  schemeId: 'ASC', // Assuming you have an 'id' field to sort by, adjust if necessary
+                },
+              });
           
-           
-          
+              // Return the paginated result
               return { errorCode: 0, result: dept };
-        
-             
+            } catch (error) {
+              return { errorCode: 1, message: 'Something went wrong', error: error.message };
             }
+          }
+          
 }
 
 

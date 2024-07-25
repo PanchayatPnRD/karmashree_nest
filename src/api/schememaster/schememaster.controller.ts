@@ -137,6 +137,13 @@ export class SchememasterController {
     return await this.masterSchemeService.masterschemeold();
   }
  
-
+  @Get('get_scheme_draft_Details/:userIndex')
+  async get_draft_Details(@Param('userIndex') userIndex: number) {
+  
+          const contractors = await this.masterSchemeService.get_draft_Details(userIndex);
+          return  contractors 
+     
+  }
+  
 
 }

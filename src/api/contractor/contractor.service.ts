@@ -8,6 +8,7 @@ import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/
 
 @Injectable()
 export class ContractorService {
+    
     constructor(
         @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
         @InjectRepository(master_zp) private masterzp: Repository<master_zp>,
@@ -16,16 +17,12 @@ export class ContractorService {
         @InjectRepository(masterdepartment) private masterdepartment: Repository<masterdepartment>,
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
-    
+
         @InjectRepository(Contractor_master_draft) private Contractormasterdraft: Repository<Contractor_master_draft>,
-    
-    
-       
-        
+
 
       ) {}
 
- 
 
     async createContractors(createContractorDto: CreateContractorDto) {
         try {
@@ -36,10 +33,10 @@ export class ContractorService {
                 const rand = Math.round(range.min + Math.random() * delta)
                 return rand.toString(); 
               }
+
 if(createContractorDto.is_draft==="1"){
     const contractorUniqueNo = `C${createContractorDto.DepartmentNo}${createContractorDto.districtcode}${generateRandomNumber()}`;
-    
-            
+
     createContractorDto.contractor_uniqueNo = contractorUniqueNo;
 
 
