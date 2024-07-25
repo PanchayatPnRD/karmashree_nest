@@ -1794,22 +1794,33 @@ if(createMasterSchemeDto.is_draft==="0"){
               return { errorCode: 1, message: 'Something went wrong: ' + error.message };
             }
           }
-
-          async masterschemeold(page: number = 1, limit: number = 100) {
+          async masterschemeold(
+            districtcode: string,
+            blockcode?: string,
+            gpCode?: string,
+            departmentNo?: number,
+          ) {
             try {
-              // Calculate the number of records to skip
-              const skip = (page - 1) * limit;
-          
-              // Find records with pagination
-              const dept = await this.masterscheme_2024_2025.find({
-                skip: skip,
-                take: limit,
-                order: {
-                  schemeId: 'ASC', // Assuming you have an 'id' field to sort by, adjust if necessary
-                },
-              });
-          
-              // Return the paginated result
+              const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme');
+        
+              // Add filters dynamically
+              queryBuilder.andWhere('scheme.districtcode = :districtcode', { districtcode });
+        
+              if (blockcode) {
+                queryBuilder.andWhere('scheme.blockcode = :blockcode', { blockcode });
+              }
+              if (gpCode) {
+                queryBuilder.andWhere('scheme.gpCode = :gpCode', { gpCode });
+              }
+              if (departmentNo !== undefined) {
+                queryBuilder.andWhere('scheme.departmentNo = :departmentNo', { departmentNo });
+              }
+        
+              const dept = await queryBuilder
+                .orderBy('scheme.schemeId', 'ASC')
+                .getMany();
+        
+              // Return the result
               return { errorCode: 0, result: dept };
             } catch (error) {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };

@@ -132,11 +132,20 @@ export class SchememasterController {
     return await this.masterSchemeService.getFundingDepartmentWiseReport();
   }
 
+
   @Get('masterscheme_2024_2025')
-  async masterschemeold() {
-    return await this.masterSchemeService.masterschemeold();
+  @ApiQuery({ name: 'departmentNo', required: false, type: Number }) 
+  @ApiQuery({ name: 'blockcode', required: false, type: Number }) 
+  @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
+
+  async getMasterSchemeOld(
+    @Query('districtcode') districtcode: string,
+    @Query('blockcode') blockcode?: string,
+    @Query('gpCode') gpCode?: string,
+    @Query('departmentNo') departmentNo?: number,
+  ) {
+    return this.masterSchemeService.masterschemeold(districtcode, blockcode, gpCode, departmentNo);
   }
- 
   @Get('get_scheme_draft_Details/:userIndex')
   async get_draft_Details(@Param('userIndex') userIndex: number) {
   
