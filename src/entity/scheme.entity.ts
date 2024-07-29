@@ -417,52 +417,48 @@ export class MasterScheme_draft {
   scheme_sl: number;
 
   
-  @Column({type: 'varchar'} )
+  @Column({type: 'varchar', nullable: true } )
   schemeId: string;
 
-  @Column({ type: 'varchar'})
+  @Column({ type: 'varchar', nullable: true })
   schemeArea: string;
 
   
-@Index()
-  @Column({type: 'int'} )
+
+  @Column({type: 'int', nullable: true } )
   departmentNo: number;
 
   
-@Index()
+
   @Column({ type: 'varchar', length: 255, collation: 'utf8mb4_unicode_ci', nullable: true  })
   deptWing: string;
 
   
-@Index()
+
   @Column({ type: 'int', nullable: true  })
   districtcode: number;
 
-  
-@Index()
+
   @Column({ type: 'int', nullable: true })
   municipalityCode: number ;
 
-  
-@Index()
+
   @Column({ type: 'int', nullable: true })
   blockcode: number ;
 
-  
-@Index()
+
   @Column({ type: 'int', nullable: true })
   gpCode: number ;
 
   
-@Index()
+
   @Column({ nullable: true })
   sansadID: number ;
 
   @Column({  nullable: true })
   village: string;
 
-  
-@Index()
+
   @Column({type: 'int', nullable: true } )
   schemeSector: number;
 
@@ -472,24 +468,21 @@ export class MasterScheme_draft {
   @Column({ type: 'varchar',length: 255, nullable: true  })
   schemeName: string;
 
-  
-@Index()
+
   @Column({type: 'int', nullable: true } )
   FundingDepttID: number;
 
   @Column({ type: 'varchar',length: 255, nullable: true  })
   FundingDeptname: string;
 
-  
-@Index()
+
   @Column({type: 'int', nullable: true } )
   ExecutingDepttID: number;
 
   @Column({ type: 'varchar',length: 255, nullable: true  })
   ExecutingDeptName: string;
 
-  
-@Index()
+
   @Column({type: 'int', nullable: true} )
   ImplementingAgencyID: number;
 
@@ -559,8 +552,7 @@ export class MasterScheme_draft {
   @Column({ type: 'date', nullable: true })
   workOderDate: Date ;
 
-  
-@Index()
+
   @Column({ type: 'int', nullable: true })
   ControctorID: number ;
 
