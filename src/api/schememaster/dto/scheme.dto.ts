@@ -23,22 +23,22 @@ export class MasterSchemeDTO {
     @IsString()
     deptWing:string
 
-    @ApiProperty({ example: 'district code' })
-    @IsNotEmpty()
+    @ApiProperty({ example: 1 })
+   
    
     districtcode: number;
 
-    @ApiProperty({ example: 'municipality code' })
-    @IsNotEmpty()
+    @ApiProperty({ example: 1 })
+
    
     municipalityCode: number;
 
-    @ApiProperty({ example: 'block code' })
+    @ApiProperty({ example: 1})
     @IsNotEmpty()
  
     blockcode: number;
 
-    @ApiProperty({ example: 'gp code' })
+    @ApiProperty({ example: 1})
     @IsNotEmpty()
 
     gpCode: number;
