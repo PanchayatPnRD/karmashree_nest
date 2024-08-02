@@ -61,8 +61,21 @@ if (cluster.isPrimary ) {
     });
   
   
+    app.use(
+      '/api/public',
+      express.static(join(__dirname, '..', 'public'), {
+        setHeaders: (res, path) => {
+          if (path.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'no-cache');
+          } else {
+            res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+          }
+        },
+      }),
+    );
+
   
-    app.use('/api/public', express.static(join(__dirname, '..', 'public')));
+   // app.use('/api/public', express.static(join(__dirname, '..', 'public')));
   
     app.use('/api/uploads', express.static(join(__dirname, '..', 'uploads')));
     const config = new DocumentBuilder()
