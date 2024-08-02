@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors,Headers } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiHeader, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto, SendSMSDto } from './dto/user.dto';
@@ -7,7 +7,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateLibraryDto } from './dto/library.dto';
 import { multerConfig } from 'src/commomn/middleware/multur.config';
 import { UpdateLibraryDto } from './dto/UpdateLibraryDto.dto';
-
+import { JwtService } from '@nestjs/jwt';
 @ApiTags("User")
 @ApiHeader({
   name: 'token',
@@ -15,16 +15,34 @@ import { UpdateLibraryDto } from './dto/UpdateLibraryDto.dto';
 @Controller('api/user')
 export class UserController {
 
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UserService,
+
+      private readonly jwtService: JwtService
+    ) {}
 
     @Post('create_user')
    async userCreate(@Body() createDto: CreateUserDto) {
      return await this.userService.userCreate(createDto);
    }
-   @Get('viewuser/:userIndex') // This decorator defines a GET endpoint for retrieving a PCB by ID
-   async viewPcbById(@Param('userIndex') userIndex: number) {
-     return this.userService.viewUserById(userIndex); // Delegate retrieval to the service
-   }
+
+
+  //  @Get('viewuser/:userIndex') // This decorator defines a GET endpoint for retrieving a PCB by ID
+  //  async viewPcbById(@Param('userIndex') userIndex: number) {
+  //    return this.userService.viewUserById(userIndex); // Delegate retrieval to the service
+  //  }
+  @Get('viewuser')
+  async viewUserByToken(@Headers() headers: Record<string, string>) {
+    try {
+      const token = headers['token'];
+      if (!token) {
+        throw new Error('Token not provided');
+      }
+      const decoded = this.jwtService.verify(token);
+      return this.userService.viewUserById(decoded.userIndex);
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
 
   
   //  @Post('sendsms')
