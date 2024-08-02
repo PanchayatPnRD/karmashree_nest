@@ -122,6 +122,11 @@ export class MasterWorkerRequirementDto {
   @IsNumber()
   userIndex: number;
 
+  @ApiProperty({ example: '0' })
+    @IsNotEmpty()
+    @IsString()
+  is_draft:string;
+
   @ApiProperty({
     isArray: true,
     default: [

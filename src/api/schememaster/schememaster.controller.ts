@@ -146,6 +146,9 @@ export class SchememasterController {
   ) {
     return this.masterSchemeService.masterschemeold(districtcode, blockcode, gpCode, departmentNo);
   }
+
+
+  
   @Get('get_scheme_draft_Details/:userIndex')
   async get_draft_Details(@Param('userIndex') userIndex: number) {
   

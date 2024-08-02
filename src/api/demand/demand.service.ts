@@ -30,85 +30,73 @@ export class DemandService {
     
     async createDemand(createDto: CreateDemandMasterDto) {
         try {
-
-            if(CreateDemandMasterDto.is_draft ==="0"){
-
-
+            // Initialize arrays to store created demands and master allotments
             const created: DemandMaster[] = [];
             const masterAllotment: MasterWorkerDemand_allotment[] = [];
-            let demand: string;
-            for (const actionDto of createDto.DemandMasterDto) {
-                const demanduniqueID = this.generateEMPID();
-                const createdTreatment = this.demandMaster.create({
-                    ...actionDto,
-                    total_pending: actionDto.total_pending,
-                    demanduniqueID,
-                    workallostatus:"0"
-                });
-                await this.demandMaster.save(createdTreatment);
-                created.push(createdTreatment);
-                demand = demanduniqueID;
-                const startDate = new Date(actionDto.dateOfApplicationForWork);
-                
-                for (let i = 0; i < actionDto.noOfDaysWorkDemanded; i++) {
-                    const currentWorkDate = new Date(startDate);
-                    currentWorkDate.setDate(startDate.getDate() + i);
+            let demandUniqueID: string;
     
-                    const newMasterAllotment = this.MasterWorkerDemandallotment.create({
-                        demanduniqueID: demand , // Generate a new ID for each allotment
-                        schemeArea: actionDto.schemeArea,
-                        departmentNo: actionDto.departmentNo,
-                        districtcode: actionDto.districtcode,
-                        municipalityCode: actionDto.municipalityCode,
-                        blockcode: actionDto.blockcode,
-                        gpCode: actionDto.gpCode,
-                        workerJobCardNo: actionDto.workerJobCardNo,
-                        dateofwork: currentWorkDate,
-                        CurrentMonth_work: actionDto.currentMonth,
-                        CurrentYear_work: actionDto.currentYear,
-                        remark: actionDto.remark,
-                        age: actionDto.age,
+            for (const demand of createDto.DemandMasterDto) {
+                if (demand.is_draft === '0') {
+                    // For non-draft demands
+                    demandUniqueID = this.generateEMPID();
+                    const createdTreatment = this.demandMaster.create({
+                        ...demand,
+                        total_pending: demand.total_pending,
+                        demanduniqueID: demandUniqueID,
+                        workallostatus: "0"
                     });
+                    await this.demandMaster.save(createdTreatment);
+                    created.push(createdTreatment);
     
-                    const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
-                    masterAllotment.push(createdMasterWorkerAllotment);
+                    const startDate = new Date(demand.dateOfApplicationForWork);
+                    for (let i = 0; i < demand.noOfDaysWorkDemanded; i++) {
+                        const currentWorkDate = new Date(startDate);
+                        currentWorkDate.setDate(startDate.getDate() + i);
+    
+                        const newMasterAllotment = this.MasterWorkerDemandallotment.create({
+                            demanduniqueID: demandUniqueID,
+                            schemeArea: demand.schemeArea,
+                            departmentNo: demand.departmentNo,
+                            districtcode: demand.districtcode,
+                            municipalityCode: demand.municipalityCode,
+                            blockcode: demand.blockcode,
+                            gpCode: demand.gpCode,
+                            workerJobCardNo: demand.workerJobCardNo,
+                            dateofwork: currentWorkDate,
+                            CurrentMonth_work: demand.currentMonth,
+                            CurrentYear_work: demand.currentYear,
+                            remark: demand.remark,
+                            age: demand.age,
+                        });
+    
+                        const createdMasterWorkerAllotment = await this.MasterWorkerDemandallotment.save(newMasterAllotment);
+                        masterAllotment.push(createdMasterWorkerAllotment);
+
+                        await this.DemandMasterDraft.delete({ userIndex: demand.userIndex });
+
+
+                    }
+                } else {
+                    // For draft demands
+                    demandUniqueID = this.generateEMPID();
+                    const createdTreatment = this.DemandMasterDraft.create({
+                        ...demand,
+                        total_pending: demand.total_pending,
+                        demanduniqueID: demandUniqueID,
+                        workallostatus: "0"
+                    });
+                    await this.DemandMasterDraft.save(createdTreatment);
+                    created.push(createdTreatment);
                 }
             }
-            
+    
             return {
                 errorCode: 0,
                 message: "Demand Created Successfully",
                 result: created,
-                demand
+                demand: demandUniqueID
             };
-
-        }else{
-            const created: DemandMaster[] = [];
-            const masterAllotment: MasterWorkerDemand_allotment[] = [];
-            let demand: string;
-            for (const actionDto of createDto.DemandMasterDto) {
-                const demanduniqueID = this.generateEMPID();
-                const createdTreatment = this.DemandMasterDraft.create({
-                    ...actionDto,
-                    total_pending: actionDto.total_pending,
-                    demanduniqueID,
-                    workallostatus:"0"
-                });
-                await this.DemandMasterDraft.save(createdTreatment);
-                created.push(createdTreatment);
-                demand = demanduniqueID;
-                const startDate = new Date(actionDto.dateOfApplicationForWork);
-        
-            }
-            
-            return {
-                errorCode: 0,
-                message: "Demand Created Successfully",
-                result: created,
-                demand
-            };
-
-        }
+    
         } catch (error) {
             return {
                 errorCode: 1,
@@ -116,7 +104,32 @@ export class DemandService {
             };
         }
     }
-
+    
+    async get_draft_Details(userIndex: number) {
+        try {
+            const DemandMasterDraft = await this.DemandMasterDraft.findOne({ where: { userIndex },order:{demandsl:'DESC'} });
+    
+            if (!DemandMasterDraft) {
+                return {
+                    errorCode: 1,
+                    message: 'Contractor not found'
+                };
+            }
+    
+            const DemandMasterDraftDetails = {
+                ...DemandMasterDraft,
+            };
+    
+          //  const lastElement = Object.values(contractorDetails).pop();
+    
+            return {
+                errorCode: 0,
+                result: DemandMasterDraftDetails
+            };
+        } catch (error) {
+            throw new Error('Failed to fetch contractors from the database.');
+        }
+    }
 
     async searchDemand(searchDto: SearchDemandDto) {
         const { workerJobCardNo, workerName } = searchDto;

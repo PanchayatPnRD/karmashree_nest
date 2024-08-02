@@ -23,13 +23,13 @@ import { cpus } from 'os';
 import * as basicAuth from 'express-basic-auth';
 
 if (cluster.isPrimary ) {
-  console.log(`Primary ${process.pid} is running`);
+  //console.log(`Primary ${process.pid} is running`);
 
   // Fork workers.
   cpus().forEach(() => cluster.fork());
 
   cluster.on('exit', (worker, code, signal) => {
-    console.log(`worker ${worker.process.pid} died`);
+   // console.log(`worker ${worker.process.pid} died`);
   });
 } else {
   async function bootstrap() {

@@ -52,4 +52,13 @@ export class DemandController {
     async getDemandStats() {
       return this.demandService.getDemandStats();
     }
+
+
+    @Get('get_demand_draft_Details/:userIndex')
+    async get_draft_Details(@Param('userIndex') userIndex: number) {
+    
+            const contractors = await this.demandService.get_draft_Details(userIndex);
+            return  contractors 
+       
+    }
 }

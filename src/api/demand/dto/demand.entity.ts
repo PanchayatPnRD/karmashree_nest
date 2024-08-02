@@ -130,6 +130,8 @@ export class DemandMasterDto {
 
 
   @ApiProperty({ example: '1' })
+  @IsNotEmpty()
+  @IsString()
   is_draft:string;
 }
 
@@ -187,13 +189,15 @@ export class CreateDemandMasterDto {
 
                 userIndex: 1,
 
+                is_draft: '1',
 
-                is_draft:'1'
+
+         
             }
         ]
     })
     DemandMasterDto: DemandMasterDto[];
-    static is_draft: string;
+    
 }
 
 

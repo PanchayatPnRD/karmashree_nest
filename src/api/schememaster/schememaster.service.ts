@@ -106,6 +106,9 @@ if(createMasterSchemeDto.is_draft==="0"){
         await this.MasterSchemeExpendutureRepository.save(masterSchemeExpenditure);
         const schemeid =  masterScheme.schemeId;
 //result: savedMasterScheme
+
+await this.MasterSchemeDraft.delete({ userIndex: createMasterSchemeDto.userIndex });
+
         return { errorCode: 0  ,message:"Scheme created successfully",schemeid };
 
 }else{
@@ -123,10 +126,14 @@ if(createMasterSchemeDto.is_draft==="0"){
   masterScheme.schemeId = schemeId;
 
   const savedMasterScheme = await this.MasterSchemeDraft.save(masterScheme);
+
+  return { errorCode: 0  ,message:"Scheme Draft created successfully",};
 }
     } catch (error) {
       return { errorCode: 1, message: 'Something went wrong', error: error.message };
     }
+
+
     }
 
     async findByUserIndex(userIndex: number) {

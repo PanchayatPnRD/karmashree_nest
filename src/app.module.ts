@@ -31,6 +31,8 @@ import { WorkerrequisitionModule } from './api/workerrequisition/workerrequisiti
 import {
   MasterWorkerRequirement,
   MasterWorkerRequirement_allotment,
+  MasterWorkerRequirement_allotment_darft,
+  MasterWorkerRequirement_draft,
 } from './entity/workrequigition.entity';
 import { jobcardformat } from './entity/nrgsjobcardformat.entity';
 import { DemandModule } from './api/demand/demand.module';
@@ -90,7 +92,9 @@ dotenv.config();
         Libariry,
         Contractor_master_draft,
         MasterScheme_draft,
-        DemandMaster_draft
+        DemandMaster_draft,
+        MasterWorkerRequirement_draft,
+        MasterWorkerRequirement_allotment_darft
       ],
       synchronize: true,
     }),
