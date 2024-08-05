@@ -21,6 +21,7 @@ import { Logger } from '@nestjs/common';
 const cluster = require('cluster');
 import { cpus } from 'os';
 import * as basicAuth from 'express-basic-auth';
+import helmet from 'helmet';
 
 if (cluster.isPrimary ) {
   //console.log(`Primary ${process.pid} is running`);
@@ -60,7 +61,23 @@ if (cluster.isPrimary ) {
       credentials: true,
     });
   
-  
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "karmashree.deptemployment.in"],
+            styleSrc: ["'self'", "'unsafe-inline'", "karmashree.deptemployment.in"],
+            imgSrc: ["'self'", "data:", "karmashree.deptemployment.in"],
+            connectSrc: ["'self'", "karmashree.deptemployment.in"],
+            fontSrc: ["'self'", "karmashree.deptemployment.in"],
+            objectSrc: ["'none'"],
+            frameSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+          },
+        },
+      })
+    );
     app.use(
       '/api/public',
       express.static(join(__dirname, '..', 'public'), {
