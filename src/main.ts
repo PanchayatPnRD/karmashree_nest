@@ -69,7 +69,7 @@ if (cluster.isPrimary ) {
             scriptSrc: ["'self'", "'unsafe-inline'", "karmashree.deptemployment.in"],
             styleSrc: ["'self'", "'unsafe-inline'", "karmashree.deptemployment.in"],
             imgSrc: ["'self'", "data:", "karmashree.deptemployment.in"],
-            connectSrc: ["'self'", "karmashree.deptemployment.in"],
+            connectSrc: ["'self'", "karmashree.deptemployment.in", "http://wbkarmashree.in:8094"],
             fontSrc: ["'self'", "karmashree.deptemployment.in"],
             objectSrc: ["'none'"],
             frameSrc: ["'none'"],
