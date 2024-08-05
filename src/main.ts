@@ -66,15 +66,17 @@ if (cluster.isPrimary ) {
         contentSecurityPolicy: {
           directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "karmashree.deptemployment.in"],
-            styleSrc: ["'self'", "'unsafe-inline'", "karmashree.deptemployment.in"],
-            imgSrc: ["'self'", "data:", "karmashree.deptemployment.in"],
-            connectSrc: ["'self'", "karmashree.deptemployment.in", "http://wbkarmashree.in:8094"],
-            fontSrc: ["'self'", "karmashree.deptemployment.in"],
+            'report-uri': ["'/csp-violation-report-endpoint'"],
+            scriptSrc: ["'self'", "'unsafe-inline'",  "http://karmashree.wbdeptemployment.in"],
+            styleSrc: ["'self'", "'unsafe-inline'", "http://karmashree.wbdeptemployment.in"],
+            imgSrc: ["'self'", "data:", "http://karmashree.wbdeptemployment.in"],
+            connectSrc: ["'self'", "http://karmashree.wbdeptemployment.in", "http://wbkarmashree.in:8094"],
+            fontSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
             objectSrc: ["'none'"],
             frameSrc: ["'none'"],
             upgradeInsecureRequests: [],
           },
+          reportOnly: false, // Set to false to enforce the policy
         },
       })
     );
