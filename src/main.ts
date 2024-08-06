@@ -52,7 +52,7 @@ if (cluster.isPrimary ) {
     expressApp.disable('x-powered-by');
   
     app.enableCors({
-      origin: true,
+      origin: 'http://karmashree.wbdeptemployment.in',
       // origin:true,
       // CORS HTTP methods
       methods: ['GET', 'POST', 'PUT'],
