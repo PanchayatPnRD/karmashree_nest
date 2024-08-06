@@ -430,6 +430,17 @@ export class AuthService {
   }
   async verifyOTP(data: VerifyOtpdto): Promise<any> {
     try {
+
+      const decryptedUserIdBytes = CryptoJS.AES.decrypt(data.userId, process.env.SECRET_KEY);
+      const decryptedUserId = decryptedUserIdBytes.toString(CryptoJS.enc.Utf8);
+
+      // Decrypt the password
+      const decryptedOtpBytes = CryptoJS.AES.decrypt(data.otp, process.env.SECRET_KEY);
+      const decryptedOtp = decryptedOtpBytes.toString(CryptoJS.enc.Utf8);
+
+      const userId = decryptedUserId.toLowerCase();
+      const otp = decryptedOtp;
+
       const userDetails = await this.user.findOne({
         where: { userId: data.userId },
       });
@@ -441,7 +452,7 @@ export class AuthService {
         };
       }
 
-      if (userDetails.otp !== data.otp) {
+      if (userDetails.otp !== otp) {
         return {
           errorCode: 1,
           message: 'Invalid OTP',
