@@ -61,25 +61,7 @@ if (cluster.isPrimary ) {
       credentials: true,
     });
   
-    app.use(
-      helmet({
-        contentSecurityPolicy: {
-          directives: {
-            defaultSrc: ["'self'"],
-            'report-uri': ["'/csp-violation-report-endpoint'"],
-            scriptSrc: ["'self'", "'unsafe-inline'",  "http://karmashree.wbdeptemployment.in"],
-            styleSrc: ["'self'", "'unsafe-inline'", "http://karmashree.wbdeptemployment.in"],
-            imgSrc: ["'self'", "data:", "http://karmashree.wbdeptemployment.in"],
-            connectSrc: ["'self'", "http://karmashree.wbdeptemployment.in", "http://wbkarmashree.in:8094"],
-            fontSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
-            objectSrc: ["'none'"],
-            frameSrc: ["'none'"],
-            upgradeInsecureRequests: [],
-          },
-          reportOnly: false, // Set to false to enforce the policy
-        },
-      })
-    );
+   
     app.use(
       '/api/public',
       express.static(join(__dirname, '..', 'public'), {

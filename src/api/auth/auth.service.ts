@@ -44,8 +44,10 @@ export class AuthService {
  
   async login(data: userLoginDto) {
     try {
+
       const decryptedUserIdBytes = CryptoJS.AES.decrypt(data.userId, process.env.SECRET_KEY);
       const decryptedUserId = decryptedUserIdBytes.toString(CryptoJS.enc.Utf8);
+
 
       // Decrypt the password
       const decryptedPasswordBytes = CryptoJS.AES.decrypt(data.password, process.env.SECRET_KEY);
@@ -54,13 +56,9 @@ export class AuthService {
       const userId = decryptedUserId.toLowerCase();
       const password = decryptedPassword;
 
-  
-
-
       const userDetails = await this.user.findOne({
         where: [{ userId: userId }],
       });
-
       if (!userDetails) {
         return {
           errorCode: 1,
