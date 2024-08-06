@@ -442,7 +442,7 @@ export class AuthService {
       const otp = decryptedOtp;
 
       const userDetails = await this.user.findOne({
-        where: { userId: data.userId },
+        where: { userId: userId },
       });
 
       if (!userDetails) {
@@ -490,7 +490,7 @@ export class AuthService {
       // Assuming process.env.SECRET is defined and valid
       const token = jwt.sign(payload, process.env.SECRET);
       const newPayload = {
-        ...payload,
+       // ...payload,
         token: token,
       };
       const response = {
