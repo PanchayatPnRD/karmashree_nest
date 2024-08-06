@@ -490,7 +490,7 @@ export class AuthService {
       // Assuming process.env.SECRET is defined and valid
       const token = jwt.sign(payload, process.env.SECRET);
       const newPayload = {
-        ...payload,
+       // ...payload,
         token: token,
       };
       const response = {
