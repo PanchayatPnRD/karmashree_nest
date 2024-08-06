@@ -19,6 +19,8 @@ import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 import { Cron } from '@nestjs/schedule';
 import { SendMessageDto } from './dto/dto/whatsapp.dto';
 const jwt = require('jsonwebtoken');
+import * as CryptoJS from 'crypto-js';
+
 const SECRET_KEY = 'NODEAPI';
 @Injectable()
 
@@ -42,7 +44,14 @@ export class AuthService {
  
   async login(data: userLoginDto) {
     try {
-      const userId = data.userId.toLowerCase();
+
+      const decryptedBytes = CryptoJS.AES.decrypt(data, process.env.SECRET_KEY);
+      const decryptedData = JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8));
+
+      const userId2 = decryptedData.userId.toLowerCase();
+      const password2 = decryptedData.password;
+
+      const userId = userId2.toLowerCase();
       const userDetails = await this.user.findOne({
         where: [{ userId: userId }],
       });
@@ -78,7 +87,7 @@ export class AuthService {
       }
 
       // Check password
-      const isMatch = await bcrypt.compare(data.password, userDetails.encryptpassword);
+      const isMatch = await bcrypt.compare(password2, userDetails.encryptpassword);
 
       if (isMatch) {
         // Reset failed login attempts on successful login
