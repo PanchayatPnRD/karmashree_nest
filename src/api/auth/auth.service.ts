@@ -44,14 +44,19 @@ export class AuthService {
  
   async login(data: userLoginDto) {
     try {
+      const decryptedUserIdBytes = CryptoJS.AES.decrypt(data.userId, process.env.SECRET_KEY);
+      const decryptedUserId = decryptedUserIdBytes.toString(CryptoJS.enc.Utf8);
 
-      const decryptedBytes = CryptoJS.AES.decrypt(data, process.env.SECRET_KEY);
-      const decryptedData = JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8));
+      // Decrypt the password
+      const decryptedPasswordBytes = CryptoJS.AES.decrypt(data.password, process.env.SECRET_KEY);
+      const decryptedPassword = decryptedPasswordBytes.toString(CryptoJS.enc.Utf8);
 
-      const userId2 = decryptedData.userId.toLowerCase();
-      const password2 = decryptedData.password;
+      const userId = decryptedUserId.toLowerCase();
+      const password = decryptedPassword;
 
-      const userId = userId2.toLowerCase();
+  
+
+
       const userDetails = await this.user.findOne({
         where: [{ userId: userId }],
       });
@@ -87,7 +92,7 @@ export class AuthService {
       }
 
       // Check password
-      const isMatch = await bcrypt.compare(password2, userDetails.encryptpassword);
+      const isMatch = await bcrypt.compare(password, userDetails.encryptpassword);
 
       if (isMatch) {
         // Reset failed login attempts on successful login
