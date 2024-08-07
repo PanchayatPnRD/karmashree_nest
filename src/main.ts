@@ -38,11 +38,11 @@ if (cluster.isPrimary ) {
  
     // Express middleware
     const app = await NestFactory.create(AppModule, {
-      httpsOptions: {
-        key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'private.key')),
-        cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'app_wbkarmashree_in.crt')),
-        ca: fs.readFileSync(path.join(__dirname, '..', 'keys', 'SectigoRSADomainValidationSecureServerCA.crt')),
-      },
+      // httpsOptions: {
+      //   key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'private.key')),
+      //   cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'app_wbkarmashree_in.crt')),
+      //   ca: fs.readFileSync(path.join(__dirname, '..', 'keys', 'SectigoRSADomainValidationSecureServerCA.crt')),
+      // },
     });
     const logger = new Logger('CORS');
   
@@ -51,7 +51,7 @@ if (cluster.isPrimary ) {
     expressApp.use(express.urlencoded({ extended: true }));
     expressApp.use(express.json());
     expressApp.disable('x-powered-by');
-   // app.use(new BlockExternalMiddleware().use);
+    app.use(new BlockExternalMiddleware().use);
     app.enableCors({
       origin: ['http://karmashree.wbdeptemployment.in','http://wbkarmashree.in'],
       // origin:true,
