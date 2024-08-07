@@ -51,6 +51,7 @@ import { EmploymentModule } from './api/employment/employment.module';
 import { Libariry } from './entity/library.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RateLimitMiddleware } from './commomn/rate-limit.middleware';
+import { BlockExternalMiddleware } from './commomn/cors.middleware';
 dotenv.config();
 
 @Module({
@@ -117,7 +118,8 @@ dotenv.config();
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-    .apply(RateLimitMiddleware)
+    
+    .apply(RateLimitMiddleware,BlockExternalMiddleware)
     .forRoutes('api/auth/resend-otp'); // Apply RateLimitMiddleware to 'auth/resend-otp' route
 
     consumer

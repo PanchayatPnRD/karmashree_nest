@@ -21,7 +21,7 @@ import { Logger } from '@nestjs/common';
 const cluster = require('cluster');
 import { cpus } from 'os';
 import * as basicAuth from 'express-basic-auth';
-import helmet from 'helmet';
+import { BlockExternalMiddleware } from './commomn/cors.middleware';
 
 if (cluster.isPrimary ) {
   //console.log(`Primary ${process.pid} is running`);
@@ -50,7 +50,7 @@ if (cluster.isPrimary ) {
     expressApp.use(express.urlencoded({ extended: true }));
     expressApp.use(express.json());
     expressApp.disable('x-powered-by');
-  
+    app.use(new BlockExternalMiddleware().use);
     app.enableCors({
       origin: ['http://karmashree.wbdeptemployment.in','http://wbkarmashree.in'],
       // origin:true,
