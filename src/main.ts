@@ -51,7 +51,7 @@ if (cluster.isPrimary ) {
     expressApp.use(express.urlencoded({ extended: true }));
     expressApp.use(express.json());
     expressApp.disable('x-powered-by');
-    app.use(new BlockExternalMiddleware().use);
+   // app.use(new BlockExternalMiddleware().use);
     app.enableCors({
       origin: ['http://karmashree.wbdeptemployment.in','http://wbkarmashree.in'],
       // origin:true,
