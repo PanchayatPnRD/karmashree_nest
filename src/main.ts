@@ -38,10 +38,11 @@ if (cluster.isPrimary ) {
  
     // Express middleware
     const app = await NestFactory.create(AppModule, {
-      // httpsOptions: {
-      //   key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'key.pem')),
-      //   cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'cert.pem')),
-      // },
+      httpsOptions: {
+        key: fs.readFileSync(path.join(__dirname, '..', 'keys', 'private.key')),
+        cert: fs.readFileSync(path.join(__dirname, '..', 'keys', 'app_wbkarmashree_in.crt')),
+        ca: fs.readFileSync(path.join(__dirname, '..', 'keys', 'SectigoRSADomainValidationSecureServerCA.crt')),
+      },
     });
     const logger = new Logger('CORS');
   
