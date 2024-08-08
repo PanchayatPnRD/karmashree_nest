@@ -119,7 +119,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
     //BlockExternalMiddleware
-    .apply(RateLimitMiddleware,BlockExternalMiddleware)
+    .apply(RateLimitMiddleware)
     .forRoutes('api/auth/resend-otp'); // Apply RateLimitMiddleware to 'auth/resend-otp' route
 
     consumer
