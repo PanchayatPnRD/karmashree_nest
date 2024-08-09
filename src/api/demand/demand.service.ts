@@ -107,7 +107,7 @@ export class DemandService {
     
     async get_draft_Details(userIndex: number) {
         try {
-            const DemandMasterDraft = await this.DemandMasterDraft.findOne({ where: { userIndex },order:{demandsl:'DESC'} });
+            const DemandMasterDraft = await this.DemandMasterDraft.find({ where: { userIndex },order:{demandsl:'DESC'} });
     
             if (!DemandMasterDraft) {
                 return {
