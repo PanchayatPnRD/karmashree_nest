@@ -107,19 +107,37 @@ export class DemandService {
     
     async get_draft_Details(userIndex: number) {
         try {
-            const DemandMasterDraft = await this.DemandMasterDraft.find({ where: { userIndex }});
+            // Fetch drafts based on userIndex
+            const DemandMasterDrafts = await this.DemandMasterDraft.find({ where: { userIndex }});
     
-      
-          //  const lastElement = Object.values(contractorDetails).pop();
+            // Map through each draft to fetch additional details
+            const result = await Promise.all(DemandMasterDrafts.map(async (draft) => {
+                const districtDetails = await this.getAllDistricts(draft.districtcode);
+                const districtName = districtDetails.result ? districtDetails.result.districtName : '';
+    
+                const blockDetails = await this.getAllblock(draft.blockcode);
+                const blockName = blockDetails.result ? blockDetails.result.blockName : '';
+    
+                const gpDetails = await this.getAllgp(draft.gpCode);
+                const gpName = gpDetails.result ? gpDetails.result.gpName : '';
+    
+                return {
+                    ...draft,
+                    districtName,
+                    blockName,
+                    gpName,
+                };
+            }));
     
             return {
                 errorCode: 0,
-                result: DemandMasterDraft
+                result,
             };
         } catch (error) {
-            throw new Error('Failed to fetch contractors from the database.');
+            throw new Error('Failed to fetch drafts from the database.');
         }
     }
+    
 
     async searchDemand(searchDto: SearchDemandDto) {
         const { workerJobCardNo, workerName } = searchDto;
