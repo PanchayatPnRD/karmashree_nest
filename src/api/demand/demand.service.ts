@@ -107,24 +107,14 @@ export class DemandService {
     
     async get_draft_Details(userIndex: number) {
         try {
-            const DemandMasterDraft = await this.DemandMasterDraft.find({ where: { userIndex },order:{demandsl:'DESC'} });
+            const DemandMasterDraft = await this.DemandMasterDraft.find({ where: { userIndex }});
     
-            if (!DemandMasterDraft) {
-                return {
-                    errorCode: 1,
-                    message: 'Contractor not found'
-                };
-            }
-    
-            const DemandMasterDraftDetails = {
-                ...DemandMasterDraft,
-            };
-    
+      
           //  const lastElement = Object.values(contractorDetails).pop();
     
             return {
                 errorCode: 0,
-                result: DemandMasterDraftDetails
+                result: DemandMasterDraft
             };
         } catch (error) {
             throw new Error('Failed to fetch contractors from the database.');
