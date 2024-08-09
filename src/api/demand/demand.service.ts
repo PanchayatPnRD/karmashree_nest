@@ -36,7 +36,7 @@ export class DemandService {
             let demandUniqueID: string;
     
             for (const demand of createDto.DemandMasterDto) {
-                if (demand.is_draft === '0') {
+                if (createDto.is_draft === '0') {
                     // For non-draft demands
                     demandUniqueID = this.generateEMPID();
                     const createdTreatment = this.demandMaster.create({
