@@ -325,90 +325,90 @@ export class MasterSchemeExpenduture {
 }
 
 
-@Entity()
-export class masterscheme_2024_2025 {
-  @PrimaryGeneratedColumn()
-  schemeId: number;
+// @Entity()
+// export class masterscheme_2024_2025 {
+//   @PrimaryGeneratedColumn()
+//   schemeId: number;
 
-  @Column({ type: 'varchar', length: 6, nullable: false })
-  schemeArea: string;
-
-  
-  @Index()
-  @Column({ type: 'int', nullable: false })
-  departmentNo: number;
+//   @Column({ type: 'varchar', length: 6, nullable: false })
+//   schemeArea: string;
 
   
-  @Index()
-  @Column({ type: 'varchar', length: 250, charset: 'utf8mb3', nullable: false })
-  schemeName: string;
+//   @Index()
+//   @Column({ type: 'int', nullable: false })
+//   departmentNo: number;
 
   
-  @Index()
-  @Column({ type: 'int', nullable: true })
-  schemeSector: number;
-
-  @Column({ type: 'varchar', length: 255, charset: 'utf8mb3', nullable: true })
-  schemeSubsector: string;
+//   @Index()
+//   @Column({ type: 'varchar', length: 250, charset: 'utf8mb3', nullable: false })
+//   schemeName: string;
 
   
-  @Index()
-  @Column({ type: 'varchar', length: 2, charset: 'utf8mb3', nullable: false })
-  districtcode: string;
+//   @Index()
+//   @Column({ type: 'int', nullable: true })
+//   schemeSector: number;
 
+//   @Column({ type: 'varchar', length: 255, charset: 'utf8mb3', nullable: true })
+//   schemeSubsector: string;
 
   
-  @Index()
-  @Column({ type: 'varchar', length: 4, charset: 'utf8mb3', nullable: false })
-  blockcode: string;
+//   @Index()
+//   @Column({ type: 'varchar', length: 2, charset: 'utf8mb3', nullable: false })
+//   districtcode: string;
 
 
   
-  @Index()
-  @Column({ type: 'varchar', length: 6, charset: 'utf8mb3', nullable: false })
-  gpCode: string;
-
-  @Column({ type: 'date', nullable: true })
-  startedOn: Date;
-
-  @Column({ type: 'date', nullable: true })
-  finishedOn: Date;
-
-  @Column({ type: 'double', precision: 19, scale: 2, nullable: true })
-  projectCost: number;
-
-  @Column({ type: 'double', precision: 19, scale: 2, default: 0 })
-  totalSpent: number;
-
-  @Column({ type: 'int', default: 0 })
-  totalLabour: number;
-
-  @Column({ type: 'varchar', length: 255, charset: 'utf8mb3', nullable: true })
-  remarks: string;
-
-  @Column({ type: 'int', default: 0 })
-  currentStatus: number;
-
-  @Column({ type: 'int', nullable: false })
-  userIndex: number;
-
-  
-  @Index()
-  @Column({ type: 'int', nullable: true })
-  OrganizerId: number;
-
-  @Column({ type: 'varchar', length: 100, charset: 'utf8mb3', nullable: true })
-  OrganizerName: string;
+//   @Index()
+//   @Column({ type: 'varchar', length: 4, charset: 'utf8mb3', nullable: false })
+//   blockcode: string;
 
 
   
-  @Index()
-  @Column({ type: 'varchar', length: 10, charset: 'utf8mb3', default: '2024-2025' })
-  finYear: string;
+//   @Index()
+//   @Column({ type: 'varchar', length: 6, charset: 'utf8mb3', nullable: false })
+//   gpCode: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-  submitDate: Date;
-}
+//   @Column({ type: 'date', nullable: true })
+//   startedOn: Date;
+
+//   @Column({ type: 'date', nullable: true })
+//   finishedOn: Date;
+
+//   @Column({ type: 'double', precision: 19, scale: 2, nullable: true })
+//   projectCost: number;
+
+//   @Column({ type: 'double', precision: 19, scale: 2, default: 0 })
+//   totalSpent: number;
+
+//   @Column({ type: 'int', default: 0 })
+//   totalLabour: number;
+
+//   @Column({ type: 'varchar', length: 255, charset: 'utf8mb3', nullable: true })
+//   remarks: string;
+
+//   @Column({ type: 'int', default: 0 })
+//   currentStatus: number;
+
+//   @Column({ type: 'int', nullable: false })
+//   userIndex: number;
+
+  
+//   @Index()
+//   @Column({ type: 'int', nullable: true })
+//   OrganizerId: number;
+
+//   @Column({ type: 'varchar', length: 100, charset: 'utf8mb3', nullable: true })
+//   OrganizerName: string;
+
+
+  
+//   @Index()
+//   @Column({ type: 'varchar', length: 10, charset: 'utf8mb3', default: '2024-2025' })
+//   finYear: string;
+
+//   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+//   submitDate: Date;
+// }
 
 
 @Entity()

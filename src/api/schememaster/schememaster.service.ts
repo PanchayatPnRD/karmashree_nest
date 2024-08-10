@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MasterSchemeDTO } from './dto/scheme.dto';
-import { MasterScheme, masterscheme_2024_2025, MasterScheme_draft, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
+import { MasterScheme, MasterScheme_draft, MasterSchemeExpenduture } from 'src/entity/scheme.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment } from 'src/entity/mastertable.enity';
@@ -10,6 +10,7 @@ import { UpdateMasterSchemeDTO } from './dto/updateschem.dto';
 import { DemandMaster } from 'src/entity/demandmaster.entity';
 import { Employment } from 'src/entity/employment.entity';
 import { master_users } from 'src/entity/user.entity';
+import { district_job, gram_panchayat_job, masterscheme_2024_2025 } from 'src/entity/old_scheme.entity';
 @Injectable()
 export class SchememasterService {
     constructor(
@@ -26,12 +27,21 @@ export class SchememasterService {
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
         @InjectRepository(DemandMaster) private demandMaster: Repository<DemandMaster>,
         @InjectRepository(Employment)private  employment: Repository<Employment>,
-        @InjectRepository(masterscheme_2024_2025)private  masterscheme_2024_2025: Repository<masterscheme_2024_2025>,
+       // @InjectRepository(masterscheme_2024_2025)private  masterscheme_2024_2025: Repository<masterscheme_2024_2025>,
         @InjectRepository(MasterScheme_draft)private  MasterSchemeDraft: Repository<MasterScheme_draft>,
 
-         
-    ) {}
+        @InjectRepository(district_job, 'secondConnection')
+        private readonly district_jobRepository: Repository<district_job>,
 
+        @InjectRepository(masterscheme_2024_2025, 'secondConnection')private  masterscheme_2024_2025: Repository<masterscheme_2024_2025>,
+        @InjectRepository(gram_panchayat_job, 'secondConnection')private  gram_panchayat_job: Repository<gram_panchayat_job>,
+
+        
+        
+      ) {}
+    
+         
+  
     async create(createMasterSchemeDto: MasterSchemeDTO) {
 
         try{
@@ -135,6 +145,7 @@ await this.MasterSchemeDraft.delete({ userIndex: createMasterSchemeDto.userIndex
 
 
     }
+
 
     async findByUserIndex(userIndex: number) {
         try {
@@ -244,9 +255,7 @@ await this.MasterSchemeDraft.delete({ userIndex: createMasterSchemeDto.userIndex
           throw new Error('Failed to fetch schemes from the database.');
         }
       }
-      
-    
-     
+
 
       async getschemeList(userIndex: number) {
           try {
@@ -1801,38 +1810,94 @@ await this.MasterSchemeDraft.delete({ userIndex: createMasterSchemeDto.userIndex
               return { errorCode: 1, message: 'Something went wrong: ' + error.message };
             }
           }
+
+
+          // async masterschemeold(
+
+          //   districtcode: string,
+          //   blockcode?: string,
+          //   gpCode?: string,
+
+          //   departmentNo?: number,
+          // ) {
+
+          //   try {
+
+          //     const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme');
+        
+          //     // Add filters dynamically
+          //     queryBuilder.andWhere('scheme.districtcode = :districtcode', { districtcode });
+        
+          //     if (blockcode) {
+          //       queryBuilder.andWhere('scheme.blockcode = :blockcode', { blockcode });
+          //     }
+          //     if (gpCode) {
+          //       queryBuilder.andWhere('scheme.gpCode = :gpCode', { gpCode });
+          //     }
+          //     if (departmentNo !== undefined) {
+          //       queryBuilder.andWhere('scheme.departmentNo = :departmentNo', { departmentNo });
+          //     }
+        
+          //     const dept = await queryBuilder
+          //       .orderBy('scheme.schemeId', 'ASC')
+          //       .getMany();
+        
+          //     // Return the result
+          //     return { errorCode: 0, result: dept };
+          //   } catch (error) {
+          //     return { errorCode: 1, message: 'Something went wrong', error: error.message };
+          //   }
+          // }
+
           async masterschemeold(
-            districtcode: string,
-            blockcode?: string,
+            districtCode: string,
+            blockCode?: string,
             gpCode?: string,
             departmentNo?: number,
           ) {
             try {
-              const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme');
-        
-              // Add filters dynamically
-              queryBuilder.andWhere('scheme.districtcode = :districtcode', { districtcode });
-        
-              if (blockcode) {
-                queryBuilder.andWhere('scheme.blockcode = :blockcode', { blockcode });
+              // Step 1: Query gram_panchayat_job table to get the relevant districtCode, blockCode, and gpCode
+              const gramPanchayatQuery = this.gram_panchayat_job.createQueryBuilder('gp')
+                .where('gp.DIST_LGD = :districtCode', { districtCode });
+          
+              if (blockCode) {
+                gramPanchayatQuery.andWhere('gp.BLOCK_LGD = :blockCode', { blockCode });
               }
+          
               if (gpCode) {
-                queryBuilder.andWhere('scheme.gpCode = :gpCode', { gpCode });
+                gramPanchayatQuery.andWhere('gp.GP_LGD = :gpCode', { gpCode });
               }
+          
+              const gramPanchayat = await gramPanchayatQuery.getOne();
+          
+              if (!gramPanchayat) {
+                return { errorCode: 1, message: 'No matching gram panchayat found' };
+              }
+          
+              // Extract individual codes from gram_panchayat_job
+              const fetchedDistrictCode = gramPanchayat.districtCode;
+              const fetchedBlockCode = gramPanchayat.blockCode;
+              const fetchedGpCode = gramPanchayat.gpCode;
+          
+              // Step 2: Use these codes to filter masterscheme_2024_2025 table
+              const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme')
+                .where('scheme.districtcode = :fetchedDistrictCode', { fetchedDistrictCode })
+                .andWhere('scheme.blockcode = :fetchedBlockCode', { fetchedBlockCode })
+                .andWhere('scheme.gpCode = :fetchedGpCode', { fetchedGpCode });
+          
               if (departmentNo !== undefined) {
                 queryBuilder.andWhere('scheme.departmentNo = :departmentNo', { departmentNo });
               }
-        
-              const dept = await queryBuilder
-                .orderBy('scheme.schemeId', 'ASC')
-                .getMany();
-        
+          
+              const schemes = await queryBuilder.orderBy('scheme.schemeId', 'ASC').getMany();
+          
               // Return the result
-              return { errorCode: 0, result: dept };
+              return { errorCode: 0, result: schemes };
             } catch (error) {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };
             }
           }
+          
           
 }
 

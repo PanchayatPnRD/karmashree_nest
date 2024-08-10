@@ -23,7 +23,7 @@ import { Actionplan_master } from './entity/actionplan.entity';
 import { ActionplanModule } from './api/actionplan/actionplan.module';
 import { Contractor_master, Contractor_master_draft } from './entity/contractor.entity';
 import { ContractorModule } from './api/contractor/contractor.module';
-import { MasterScheme, masterscheme_2024_2025, MasterScheme_draft, MasterSchemeExpenduture } from './entity/scheme.entity';
+import { MasterScheme, MasterScheme_draft, MasterSchemeExpenduture } from './entity/scheme.entity';
 import { SchememasterModule } from './api/schememaster/schememaster.module';
 import * as dotenv from 'dotenv';
 
@@ -52,6 +52,7 @@ import { Libariry } from './entity/library.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RateLimitMiddleware } from './commomn/rate-limit.middleware';
 import { BlockExternalMiddleware } from './commomn/cors.middleware';
+import { district_job, gram_panchayat_job, masterscheme_2024_2025 } from './entity/old_scheme.entity';
 dotenv.config();
 
 @Module({
@@ -99,6 +100,21 @@ dotenv.config();
       ],
       synchronize: true,
     }),
+
+    TypeOrmModule.forRoot({
+      name: 'secondConnection',  // Second database connection
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB2_NAME,
+      entities: [
+        district_job,masterscheme_2024_2025,gram_panchayat_job
+      ],
+      synchronize: true,
+    }),
+
     ConfigModule.forRoot(),
     AuthModule,
     MastertableModule,
@@ -119,7 +135,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
     //BlockExternalMiddleware
-    .apply(RateLimitMiddleware,BlockExternalMiddleware)
+    .apply(RateLimitMiddleware)
     .forRoutes('api/auth/resend-otp'); // Apply RateLimitMiddleware to 'auth/resend-otp' route
 
     consumer
