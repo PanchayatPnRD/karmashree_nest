@@ -39,6 +39,11 @@ export class WorkerrequisitionController {
   }
 
 
+  @Get('draft-details')
+ 
+  async getDraftDetails(@Query('userIndex') userIndex: number) {
+      return this.workerrequisitionService.getDraftDetails(userIndex);
+  }
   
 }
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MasterWorkerRequirement, MasterWorkerRequirement_allotment } from 'src/entity/workrequigition.entity';
+import { MasterWorkerRequirement, MasterWorkerRequirement_allotment, MasterWorkerRequirement_allotment_darft, MasterWorkerRequirement_draft } from 'src/entity/workrequigition.entity';
 import { Repository } from 'typeorm';
 import { gram_panchayat, master_ps, master_subdivision, master_urban, master_zp, masterdepartment, mastersector, pedestalMaster } from 'src/entity/mastertable.enity';
 
@@ -21,16 +21,19 @@ export class WorkerrequisitionService {
         @InjectRepository(gram_panchayat) private grampanchayat: Repository<gram_panchayat>,
         @InjectRepository(mastersector) private mastersector: Repository<mastersector>,
         @InjectRepository(master_urban) private masterurban: Repository<master_urban>,
-        @InjectRepository(MasterScheme)
-        private  masterSchemeRepository: Repository<MasterScheme>,
+        @InjectRepository(MasterScheme)private  masterSchemeRepository: Repository<MasterScheme>,
         @InjectRepository(MasterSchemeExpenduture) private  MasterSchemeExpendutureRepository: Repository<MasterSchemeExpenduture>,
         @InjectRepository(Contractor_master) private Contractor: Repository<Contractor_master>,
         @InjectRepository(master_users) private userRepository: Repository<master_users>,
+        @InjectRepository(MasterWorkerRequirement_draft) private MasterWorkerRequirementdraft: Repository<MasterWorkerRequirement_draft>,
+        @InjectRepository(MasterWorkerRequirement_allotment_darft) private MasterWorkerRequirementallotmentdarft: Repository<MasterWorkerRequirement_allotment_darft>,
 
     ) {}
 
     async create(createWorkerRequirementDto: MasterWorkerRequirementDto) {
       try {
+
+if(createWorkerRequirementDto.is_draft==="0"){
         // Create a new MasterWorkerRequirement entity
         const masterWorker = this.masterWorkerRequirement.create(createWorkerRequirementDto);
     
@@ -92,16 +95,162 @@ export class WorkerrequisitionService {
           masterAllotment.push(newMasterWorkerAllotment); // Pushing single entity
         }
     const requireid =  masterWorker.workerreqID;
+
+
+    await this.MasterWorkerRequirementdraft.delete({ userIndex: createWorkerRequirementDto.userIndex });
+    await this.MasterWorkerRequirementallotmentdarft.delete({ userIndex: createWorkerRequirementDto.userIndex });
+
         // Return success response with created MasterWorkerRequirement_allotment entities
         return { errorCode: 0, message: "Worker Requisition created successfully", requireid };
+
+       } else{
+          const masterWorker = this.MasterWorkerRequirementdraft.create(createWorkerRequirementDto);
+    
+          // Generate a random workerreqID
+          const randomNum = this.generateEMPID();
+          masterWorker.workerreqID = randomNum;
+      
+          // Save the MasterWorkerRequirement entity
+          const savedMasterScheme = await this.MasterWorkerRequirementdraft.save(masterWorker);
+      
+          // Create an array to store MasterWorkerRequirement_allotment entities
+          const masterAllotment: MasterWorkerRequirement_allotment_darft[] = [];
+      
+          // Extract gpCode from masterWorker
+          const gpCode = masterWorker.gpCode;
+  
+          const workCodeSchemeID= masterWorker.workCodeSchemeID;
+          const contractorID= masterWorker.ContractorID;
+         const  currentMonthWork= masterWorker.currentMonth;
+         
+        //  const currentYear = masteDrWorker.currentYear;
+      
+          // Iterate through createworkalloDto array and create MasterWorkerRequirement_allotment entities
+          for (const createWorkAllotDto of createWorkerRequirementDto.createworkalloDto) {
+            const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
+              workerreqID: savedMasterScheme.workerreqID,
+              skilledWorkers: createWorkAllotDto.skilledWorkers,
+              unskilledWorkers: createWorkAllotDto.unskilledWorkers,
+              semiSkilledWorkers: createWorkAllotDto.semiSkilledWorkers,
+              dateofwork: createWorkAllotDto.dateofwork,
+              FundingDeptname:masterWorker.FundingDeptname,
+              gpCode: gpCode, 
+              workCodeSchemeID: workCodeSchemeID,
+              contractorID: contractorID,
+              currentMonthWork: currentMonthWork,
+              departmentNo: masterWorker.departmentNo,
+              districtcode: masterWorker.districtcode,
+              municipalityCode: masterWorker.municipalityCode,
+              blockcode: masterWorker.blockcode,
+              currentYearWork: masterWorker.currentYear,
+              userIndex:masterWorker.userIndex,
+              schemeArea:masterWorker.schemeArea,
+              finYearWork:masterWorker.finYear,
+           
+    contactPersonName: masterWorker.contactPersonName,
+  
+  
+   
+    contactPersonPhoneNumber:masterWorker.contactPersonPhoneNumber
+  
+             // finYearWork: masterWorker.finYearWork
+  
+            });
+      
+            // Save the MasterWorkerRequirement_allotment entity
+            await this.MasterWorkerRequirementallotmentdarft.save(newMasterWorkerAllotment); // Saving single entity
+      
+            // Push the saved entity to the masterAllotment array
+            masterAllotment.push(newMasterWorkerAllotment); // Pushing single entity
+          }
+      const requireid =  masterWorker.workerreqID;
+  
+  
+  
+          // Return success response with created MasterWorkerRequirement_allotment entities
+          return { errorCode: 0, message: "Worker Requisition created successfully", requireid };
+
+        }
       } catch (error) {
         // Return error response if any error occurs
         return { errorCode: 1, message: 'Something went wrong', error: error.message };
       }
     }
+
+    async getDraftDetails(userIndex: number) {
+      try {
+        // Fetch the draft details
+        const contractor = await this.MasterWorkerRequirementdraft.findOne({
+          where: { userIndex },
+          order: { workersl: 'DESC' }
+        });
     
+        if (!contractor) {
+          return {
+            errorCode: 1,
+            message: 'Not found'
+          };
+        }
     
+        // Fetch all draft data for the same workerreqID
+        const drafts = await this.MasterWorkerRequirementallotmentdarft.find({
+          where: { workerreqID: contractor.workerreqID },
+        });
     
+        // Structure the response according to MasterWorkerRequirementDto
+        const MasterWorkerRequirementDto = {
+          schemeArea: contractor.schemeArea,
+          workerreqID: contractor.workerreqID,
+          
+          departmentNo: contractor.departmentNo,
+          districtcode: contractor.districtcode,
+          municipalityCode: contractor.municipalityCode,
+          blockcode: contractor.blockcode,
+          gpCode: contractor.gpCode,
+          sansadID: contractor.sansadID,
+          village: contractor.village,
+          workCodeSchemeID: contractor.workCodeSchemeID,
+          ContractorID: contractor.ContractorID,
+          contactPersonName: contractor.contactPersonName,
+          contactPersonPhoneNumber: contractor.contactPersonPhoneNumber,
+          reportingPlace: contractor.reportingPlace,
+          nearestLandMark: contractor.nearestLandMark,
+          fromDate: contractor.fromDate,
+          noOfDays: contractor.noOfDays,
+          currentMonth: contractor.currentMonth,
+          currentYear: contractor.currentYear,
+          finYear: contractor.finYear,
+          FundingDeptname: contractor.FundingDeptname,
+
+          userIndex: contractor.userIndex,
+
+          createworkalloDto: drafts.map(draft => ({
+            skilledWorkers: draft.skilledWorkers,
+            currentMonthWork: draft.currentMonthWork,
+            currentYearWork: draft.currentYearWork,
+            finYearWork: draft.finYearWork,
+            semiSkilledWorkers: draft.semiSkilledWorkers,
+            unskilledWorkers: draft.unskilledWorkers,
+            dateofwork: draft.dateofwork
+          })),
+       
+        };
+    
+        return {
+          errorCode: 0,
+          result: MasterWorkerRequirementDto
+        };
+      } catch (error) {
+        return {
+          errorCode: 1,
+          message: 'Failed to fetch contractors from the database.',
+          error: error.message
+        };
+      }
+    }
+    
+  
+  
     
     private generateEMPID(): string {
       const random6Digits = Math.floor(10000000 + Math.random() * 90000000).toString();
