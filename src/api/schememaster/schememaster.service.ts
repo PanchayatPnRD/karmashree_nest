@@ -1850,53 +1850,89 @@ await this.MasterSchemeDraft.delete({ userIndex: createMasterSchemeDto.userIndex
           // }
 
           async masterschemeold(
+            schemeArea: string,
             districtCode: string,
             blockCode?: string,
             gpCode?: string,
             departmentNo?: number,
+            municipalityCode?: number
           ) {
             try {
-              // Step 1: Query gram_panchayat_job table to get the relevant districtCode, blockCode, and gpCode
+              // Initialize queryBuilder for gram_panchayat_job
               const gramPanchayatQuery = this.gram_panchayat_job.createQueryBuilder('gp')
                 .where('gp.DIST_LGD = :districtCode', { districtCode });
           
-              if (blockCode) {
-                gramPanchayatQuery.andWhere('gp.BLOCK_LGD = :blockCode', { blockCode });
+              // Step 1: Filter by schemeArea
+              if (schemeArea === 'RURAL') {
+                // Apply block and GP filtering for rural areas
+                if (blockCode) {
+                  gramPanchayatQuery.andWhere('gp.BLOCK_LGD = :blockCode', { blockCode });
+                }
+          
+                if (gpCode) {
+                  gramPanchayatQuery.andWhere('gp.GP_LGD = :gpCode', { gpCode });
+                }
+          
+                // Fetch matching gram panchayat data
+                const gramPanchayat = await gramPanchayatQuery.getOne();
+          
+                if (!gramPanchayat) {
+                  return { errorCode: 1, message: 'No matching gram panchayat found' };
+                }
+          
+                // Extract individual codes from gram_panchayat_job
+                const fetchedDistrictCode = gramPanchayat.districtCode;
+                const fetchedBlockCode = gramPanchayat.blockCode;
+                const fetchedGpCode = gramPanchayat.gpCode;
+          
+                // Step 2: Use these codes to filter masterscheme_2024_2025 table
+                const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme')
+                  .where('scheme.districtcode = :fetchedDistrictCode', { fetchedDistrictCode })
+                  .andWhere('scheme.blockcode = :fetchedBlockCode', { fetchedBlockCode })
+                  .andWhere('scheme.gpCode = :fetchedGpCode', { fetchedGpCode });
+          
+                if (departmentNo !== undefined) {
+                  queryBuilder.andWhere('scheme.departmentNo = :departmentNo', { departmentNo });
+                }
+          
+                const schemes = await queryBuilder.orderBy('scheme.schemeId', 'ASC').getMany();
+          
+                // Return the result
+                return { errorCode: 0, result: schemes };
+          
+              } else if (schemeArea === 'URBAN') {
+
+                const gramPanchayat = await gramPanchayatQuery.getOne();
+          
+                if (!gramPanchayat) {
+                  return { errorCode: 1, message: 'No matching gram panchayat found' };
+                }
+
+                const fetchedDistrictCode = gramPanchayat.districtCode;
+                // For urban areas, filter by district and municipality code
+                const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme')
+                 .where('scheme.districtcode = :fetchedDistrictCode', { fetchedDistrictCode })
+          
+                if (municipalityCode !== undefined) {
+                  queryBuilder.andWhere('scheme.gpCode = :municipalityCode', { municipalityCode });
+                }
+          
+                if (departmentNo !== undefined) {
+                  queryBuilder.andWhere('scheme.departmentNo = :departmentNo', { departmentNo });
+                }
+          
+                const schemes = await queryBuilder.orderBy('scheme.schemeId', 'ASC').getMany();
+          
+                // Return the result
+                return { errorCode: 0, result: schemes };
+              } else {
+                return { errorCode: 1, message: 'Invalid schemeArea value. Please use RURAL or URBAN.' };
               }
-          
-              if (gpCode) {
-                gramPanchayatQuery.andWhere('gp.GP_LGD = :gpCode', { gpCode });
-              }
-          
-              const gramPanchayat = await gramPanchayatQuery.getOne();
-          
-              if (!gramPanchayat) {
-                return { errorCode: 1, message: 'No matching gram panchayat found' };
-              }
-          
-              // Extract individual codes from gram_panchayat_job
-              const fetchedDistrictCode = gramPanchayat.districtCode;
-              const fetchedBlockCode = gramPanchayat.blockCode;
-              const fetchedGpCode = gramPanchayat.gpCode;
-          
-              // Step 2: Use these codes to filter masterscheme_2024_2025 table
-              const queryBuilder = this.masterscheme_2024_2025.createQueryBuilder('scheme')
-                .where('scheme.districtcode = :fetchedDistrictCode', { fetchedDistrictCode })
-                .andWhere('scheme.blockcode = :fetchedBlockCode', { fetchedBlockCode })
-                .andWhere('scheme.gpCode = :fetchedGpCode', { fetchedGpCode });
-          
-              if (departmentNo !== undefined) {
-                queryBuilder.andWhere('scheme.departmentNo = :departmentNo', { departmentNo });
-              }
-          
-              const schemes = await queryBuilder.orderBy('scheme.schemeId', 'ASC').getMany();
-          
-              // Return the result
-              return { errorCode: 0, result: schemes };
             } catch (error) {
               return { errorCode: 1, message: 'Something went wrong', error: error.message };
             }
           }
+          
           
           
 }

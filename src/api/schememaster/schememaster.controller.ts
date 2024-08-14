@@ -137,14 +137,16 @@ export class SchememasterController {
   @ApiQuery({ name: 'departmentNo', required: false, type: Number }) 
   @ApiQuery({ name: 'blockcode', required: false, type: Number }) 
   @ApiQuery({ name: 'gpCode', required: false, type: Number }) 
-
+  @ApiQuery({ name: 'municipalityCode', required: false, type: Number }) 
   async getMasterSchemeOld(
+    @Query('schemeArea') schemeArea: string,
     @Query('districtcode') districtcode: string,
     @Query('blockcode') blockcode?: string,
     @Query('gpCode') gpCode?: string,
     @Query('departmentNo') departmentNo?: number,
+    @Query('municipalityCode')municipalityCode?:number,
   ) {
-    return this.masterSchemeService.masterschemeold(districtcode, blockcode, gpCode, departmentNo);
+    return this.masterSchemeService.masterschemeold(schemeArea,districtcode, blockcode, gpCode, departmentNo,municipalityCode);
   }
 
 
