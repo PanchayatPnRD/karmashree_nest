@@ -68,13 +68,19 @@ if (cluster.isPrimary ) {
       helmet({
         contentSecurityPolicy: {
           directives: {
-            defaultSrc: ["https:", "'unsafe-eval'", "'unsafe-inline'"],
-            imgSrc: ["https:", "data:", "'unsafe-eval'", "'unsafe-inline'"],
-            styleSrc: ["https:", "blob:", "'unsafe-eval'", "'unsafe-inline'"],
-            workerSrc: ["'self'", "blob:"],
-            mediaSrc: ["'self'", "blob:", "data:", "https:"],
-            objectSrc: ["https://flash.sitepoint.com"],
-            frameAncestors: ["'self'"],
+            defaultSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            scriptSrc: [
+              "'strict-dynamic'",
+              "'unsafe-inline'",
+              "'nonce-6mwLcyZ6I8JcnUDiO9P6E13de2Uk5qvx'",
+              "http://karmashree.wbdeptemployment.in"
+            ],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            formAction: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            mediaSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            frameSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            reportTo: ["csp-endpoint"], // Ensure `csp-endpoint` is properly defined elsewhere
           },
         },
         crossOriginEmbedderPolicy: true,
@@ -88,6 +94,13 @@ if (cluster.isPrimary ) {
         permittedCrossDomainPolicies: { permittedPolicies: 'none' },
       })
     );
+  
+    // Custom middleware to set additional headers if needed
+    app.use((req, res, next) => {
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('Clear-Site-Data', 'cache, cookies, storage, executionContexts');
+      next();
+    });
   
     app.use(
       '/api/public',
