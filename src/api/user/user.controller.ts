@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors,Headers } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors,Headers, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiConsumes, ApiHeader, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto, SendSMSDto } from './dto/user.dto';
@@ -8,6 +8,7 @@ import { CreateLibraryDto } from './dto/library.dto';
 import { multerConfig } from 'src/commomn/middleware/multur.config';
 import { UpdateLibraryDto } from './dto/UpdateLibraryDto.dto';
 import { JwtService } from '@nestjs/jwt';
+import { TrimAndValidatePipe } from './trim-and-validate.pipe';
 @ApiTags("User")
 @ApiHeader({
   name: 'token',
@@ -21,6 +22,7 @@ export class UserController {
     ) {}
 
     @Post('create_user')
+   // @UsePipes(new TrimAndValidatePipe)
    async userCreate(@Body() createDto: CreateUserDto) {
      return await this.userService.userCreate(createDto);
    }
@@ -30,6 +32,8 @@ export class UserController {
   //  async viewPcbById(@Param('userIndex') userIndex: number) {
   //    return this.userService.viewUserById(userIndex); // Delegate retrieval to the service
   //  }
+
+
   @Get('viewuser')
   async viewUserByToken(@Headers() headers: Record<string, string>) {
     try {
@@ -74,7 +78,7 @@ async getDnolist( @Query('created_by') created_by: number,
 ) {
   return await this.userService.getDnolist(created_by);
 }
-@Put('updateUser/:userIndex')
+@Post('updateUser/:userIndex')
 async updateUser(@Body() updateUserDto: UpdateUserDto, @Param('userIndex') userIndex: number) {
   return await this.userService.updateUser(userIndex, updateUserDto);
 }

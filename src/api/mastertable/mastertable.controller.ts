@@ -158,7 +158,7 @@ export class MastertableController {
       return await this.mastertableService.listDesignations();
     }
   
-    @Put('UpdateDesigntion:designationId')
+    @Post('UpdateDesigntion:designationId')
     async updateDesignation(@Param('designationId') designationId: number, @Body() data: DesignationDto) {
       return await this.mastertableService.updateDesignation(designationId, data);
     }

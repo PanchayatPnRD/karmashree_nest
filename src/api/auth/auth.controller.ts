@@ -72,7 +72,7 @@ export class AuthController {
                 }
                 @UseGuards(ApiKeyGuard)
                 @ApiHeader({ name: 'x-api-key' })
-                @Put('userId/:userId')
+                @Post('userId/:userId')
 async updateUser(@Body() updateUserDto: passwordcDto, @Param('userId') userId: string) {
   return await this.authService.updateUser(userId, updateUserDto);
 }

@@ -22,6 +22,7 @@ const cluster = require('cluster');
 import { cpus } from 'os';
 import * as basicAuth from 'express-basic-auth';
 import { BlockExternalMiddleware } from './commomn/cors.middleware';
+import helmet from 'helmet';
 
 if (cluster.isPrimary ) {
   //console.log(`Primary ${process.pid} is running`);
@@ -51,18 +52,44 @@ if (cluster.isPrimary ) {
     expressApp.use(express.urlencoded({ extended: true }));
     expressApp.use(express.json());
     expressApp.disable('x-powered-by');
-  app.use(new BlockExternalMiddleware().use);
+   app.use(new BlockExternalMiddleware().use);
     app.enableCors({
-      origin: ['http://karmashree.wbdeptemployment.in','http://wbkarmashree.in'],
+      origin: ['http://localhost:5173','http://karmashree.wbdeptemployment.in','http://wbkarmashree.in'],
       // origin:true,
       // CORS HTTP methods
-      methods: ['GET', 'POST', 'PUT'],
+      methods: ['GET', 'POST'],
       allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key', 'token'],
       exposedHeaders: ['Authorization'],
       credentials: true,
     });
   
-   
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
+          },
+        },
+        crossOriginEmbedderPolicy: true,
+        crossOriginOpenerPolicy: { policy: "same-origin" },
+        crossOriginResourcePolicy: { policy: "same-origin" },
+        referrerPolicy: { policy: 'no-referrer' },
+        frameguard: { action: 'deny' },
+        hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+        ieNoOpen: true,
+        noSniff: true,
+        permittedCrossDomainPolicies: { permittedPolicies: 'none' }, // Corrected
+      //  clearSiteData: ['cache', 'cookies', 'storage', 'executionContexts'],
+      })
+    );
+  
     app.use(
       '/api/public',
       express.static(join(__dirname, '..', 'public'), {
