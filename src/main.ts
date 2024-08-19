@@ -63,18 +63,18 @@ if (cluster.isPrimary ) {
       credentials: true,
     });
   
+ 
     app.use(
       helmet({
         contentSecurityPolicy: {
           directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            imgSrc: ["'self'", "data:"],
-            connectSrc: ["'self'"],
-            fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-            objectSrc: ["'none'"],
-            upgradeInsecureRequests: [],
+            defaultSrc: ["https:", "'unsafe-eval'", "'unsafe-inline'"],
+            imgSrc: ["https:", "data:", "'unsafe-eval'", "'unsafe-inline'"],
+            styleSrc: ["https:", "blob:", "'unsafe-eval'", "'unsafe-inline'"],
+            workerSrc: ["'self'", "blob:"],
+            mediaSrc: ["'self'", "blob:", "data:", "https:"],
+            objectSrc: ["https://flash.sitepoint.com"],
+            frameAncestors: ["'self'"],
           },
         },
         crossOriginEmbedderPolicy: true,
@@ -85,8 +85,7 @@ if (cluster.isPrimary ) {
         hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
         ieNoOpen: true,
         noSniff: true,
-        permittedCrossDomainPolicies: { permittedPolicies: 'none' }, // Corrected
-      //  clearSiteData: ['cache', 'cookies', 'storage', 'executionContexts'],
+        permittedCrossDomainPolicies: { permittedPolicies: 'none' },
       })
     );
   
