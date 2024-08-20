@@ -64,36 +64,34 @@ if (cluster.isPrimary ) {
     });
   
  
-    // app.use(
-    //   helmet({
-    //     contentSecurityPolicy: {
-    //       directives: {
-    //         defaultSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
-    //         scriptSrc: [
-            
-           
-            
-    //           "http://karmashree.wbdeptemployment.in"
-    //         ],
-    //         objectSrc: ["'none'"],
-    //         baseUri: ["'self'", "karmashree.wbdeptemployment.in"],
-    //         formAction: ["'self'", "karmashree.wbdeptemployment.in"],
-    //         mediaSrc: ["'self'", "karmashree.wbdeptemployment.in"],
-    //         frameSrc: ["'self'", "karmashree.wbdeptemployment.in"],
-    //         reportTo: ["csp-endpoint"], // Ensure `csp-endpoint` is properly defined elsewhere
-    //       },
-    //     },
-    //     crossOriginEmbedderPolicy: true,
-    //     crossOriginOpenerPolicy: { policy: "same-origin" },
-    //     crossOriginResourcePolicy: { policy: "same-origin" },
-    //     referrerPolicy: { policy: 'no-referrer' },
-    //     frameguard: { action: 'deny' },
-    //     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
-    //     ieNoOpen: true,
-    //     noSniff: true,
-    //     permittedCrossDomainPolicies: { permittedPolicies: 'none' },
-    //   })
-    // );
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            scriptSrc: [
+
+              "http://karmashree.wbdeptemployment.in"
+            ],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            formAction: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            mediaSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            frameSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
+            reportTo: ["csp-endpoint"], // Ensure `csp-endpoint` is properly defined elsewhere
+          },
+        },
+        crossOriginEmbedderPolicy: true,
+        crossOriginOpenerPolicy: { policy: "same-origin" },
+        crossOriginResourcePolicy: { policy: "same-origin" },
+        referrerPolicy: { policy: 'no-referrer' },
+        frameguard: { action: 'deny' },
+        hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+        ieNoOpen: true,
+        noSniff: true,
+        permittedCrossDomainPolicies: { permittedPolicies: 'none' },
+      })
+    );
   
     // Custom middleware to set additional headers if needed
 
