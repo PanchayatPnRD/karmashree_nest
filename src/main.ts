@@ -70,9 +70,9 @@ if (cluster.isPrimary ) {
           directives: {
             defaultSrc: ["'self'", "http://karmashree.wbdeptemployment.in"],
             scriptSrc: [
-              "'strict-dynamic'",
-              "'unsafe-inline'",
-              "'nonce-6mwLcyZ6I8JcnUDiO9P6E13de2Uk5qvx'",
+            
+           
+            
               "http://karmashree.wbdeptemployment.in"
             ],
             objectSrc: ["'none'"],
@@ -96,11 +96,7 @@ if (cluster.isPrimary ) {
     );
   
     // Custom middleware to set additional headers if needed
-    app.use((req, res, next) => {
-      res.setHeader('Cache-Control', 'no-store');
-      res.setHeader('Clear-Site-Data', 'cache, cookies, storage, executionContexts');
-      next();
-    });
+
   
     app.use(
       '/api/public',
