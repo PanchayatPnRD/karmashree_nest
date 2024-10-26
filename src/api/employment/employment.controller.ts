@@ -40,6 +40,18 @@ export class EmploymentController {
       async   creatediretemp(@Body() createDto: EmploymentDto) {
           return this.employmentService.creatediretemp(createDto);
         }
+
+        @Get('employment_wisereport')
+  async getEmploymentSummary() {
+    return await this.employmentService.getEmploymentSummary();
+  }
+
+  @Get('Executing_Department_wise_report-')
+  async Executing_Department() {
+    return await this.employmentService.getExecuting_Department();
+  }
+
+  
     
 
 }

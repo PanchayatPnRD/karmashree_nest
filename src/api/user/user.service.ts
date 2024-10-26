@@ -623,7 +623,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             const designationName = designationDetails.result ? designationDetails.result.designation : '';
             return {
                 // ...user,
-                // userIndex: user.userIndex,
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -703,6 +703,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             const designationName = designationDetails.result ? designationDetails.result.designation : '';
             return {
               category: user.category,
+              userIndex: user.userIndex,
               departmentNo: user.departmentNo,
               area: user.area,
               deptWing: user.deptWing,
@@ -780,6 +781,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             const designationName = designationDetails.result ? designationDetails.result.designation : '';
             return {
                category: user.category,
+               userIndex: user.userIndex,
                 departmentNo: user.departmentNo,
                 area: user.area,
                 deptWing: user.deptWing,
@@ -788,6 +790,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                 subDivision: user.subDivision,
                 blockCode: user.blockCode,
                 gpCode: user.gpCode,
+
                 // userType: user.userType,
                 // role_type: user.role_type,
                 // userId: user.userId,
@@ -856,6 +859,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
             const designationDetails = await this.getDesignationbyid(user.designationID);
             const designationName = designationDetails.result ? designationDetails.result.designation : '';
             return {
+              userIndex: user.userIndex,
                category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -932,6 +936,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1010,6 +1015,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
                 category: user.category,
+                userIndex: user.userIndex,
                 departmentNo: user.departmentNo,
                 area: user.area,
                 deptWing: user.deptWing,
@@ -1088,6 +1094,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1167,6 +1174,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1246,6 +1254,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1325,6 +1334,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1406,6 +1416,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1486,6 +1497,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1566,6 +1578,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
               const designationDetails = await this.getDesignationbyid(user.designationID);
               const designationName = designationDetails.result ? designationDetails.result.designation : '';
               return {
+                userIndex: user.userIndex,
                 category: user.category,
                 departmentNo: user.departmentNo,
                 area: user.area,
@@ -1650,6 +1663,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                          const designationDetails = await this.getDesignationbyid(user.designationID);
                          const designationName = designationDetails.result ? designationDetails.result.designation : '';
                          return {
+                          userIndex: user.userIndex,
                           category: user.category,
                           departmentNo: user.departmentNo,
                           area: user.area,
@@ -1730,6 +1744,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
                        const designationDetails = await this.getDesignationbyid(user.designationID);
                        const designationName = designationDetails.result ? designationDetails.result.designation : '';
                        return {
+                        userIndex: user.userIndex,
                         category: user.category,
                         departmentNo: user.departmentNo,
                         area: user.area,
@@ -1832,6 +1847,7 @@ async updateUser(userIndex: number, updateUserDto: UpdateUserDto) {
            const designationDetails = await this.getDesignationbyid(user.designationID);
            const designationName = designationDetails.result ? designationDetails.result.designation : '';
            return {
+            userIndex: user.userIndex,
             category: user.category,
             departmentNo: user.departmentNo,
             area: user.area,
@@ -1911,6 +1927,7 @@ const queryBuilder = this.userRepository.createQueryBuilder('user');
              const designationDetails = await this.getDesignationbyid(user.designationID);
              const designationName = designationDetails.result ? designationDetails.result.designation : '';
              return {
+              userIndex: user.userIndex,
               category: user.category,
               departmentNo: user.departmentNo,
               area: user.area,
@@ -1995,6 +2012,7 @@ const queryBuilder = this.userRepository.createQueryBuilder('user');
                         const designationDetails = await this.getDesignationbyid(user.designationID);
                         const designationName = designationDetails.result ? designationDetails.result.designation : '';
                         return {
+                          userIndex: user.userIndex,
                           category: user.category,
                           departmentNo: user.departmentNo,
                           area: user.area,
@@ -2075,6 +2093,7 @@ const queryBuilder = this.userRepository.createQueryBuilder('user');
                       const designationDetails = await this.getDesignationbyid(user.designationID);
                       const designationName = designationDetails.result ? designationDetails.result.designation : '';
                       return {
+                        userIndex: user.userIndex,
                         category: user.category,
                         departmentNo: user.departmentNo,
                         area: user.area,

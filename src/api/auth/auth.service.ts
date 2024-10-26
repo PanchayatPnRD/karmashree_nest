@@ -44,92 +44,86 @@ export class AuthService {
  
   async login(data: userLoginDto) {
     try {
-
+      console.log('Starting login process');
+      
+      if (!process.env.SECRET_KEY) {
+        throw new Error('SECRET_KEY environment variable is not set');
+      }
+  
       const decryptedUserIdBytes = CryptoJS.AES.decrypt(data.userId, process.env.SECRET_KEY);
       const decryptedUserId = decryptedUserIdBytes.toString(CryptoJS.enc.Utf8);
-
-
-      // Decrypt the password
+      console.log('Decrypted userId:', decryptedUserId);
+  
       const decryptedPasswordBytes = CryptoJS.AES.decrypt(data.password, process.env.SECRET_KEY);
       const decryptedPassword = decryptedPasswordBytes.toString(CryptoJS.enc.Utf8);
-
+      console.log('Decrypted password');
+  
       const userId = decryptedUserId.toLowerCase();
       const password = decryptedPassword;
-
+  
       const userDetails = await this.user.findOne({
         where: [{ userId: userId }],
       });
       if (!userDetails) {
+        console.log('User not found');
         return {
           errorCode: 1,
           message: 'UserID Password is incorrect',
         };
       }
-
-      // Check if the user is temporarily locked out
+  
       const maxLoginAttempts = 3;
       const lockoutDuration = 60 * 1000; // 1 minute in milliseconds
-
+  
       if (userDetails.loginAttempts >= maxLoginAttempts) {
         const lastLoginAttempt = userDetails.lastLoginAttempt.getTime();
         const now = new Date().getTime();
         const timeSinceLastAttempt = now - lastLoginAttempt;
-
+  
         if (timeSinceLastAttempt < lockoutDuration) {
           const waitTimeSeconds = Math.ceil((lockoutDuration - timeSinceLastAttempt) / 1000);
+          console.log('User is temporarily locked out');
           return {
             errorCode: 1,
-            message: 'Too many requests for OTP resend from this IP, please try again later' ,
-          
+            message: 'Too many requests for OTP resend from this IP, please try again later',
           };
         } else {
-          // Reset failed login attempts
           userDetails.loginAttempts = 0;
           await this.user.save(userDetails);
         }
       }
-
-      // Check password
+  
       const isMatch = await bcrypt.compare(password, userDetails.encryptpassword);
-
       if (isMatch) {
-        // Reset failed login attempts on successful login
         userDetails.loginAttempts = 0;
         userDetails.lastLoginAttempt = null;
         await this.user.save(userDetails);
-
-        // Generate OTP
+  
         const otp = this.generateOTP();
-
-        // Send OTP via SMS and/or other methods
         await this.sendSMS(userDetails.userName, userDetails.contactNo, otp);
         await this.sendMessage(userDetails.userName, userDetails.contactNo, otp);
-
-        // Save OTP and timestamp to user record
+  
         userDetails.otp = otp;
         userDetails.otpCreatedAt = new Date();
         await this.user.save(userDetails);
-
-        // Generate JWT token
+  
         const payload = { userId: userDetails.userId, otp: otp };
         const token = this.jwtService.sign(payload, { expiresIn: '100m' });
-
+  
         return {
           errorCode: 0,
           message: 'Successfully logged in',
           token,
         };
       } else {
-        // Increment failed login attempts
         userDetails.loginAttempts++;
         userDetails.lastLoginAttempt = new Date();
         await this.user.save(userDetails);
-
-        // Check if user is now locked out
+  
         if (userDetails.loginAttempts >= maxLoginAttempts) {
           return {
             errorCode: 1,
-            message: `Too many failed attempts. Please wait 1 minute before trying again.`,
+            message: 'Too many failed attempts. Please wait 1 minute before trying again.',
           };
         } else {
           return {
@@ -139,7 +133,7 @@ export class AuthService {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error during login process:', error);
       throw new BadRequestException('Something went wrong');
     }
   }
@@ -395,9 +389,7 @@ export class AuthService {
       });
       
      return [response1,response3, response2,response4, response5,response10,response11,response12];
-    
-    
-   
+
      // return [response1];
     } catch (error) {
       throw new Error(error.response.data);
@@ -539,7 +531,8 @@ export class AuthService {
 
       return {
         errorCode: 0,
-        result: { ...payload, token },
+       // result: { ...payload, token },
+       message:"valid token"
       };
     } catch (error) {
       // Handle the error here

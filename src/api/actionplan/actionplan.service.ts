@@ -119,13 +119,9 @@ async getmunibyid(urbanCode: number) {
 
     async getpedabyid(id: number) {
         let dept; // Declare dept before the try block
-      
-     
+
             dept = await this.pedestalMaster.findOne({ where: { id },  select: ["pedestalName","id"] });
-        
-      
-       
-      
+
           return { errorCode: 0, result: dept };
     
          

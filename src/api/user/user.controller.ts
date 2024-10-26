@@ -28,10 +28,10 @@ export class UserController {
    }
 
 
-  //  @Get('viewuser/:userIndex') // This decorator defines a GET endpoint for retrieving a PCB by ID
-  //  async viewPcbById(@Param('userIndex') userIndex: number) {
-  //    return this.userService.viewUserById(userIndex); // Delegate retrieval to the service
-  //  }
+   @Get('getuser/:userIndex') // This decorator defines a GET endpoint for retrieving a PCB by ID
+   async viewPcbById(@Param('userIndex') userIndex: number) {
+     return this.userService.viewUserById(userIndex); // Delegate retrieval to the service
+   }
 
 
   @Get('viewuser')

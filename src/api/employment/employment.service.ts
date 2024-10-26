@@ -507,339 +507,598 @@ async getDepatmentbyid(departmentNo: number) {
         return `REQ${random6Digits}`;
       }
       
-      async creatediretemp(createDto: EmploymentDto) {
-        try {
-          const employmentID = this.generateEMPID();
-          const newWorkAllocations = [];
-          const workAllocationIDs = [];
-          const newRequsitions = [];
+//       async creatediretemp(createDto: EmploymentDto) {
+//         try {
+//           const employmentID = this.generateEMPID();
+//           const newWorkAllocations = [];
+//           const workAllocationIDs = [];
+//           const newRequsitions = [];
   
-          for (const employmentDto of createDto.CreateEmploymentDtos) {
-              const masterWorker = this.masterWorkerRequirement.create({
-                  gpCode: employmentDto.gpCode || null,
-                  workCodeSchemeID: employmentDto.schemeId || null,
-                  ContractorID: employmentDto.ContractorID || null,
-                  currentMonth: employmentDto.currentMonth || null,
-                  FundingDeptname: employmentDto.FundingDeptname || null,
-                  departmentNo: employmentDto.departmentNo || null,
-                  districtcode: employmentDto.districtcode || null,
-                  municipalityCode: employmentDto.municipalityCode || null,
-                  fromDate:employmentDto.workAllocationFromDate||null,
-                  blockcode: employmentDto.blockcode || null,
-                  noOfDays: employmentDto.noOfDaysWorkDemanded || null,
-                  currentYear: employmentDto.currentYear || null,
-                  userIndex: employmentDto.userIndex || null,
-                  schemeArea: employmentDto.schemeArea || null,
-                  finYear: employmentDto.finYear || null,
-                  contactPersonName: null,
-                  contactPersonPhoneNumber: null,
-              });
+//           for (const employmentDto of createDto.CreateEmploymentDtos) {
+//               const masterWorker = this.masterWorkerRequirement.create({
+//                   gpCode: employmentDto.gpCode || null,
+//                   workCodeSchemeID: employmentDto.schemeId || null,
+//                   ContractorID: employmentDto.ContractorID || null,
+//                   currentMonth: employmentDto.currentMonth || null,
+//                   FundingDeptname: employmentDto.FundingDeptname || null,
+//                   departmentNo: employmentDto.departmentNo || null,
+//                   districtcode: employmentDto.districtcode || null,
+//                   municipalityCode: employmentDto.municipalityCode || null,
+//                   fromDate:employmentDto.workAllocationFromDate||null,
+//                   blockcode: employmentDto.blockcode || null,
+//                   noOfDays: employmentDto.noOfDaysWorkDemanded || null,
+//                   currentYear: employmentDto.currentYear || null,
+//                   userIndex: employmentDto.userIndex || null,
+//                   schemeArea: employmentDto.schemeArea || null,
+//                   finYear: employmentDto.finYear || null,
+//                   contactPersonName: null,
+//                   contactPersonPhoneNumber: null,
+//               });
   
-              const randomNum = this.generateEMPID2();
-              masterWorker.workerreqID = randomNum;
+//               const randomNum = this.generateEMPID2();
+//               masterWorker.workerreqID = randomNum;
   
-              const savedMasterScheme = await this.masterWorkerRequirement.save(masterWorker);
+//               const savedMasterScheme = await this.masterWorkerRequirement.save(masterWorker);
   
-              const masterAllotment: MasterWorkerRequirement_allotment[] = [];
-              const gpCode = masterWorker.gpCode;
-              const workCodeSchemeID = masterWorker.workCodeSchemeID;
-              const contractorID = masterWorker.ContractorID;
-              const currentMonthWork = masterWorker.currentMonth;
-              const workerreqID = savedMasterScheme.workerreqID;
+//               const masterAllotment: MasterWorkerRequirement_allotment[] = [];
+//               const gpCode = masterWorker.gpCode;
+//               const workCodeSchemeID = masterWorker.workCodeSchemeID;
+//               const contractorID = masterWorker.ContractorID;
+//               const currentMonthWork = masterWorker.currentMonth;
+//               const workerreqID = savedMasterScheme.workerreqID;
 
 
-              for (const createWorkAllotDto of createDto.CreateEmploymentDtos) {
-                const fromDate = new Date(employmentDto.workAllocationFromDate);
-                const toDate = addDays(fromDate, employmentDto.noOfDaysWorkDemanded);
+//               for (const createWorkAllotDto of createDto.CreateEmploymentDtos) {
+//                 const fromDate = new Date(employmentDto.workAllocationFromDate);
+//                 const toDate = addDays(fromDate, employmentDto.noOfDaysWorkDemanded);
     
-                // Iterate over each day within the range
-                for (let currentDate = fromDate; currentDate <= toDate; currentDate = addDays(currentDate, 1)) {
+//                 // Iterate over each day within the range
+//                 for (let currentDate = fromDate; currentDate <= toDate; currentDate = addDays(currentDate, 1)) {
           
-                  const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
-                      workerreqID: workerreqID,
-                      skilledWorkers: createWorkAllotDto.skilledWorkers,
-                      unskilledWorkers: createWorkAllotDto.unskilledWorkers,
-                      semiSkilledWorkers: createWorkAllotDto.semiSkilledWorkers,
-                      dateofwork: createWorkAllotDto.workAllocationFromDate,
-                      FundingDeptname: masterWorker.FundingDeptname,
-                      gpCode: gpCode,
-                      workCodeSchemeID: workCodeSchemeID,
-                      contractorID: contractorID,
-                      currentMonthWork: currentMonthWork,
-                      departmentNo: masterWorker.departmentNo,
-                      districtcode: masterWorker.districtcode,
-                      municipalityCode: masterWorker.municipalityCode,
-                      blockcode: masterWorker.blockcode,
-                      currentYearWork: masterWorker.currentYear,
-                      userIndex: masterWorker.userIndex,
-                      schemeArea: masterWorker.schemeArea,
-                      finYearWork: masterWorker.finYear,
-                      contactPersonName: masterWorker.contactPersonName,
-                      contactPersonPhoneNumber: masterWorker.contactPersonPhoneNumber,
-                  });
+//                   const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
+//                       workerreqID: workerreqID,
+//                       skilledWorkers: createWorkAllotDto.skilledWorkers,
+//                       unskilledWorkers: createWorkAllotDto.unskilledWorkers,
+//                       semiSkilledWorkers: createWorkAllotDto.semiSkilledWorkers,
+//                       dateofwork: createWorkAllotDto.workAllocationFromDate,
+//                       FundingDeptname: masterWorker.FundingDeptname,
+//                       gpCode: gpCode,
+//                       workCodeSchemeID: workCodeSchemeID,
+//                       contractorID: contractorID,
+//                       currentMonthWork: currentMonthWork,
+//                       departmentNo: masterWorker.departmentNo,
+//                       districtcode: masterWorker.districtcode,
+//                       municipalityCode: masterWorker.municipalityCode,
+//                       blockcode: masterWorker.blockcode,
+//                       currentYearWork: masterWorker.currentYear,
+//                       userIndex: masterWorker.userIndex,
+//                       schemeArea: masterWorker.schemeArea,
+//                       finYearWork: masterWorker.finYear,
+//                       contactPersonName: masterWorker.contactPersonName,
+//                       contactPersonPhoneNumber: masterWorker.contactPersonPhoneNumber,
+//                   });
   
-                  await this.masterWorkerRequirementallotment.save(newMasterWorkerAllotment);
-                  masterAllotment.push(newMasterWorkerAllotment);
-                  ///console.log(newMasterWorkerAllotment);
-              }
-            }
-              const existingRecords = await this.masterWorkerRequirementallotment.find({
-                  where: { workerreqID: workerreqID }
-              });
+//                   await this.masterWorkerRequirementallotment.save(newMasterWorkerAllotment);
+//                   masterAllotment.push(newMasterWorkerAllotment);
+//                   ///console.log(newMasterWorkerAllotment);
+//               }
+//             }
+//               const existingRecords = await this.masterWorkerRequirementallotment.find({
+//                   where: { workerreqID: workerreqID }
+//               });
   
-              // Calculate total unskilled workers and current time
-              const totalUnskilledWorkers = createDto.CreateEmploymentDtos.length;
-              const submitTime = new Date();
+//               // Calculate total unskilled workers and current time
+//               const totalUnskilledWorkers = createDto.CreateEmploymentDtos.length;
+//               const submitTime = new Date();
   
-              // Ensure that the workAllocationID is correctly set
-              const newWorkAllocationID = await this.generateWorkAllocationID(employmentDto.departmentNo);
+//               // Ensure that the workAllocationID is correctly set
+//               const newWorkAllocationID = await this.generateWorkAllocationID(employmentDto.departmentNo);
   
-              // Update each existing record
-              for (const existingRecord of existingRecords) {
-//console.log(existingRecord);
-                  await this.masterWorkerRequirementallotment.update(
-                      { workersl: existingRecord.workersl },
-                      {
-                          allocationID: newWorkAllocationID,
-                          allotmentuserIndex: createDto.CreateEmploymentDtos[0].userIndex,
-                          dateofallotment: submitTime,
-                          noUnskilledWorkers: totalUnskilledWorkers,
-                          currentMonthAllot: createDto.CreateEmploymentDtos[0].currentMonth,
-                          currentYearAllot: createDto.CreateEmploymentDtos[0].currentYear,
-                          finYearAllot: createDto.CreateEmploymentDtos[0].finYear,
-                      }
-                  );
-              }
-              const department = await this.getDepatmentbyid( createDto.CreateEmploymentDtos[0].departmentNo);
-              const departmentName = department.result?.deptshort|| '';
-              //console.log(departmentName)
-             // console.log(createDto.CreateEmploymentDtos[0].departmentNo)
-              // Generate the work allocation ID using the department name
-              const workAllocationID = await this.generateWorkAllocationID(departmentName);
-              // Create and save WorkAllocation record
-              const newWorkAllocation = this.workallocation.create({
-                  workAllocationID: workAllocationID,
-                  schemeArea: employmentDto.schemeArea,
-                  departmentNo: employmentDto.departmentNo,
-                  districtcode: employmentDto.districtcode,
-                  municipalityCode: employmentDto.municipalityCode,
-                  blockcode: employmentDto.blockcode,
-                  gpCode: employmentDto.gpCode,
-                  workerJobCardNo: employmentDto.workerJobCardNo,
-                  workerName: employmentDto.workerName,
-                  workallocstatus: "1",
+//               // Update each existing record
+//               for (const existingRecord of existingRecords) {
+// //console.log(existingRecord);
+//                   await this.masterWorkerRequirementallotment.update(
+//                       { workersl: existingRecord.workersl },
+//                       {
+//                           allocationID: newWorkAllocationID,
+//                           allotmentuserIndex: createDto.CreateEmploymentDtos[0].userIndex,
+//                           dateofallotment: submitTime,
+//                           noUnskilledWorkers: totalUnskilledWorkers,
+//                           currentMonthAllot: createDto.CreateEmploymentDtos[0].currentMonth,
+//                           currentYearAllot: createDto.CreateEmploymentDtos[0].currentYear,
+//                           finYearAllot: createDto.CreateEmploymentDtos[0].finYear,
+//                       }
+//                   );
+//               }
+//               const department = await this.getDepatmentbyid( createDto.CreateEmploymentDtos[0].departmentNo);
+//               const departmentName = department.result?.deptshort|| '';
+//               //console.log(departmentName)
+//              // console.log(createDto.CreateEmploymentDtos[0].departmentNo)
+//               // Generate the work allocation ID using the department name
+//               const workAllocationID = await this.generateWorkAllocationID(departmentName);
+//               // Create and save WorkAllocation record
+//               const newWorkAllocation = this.workallocation.create({
+//                   workAllocationID: workAllocationID,
+//                   schemeArea: employmentDto.schemeArea,
+//                   departmentNo: employmentDto.departmentNo,
+//                   districtcode: employmentDto.districtcode,
+//                   municipalityCode: employmentDto.municipalityCode,
+//                   blockcode: employmentDto.blockcode,
+//                   gpCode: employmentDto.gpCode,
+//                   workerJobCardNo: employmentDto.workerJobCardNo,
+//                   workerName: employmentDto.workerName,
+//                   workallocstatus: "1",
                  
-                  noOfDaysWorkAlloted: employmentDto.noOfDaysWorkAlloted,
-                  workAllocationFromDate: employmentDto.workAllocationFromDate,
-                  workAllocationToDate: employmentDto.workAllocationToDate,
-                  currentMonth: employmentDto.currentMonth,
-                  currentYear: employmentDto.currentYear,
-                  finYear: employmentDto.finYear,
-                  userIndex: employmentDto.userIndex,
-                  demanduniqueID: employmentDto.demandid,
-                  schemeId: employmentDto.scheme_Id,
-                  schemeName:  employmentDto.schemeName,
-                  dateOfApplicationForWork: employmentDto.dateOfApplicationForWork,
-                  noOfDaysWorkDemanded: employmentDto.noOfDaysWorkDemanded
-              });
+//                   noOfDaysWorkAlloted: employmentDto.noOfDaysWorkAlloted,
+//                   workAllocationFromDate: employmentDto.workAllocationFromDate,
+//                   workAllocationToDate: employmentDto.workAllocationToDate,
+//                   currentMonth: employmentDto.currentMonth,
+//                   currentYear: employmentDto.currentYear,
+//                   finYear: employmentDto.finYear,
+//                   userIndex: employmentDto.userIndex,
+//                   demanduniqueID: employmentDto.demandid,
+//                   schemeId: employmentDto.scheme_Id,
+//                   schemeName:  employmentDto.schemeName,
+//                   dateOfApplicationForWork: employmentDto.dateOfApplicationForWork,
+//                   noOfDaysWorkDemanded: employmentDto.noOfDaysWorkDemanded
+//               });
   
-              await this.workallocation.save(newWorkAllocation);
-              workAllocationIDs.push(newWorkAllocationID);
+//               await this.workallocation.save(newWorkAllocation);
+//               workAllocationIDs.push(newWorkAllocationID);
   
-              const workerJobCardNos = createDto.CreateEmploymentDtos.map(dto => dto.workerJobCardNo);
-              const demanduniqueIDs = createDto.CreateEmploymentDtos.map(dto => dto.demandid);
+//               const workerJobCardNos = createDto.CreateEmploymentDtos.map(dto => dto.workerJobCardNo);
+//               const demanduniqueIDs = createDto.CreateEmploymentDtos.map(dto => dto.demandid);
   
-              // Fetch and update records in DemandMaster
-              const demandMasterRecords = await this.demandMaster.find({
-                  where: {
-                      workerJobCardNo: In(workerJobCardNos),
-                      demanduniqueID: In(demanduniqueIDs)
-                  },
-              });
+//               // Fetch and update records in DemandMaster
+//               const demandMasterRecords = await this.demandMaster.find({
+//                   where: {
+//                       workerJobCardNo: In(workerJobCardNos),
+//                       demanduniqueID: In(demanduniqueIDs)
+//                   },
+//               });
   
-              // Calculate the total work days for each job card number and demand unique ID
-              const totalWorkDaysMap = new Map();
+//               // Calculate the total work days for each job card number and demand unique ID
+//               const totalWorkDaysMap = new Map();
   
-              for (let i = 0; i < createDto.CreateEmploymentDtos.length; i++) {
-                  const workAllocationDto = createDto.CreateEmploymentDtos[i];
-                  const key = `${workAllocationDto.workerJobCardNo}-${workAllocationDto.demandid}`;
-                  const startDate = new Date(workAllocationDto.workAllocationFromDate);
-                  const endDate = new Date(workAllocationDto.workAllocationToDate);
-                  const workDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+//               for (let i = 0; i < createDto.CreateEmploymentDtos.length; i++) {
+//                   const workAllocationDto = createDto.CreateEmploymentDtos[i];
+//                   const key = `${workAllocationDto.workerJobCardNo}-${workAllocationDto.demandid}`;
+//                   const startDate = new Date(workAllocationDto.workAllocationFromDate);
+//                   const endDate = new Date(workAllocationDto.workAllocationToDate);
+//                   const workDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
   
-                  if (totalWorkDaysMap.has(key)) {
-                      totalWorkDaysMap.set(key, totalWorkDaysMap.get(key) + workDays);
-                  } else {
-                      totalWorkDaysMap.set(key, workDays);
-                  }
+//                   if (totalWorkDaysMap.has(key)) {
+//                       totalWorkDaysMap.set(key, totalWorkDaysMap.get(key) + workDays);
+//                   } else {
+//                       totalWorkDaysMap.set(key, workDays);
+//                   }
   
-                  const newAllotment = this.Demandallotmenthistroy.create({
-                      allotmentuserIndex: workAllocationDto.userIndex,
-                      allocationID: workAllocationID,
-                      workerJobCardNo: workAllocationDto.workerJobCardNo,
-                      demanduniqueID: workAllocationDto.demandid,
-                      workAllotedstatus: "1",
-                      finYear_work: workAllocationDto.finYear,
-                      CurrentMonth_allot: workAllocationDto.currentMonth,
-                      CurrentYear_allot: workAllocationDto.currentYear,
-                      finYear_allot: workAllocationDto.finYear,
-                      dateofallotmentfrom: workAllocationDto.workAllocationFromDate,
-                      dateofallotmentto: workAllocationDto.workAllocationToDate,
-                  });
-                  await this.Demandallotmenthistroy.save(newAllotment);
-              }
+//                   const newAllotment = this.Demandallotmenthistroy.create({
+//                       allotmentuserIndex: workAllocationDto.userIndex,
+//                       allocationID: workAllocationID,
+//                       workerJobCardNo: workAllocationDto.workerJobCardNo,
+//                       demanduniqueID: workAllocationDto.demandid,
+//                       workAllotedstatus: "1",
+//                       finYear_work: workAllocationDto.finYear,
+//                       CurrentMonth_allot: workAllocationDto.currentMonth,
+//                       CurrentYear_allot: workAllocationDto.currentYear,
+//                       finYear_allot: workAllocationDto.finYear,
+//                       dateofallotmentfrom: workAllocationDto.workAllocationFromDate,
+//                       dateofallotmentto: workAllocationDto.workAllocationToDate,
+//                   });
+//                   await this.Demandallotmenthistroy.save(newAllotment);
+//               }
   
-              for (let i = 0; i < createDto.CreateEmploymentDtos.length; i++) {
-                  const workAllocationDto = createDto.CreateEmploymentDtos[i];
-                  const key = `${workAllocationDto.workerJobCardNo}-${workAllocationDto.demandid}`;
-                  const totalWorkDays = totalWorkDaysMap.get(key);
+//               for (let i = 0; i < createDto.CreateEmploymentDtos.length; i++) {
+//                   const workAllocationDto = createDto.CreateEmploymentDtos[i];
+//                   const key = `${workAllocationDto.workerJobCardNo}-${workAllocationDto.demandid}`;
+//                   const totalWorkDays = totalWorkDaysMap.get(key);
   
-                  const matchingDemandMaster = demandMasterRecords.find(record =>
-                      record.workerJobCardNo === workAllocationDto.workerJobCardNo &&
-                      record.demanduniqueID === workAllocationDto.demandid
-                  );
+//                   const matchingDemandMaster = demandMasterRecords.find(record =>
+//                       record.workerJobCardNo === workAllocationDto.workerJobCardNo &&
+//                       record.demanduniqueID === workAllocationDto.demandid
+//                   );
   
-                  if (matchingDemandMaster) {
-                      if (matchingDemandMaster.workallostatus === "0") {
-                          matchingDemandMaster.total_pending = workAllocationDto.noOfDaysWorkDemanded - totalWorkDays;
-                          matchingDemandMaster.total_pending = Math.max(matchingDemandMaster.total_pending, 0);
-                          matchingDemandMaster.workallostatus = "1";
-                      } else if (matchingDemandMaster.workallostatus === "1") {
-                          matchingDemandMaster.total_pending -= workAllocationDto.noOfDaysWorkAlloted;
-                          matchingDemandMaster.total_pending = Math.max(matchingDemandMaster.total_pending, 0);
-                      }
-                      matchingDemandMaster.dateoflastallocation = workAllocationDto.workAllocationToDate;
+//                   if (matchingDemandMaster) {
+//                       if (matchingDemandMaster.workallostatus === "0") {
+//                           matchingDemandMaster.total_pending = workAllocationDto.noOfDaysWorkDemanded - totalWorkDays;
+//                           matchingDemandMaster.total_pending = Math.max(matchingDemandMaster.total_pending, 0);
+//                           matchingDemandMaster.workallostatus = "1";
+//                       } else if (matchingDemandMaster.workallostatus === "1") {
+//                           matchingDemandMaster.total_pending -= workAllocationDto.noOfDaysWorkAlloted;
+//                           matchingDemandMaster.total_pending = Math.max(matchingDemandMaster.total_pending, 0);
+//                       }
+//                       matchingDemandMaster.dateoflastallocation = workAllocationDto.workAllocationToDate;
   
-                      await this.demandMaster.save(matchingDemandMaster);
-                  } else {
-                      console.log("No matching record found for:", {
-                          workerJobCardNo: workAllocationDto.workerJobCardNo,
-                          demanduniqueID: workAllocationDto.demandid,
-                      });
-                  }
-              }
+//                       await this.demandMaster.save(matchingDemandMaster);
+//                   } else {
+//                       console.log("No matching record found for:", {
+//                           workerJobCardNo: workAllocationDto.workerJobCardNo,
+//                           demanduniqueID: workAllocationDto.demandid,
+//                       });
+//                   }
+//               }
           
             
                          
-                // Prepare the Employment record
-                const newEmployment = this.employment.create({
-                    employmentID,
-                    schemeArea: employmentDto.schemeArea,
-                    departmentNo: employmentDto.departmentNo,
-                    districtcode: employmentDto.districtcode,
-                    municipalityCode: employmentDto.municipalityCode,
-                    blockcode: employmentDto.blockcode,
-                    gpCode: employmentDto.gpCode,
-                    schemeId: employmentDto.schemeId,
-                    demandid: employmentDto.demandid,
-                    schemeSector: employmentDto.schemeSector,
-                    FundingDepttID: employmentDto.FundingDepttID,
-                    FundingDeptname: employmentDto.FundingDeptname,
-                    ExecutingDepttID: employmentDto.ExecutingDepttID,
-                    ExecutingDeptName: employmentDto.ExecutingDeptName,
-                    ImplementingAgencyID: employmentDto.ImplementingAgencyID,
-                    ImplementingAgencyName: employmentDto.ImplementingAgencyName,
-                    workAllocationID:workAllocationID,
-                    workerJobCardNo: employmentDto.workerJobCardNo,
-                    workerName: employmentDto.workerName,
-                    workAllocationFromDate: employmentDto.workAllocationFromDate,
-                    workAllocationToDate: employmentDto.workAllocationToDate,
-                    noOfDaysWorkAlloted: employmentDto.noOfDaysWorkAlloted,
-                    totalWagePaid: employmentDto.totalWagePaid,
-                    empProvidedfrom: employmentDto.empProvidedfrom,
-                    empProvidedto: employmentDto.empProvidedto,
-                    dateOfPayment: employmentDto.dateOfPayment,
-                    noOfDaysWorProvided: employmentDto.noOfDaysWorProvided,
-                    currentMonth: employmentDto.currentMonth,
-                    currentYear: employmentDto.currentYear,
-                    finYear: employmentDto.finYear,
-                    attandance: employmentDto.attandance,
-                    userIndex: employmentDto.userIndex,
-                      directempstatus:"Y",
-                });
-                newWorkAllocations.push(newEmployment);
-            }
+//                 // Prepare the Employment record
+//                 const newEmployment = this.employment.create({
+//                     employmentID,
+//                     schemeArea: employmentDto.schemeArea,
+//                     departmentNo: employmentDto.departmentNo,
+//                     districtcode: employmentDto.districtcode,
+//                     municipalityCode: employmentDto.municipalityCode,
+//                     blockcode: employmentDto.blockcode,
+//                     gpCode: employmentDto.gpCode,
+//                     schemeId: employmentDto.schemeId,
+//                     demandid: employmentDto.demandid,
+//                     schemeSector: employmentDto.schemeSector,
+//                     FundingDepttID: employmentDto.FundingDepttID,
+//                     FundingDeptname: employmentDto.FundingDeptname,
+//                     ExecutingDepttID: employmentDto.ExecutingDepttID,
+//                     ExecutingDeptName: employmentDto.ExecutingDeptName,
+//                     ImplementingAgencyID: employmentDto.ImplementingAgencyID,
+//                     ImplementingAgencyName: employmentDto.ImplementingAgencyName,
+//                     workAllocationID:workAllocationID,
+//                     workerJobCardNo: employmentDto.workerJobCardNo,
+//                     workerName: employmentDto.workerName,
+//                     workAllocationFromDate: employmentDto.workAllocationFromDate,
+//                     workAllocationToDate: employmentDto.workAllocationToDate,
+//                     noOfDaysWorkAlloted: employmentDto.noOfDaysWorkAlloted,
+//                     totalWagePaid: employmentDto.totalWagePaid,
+//                     empProvidedfrom: employmentDto.empProvidedfrom,
+//                     empProvidedto: employmentDto.empProvidedto,
+//                     dateOfPayment: employmentDto.dateOfPayment,
+//                     noOfDaysWorProvided: employmentDto.noOfDaysWorProvided,
+//                     currentMonth: employmentDto.currentMonth,
+//                     currentYear: employmentDto.currentYear,
+//                     finYear: employmentDto.finYear,
+//                     attandance: employmentDto.attandance,
+//                     userIndex: employmentDto.userIndex,
+//                       directempstatus:"Y",
+//                 });
+//                 newWorkAllocations.push(newEmployment);
+//             }
     
-            // Save all Employment records
-            const result = await this.employment.save(newWorkAllocations);
+//             // Save all Employment records
+//             const result = await this.employment.save(newWorkAllocations);
     
-            // Backtrack calculations
-            const demanduniqueIDs = createDto.CreateEmploymentDtos.map(dto => dto.demandid);
-            const schemeIds = createDto.CreateEmploymentDtos.map(dto => dto.schemeId);
-            const totalWagePaid = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalWagePaid, 0);
-            const personDaysGeneratedProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.noOfDaysWorkAlloted, 0);
-            const totalLabourProvided = createDto.CreateEmploymentDtos.length;
+//             // Backtrack calculations
+//             const demanduniqueIDs = createDto.CreateEmploymentDtos.map(dto => dto.demandid);
+//             const schemeIds = createDto.CreateEmploymentDtos.map(dto => dto.schemeId);
+//             const totalWagePaid = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalWagePaid, 0);
+//             const personDaysGeneratedProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.noOfDaysWorkAlloted, 0);
+//             const totalLabourProvided = createDto.CreateEmploymentDtos.length;
     
-            const schemes = await this.masterSchemeRepository.findByIds(schemeIds);
-            const updates = schemes.map(scheme => ({
-              scheme_sl:scheme.scheme_sl,
-                schemeId: scheme.schemeId,
-                totalCostprovided: scheme.totalCostprovided + totalWagePaid,
-                totalLabourprovided: scheme.totalLabourprovided + totalLabourProvided,
-                personDaysGeneratedprovided: scheme.personDaysGeneratedprovided + personDaysGeneratedProvided,
-            }));
+//             const schemes = await this.masterSchemeRepository.findByIds(schemeIds);
+//             const updates = schemes.map(scheme => ({
+//               scheme_sl:scheme.scheme_sl,
+//                 schemeId: scheme.schemeId,
+//                 totalCostprovided: scheme.totalCostprovided + totalWagePaid,
+//                 totalLabourprovided: scheme.totalLabourprovided + totalLabourProvided,
+//                 personDaysGeneratedprovided: scheme.personDaysGeneratedprovided + personDaysGeneratedProvided,
+//             }));
     
-            await Promise.all([
-                this.workallocation.update(
-                    { workAllocationID: In(workAllocationIDs) },
-                    { empId: employmentID, empStatus: "1" }
-                ),
-                this.Demandallotmenthistroy.update(
-                    { demanduniqueID: In(demanduniqueIDs) },
-                    { empid: employmentID, empStatus: "1" }
-                ),
-                ...updates.map(update =>
-                    this.masterSchemeRepository.update(
-                        { schemeId: update.schemeId },
-                        {
-                            totalCostprovided: update.totalCostprovided,
-                            totalLabourprovided: update.totalLabourprovided,
-                            personDaysGeneratedprovided: update.personDaysGeneratedprovided,
-                        }
-                    )
-                )
-                 ,   
-              ...updates.map(update => 
-              this.MasterSchemeExpendutureRepository.update(
-                { schemeId: update.scheme_sl },
-                {
+//             await Promise.all([
+//                 this.workallocation.update(
+//                     { workAllocationID: In(workAllocationIDs) },
+//                     { empId: employmentID, empStatus: "1" }
+//                 ),
+//                 this.Demandallotmenthistroy.update(
+//                     { demanduniqueID: In(demanduniqueIDs) },
+//                     { empid: employmentID, empStatus: "1" }
+//                 ),
+//                 ...updates.map(update =>
+//                     this.masterSchemeRepository.update(
+//                         { schemeId: update.schemeId },
+//                         {
+//                             totalCostprovided: update.totalCostprovided,
+//                             totalLabourprovided: update.totalLabourprovided,
+//                             personDaysGeneratedprovided: update.personDaysGeneratedprovided,
+//                         }
+//                     )
+//                 )
+//                  ,   
+//               ...updates.map(update => 
+//               this.MasterSchemeExpendutureRepository.update(
+//                 { schemeId: update.scheme_sl },
+//                 {
     
                   
       
-        totalWageCost: update.totalCostprovided,
+//         totalWageCost: update.totalCostprovided,
     
     
-        totalLabour:update.totalLabourprovided,
+//         totalLabour:update.totalLabourprovided,
     
      
-        personDaysGenerated:update.personDaysGeneratedprovided,
+//         personDaysGenerated:update.personDaysGeneratedprovided,
     
       
-        totalUnskilledWorkers: update.totalLabourprovided,
+//         totalUnskilledWorkers: update.totalLabourprovided,
     
-                }
-            )
-          )
-          ]);
+//                 }
+//             )
+//           )
+//           ]);
       
-            return {
-                errorCode: 0,
-                message: "Employment Created Successfully",
-                employment: employmentID,
-            };
-        } catch (error) {
-            return {
-                errorCode: 1,
-                message: "Something went wrong: " + error.message,
-            };
-        }
-    }
+//             return {
+//                 errorCode: 0,
+//                 message: "Employment Created Successfully",
+//                 employment: employmentID,
+//             };
+//         } catch (error) {
+//             return {
+//                 errorCode: 1,
+//                 message: "Something went wrong: " + error.message,
+//             };
+//         }
+//     }
     
  
-    
+async creatediretemp(createDto: EmploymentDto) {
+    try {
+        const employmentID = this.generateEMPID();
+        const newWorkAllocations = [];
+        const workAllocationIDs = [];
+        const newRequisitions = [];
+        const totalWorkDaysMap = new Map();
+
+        for (const employmentDto of createDto.CreateEmploymentDtos) {
+            const masterWorker = this.masterWorkerRequirement.create({
+                gpCode: employmentDto.gpCode || null,
+                workCodeSchemeID: employmentDto.schemeId || null,
+                ContractorID: employmentDto.ContractorID || null,
+                currentMonth: employmentDto.currentMonth || null,
+                FundingDeptname: employmentDto.FundingDeptname || null,
+                departmentNo: employmentDto.departmentNo || null,
+                districtcode: employmentDto.districtcode || null,
+                municipalityCode: employmentDto.municipalityCode || null,
+                fromDate: employmentDto.workAllocationFromDate || null,
+                blockcode: employmentDto.blockcode || null,
+                noOfDays: employmentDto.noOfDaysWorkDemanded || null,
+                currentYear: employmentDto.currentYear || null,
+                userIndex: employmentDto.userIndex || null,
+                schemeArea: employmentDto.schemeArea || null,
+                finYear: employmentDto.finYear || null,
+                contactPersonName: null,
+                contactPersonPhoneNumber: null,
+            });
+
+            const randomNum = this.generateEMPID2();
+            masterWorker.workerreqID = randomNum;
+
+            const savedMasterScheme = await this.masterWorkerRequirement.save(masterWorker);
+            const workerreqID = savedMasterScheme.workerreqID;
+
+            const fromDate = new Date(employmentDto.workAllocationFromDate);
+            const toDate = new Date(employmentDto.workAllocationToDate);
+
+            // Iterate over each day within the range
+            for (let currentDate = fromDate; currentDate <= toDate; currentDate = this.addDays(currentDate, 1)) {
+                const newMasterWorkerAllotment = this.masterWorkerRequirementallotment.create({
+                    workerreqID: workerreqID,
+                    skilledWorkers: employmentDto.skilledWorkers,
+                    unskilledWorkers: employmentDto.unskilledWorkers,
+                    semiSkilledWorkers: employmentDto.semiSkilledWorkers,
+                    dateofwork: currentDate,
+                    FundingDeptname: masterWorker.FundingDeptname,
+                    gpCode: masterWorker.gpCode,
+                    workCodeSchemeID: masterWorker.workCodeSchemeID,
+                    contractorID: masterWorker.ContractorID,
+                    currentMonthWork: masterWorker.currentMonth,
+                    departmentNo: masterWorker.departmentNo,
+                    districtcode: masterWorker.districtcode,
+                    municipalityCode: masterWorker.municipalityCode,
+                    blockcode: masterWorker.blockcode,
+                    currentYearWork: masterWorker.currentYear,
+                    userIndex: masterWorker.userIndex,
+                    schemeArea: masterWorker.schemeArea,
+                    finYearWork: masterWorker.finYear,
+                    contactPersonName: masterWorker.contactPersonName,
+                    contactPersonPhoneNumber: masterWorker.contactPersonPhoneNumber,
+                });
+
+                await this.masterWorkerRequirementallotment.save(newMasterWorkerAllotment);
+            }
+
+            const newWorkAllocationID = await this.generateWorkAllocationID(employmentDto.departmentNo);
+            workAllocationIDs.push(newWorkAllocationID);
+
+            const key = `${employmentDto.workerJobCardNo}-${employmentDto.demandid}`;
+            const workDays = this.calculateWorkDays(fromDate, toDate);
+
+            if (totalWorkDaysMap.has(key)) {
+                totalWorkDaysMap.set(key, totalWorkDaysMap.get(key) + workDays);
+            } else {
+                totalWorkDaysMap.set(key, workDays);
+            }
+
+            const newWorkAllocation = this.workallocation.create({
+                workAllocationID: newWorkAllocationID,
+                schemeArea: employmentDto.schemeArea,
+                departmentNo: employmentDto.departmentNo,
+                districtcode: employmentDto.districtcode,
+                municipalityCode: employmentDto.municipalityCode,
+                blockcode: employmentDto.blockcode,
+                gpCode: employmentDto.gpCode,
+                workerJobCardNo: employmentDto.workerJobCardNo,
+                workerName: employmentDto.workerName,
+                workallocstatus: "1",
+                noOfDaysWorkAlloted: employmentDto.noOfDaysWorkAlloted,
+                workAllocationFromDate: employmentDto.workAllocationFromDate,
+                workAllocationToDate: employmentDto.workAllocationToDate,
+                currentMonth: employmentDto.currentMonth,
+                currentYear: employmentDto.currentYear,
+                finYear: employmentDto.finYear,
+                userIndex: employmentDto.userIndex,
+                demanduniqueID: employmentDto.demandid,
+                schemeId: employmentDto.scheme_Id,
+                schemeName: employmentDto.schemeName,
+                dateOfApplicationForWork: employmentDto.dateOfApplicationForWork,
+                noOfDaysWorkDemanded: employmentDto.noOfDaysWorkDemanded,
+            });
+
+            await this.workallocation.save(newWorkAllocation);
+
+            newWorkAllocations.push({
+                workerJobCardNo: employmentDto.workerJobCardNo,
+                demanduniqueID: employmentDto.demandid,
+                totalWorkDaysMap,
+            });
+        }
+
+        // Update DemandMaster records
+        const workerJobCardNos = createDto.CreateEmploymentDtos.map(dto => dto.workerJobCardNo);
+        const demanduniqueIDs = createDto.CreateEmploymentDtos.map(dto => dto.demandid);
+
+        const demandMasterRecords = await this.demandMaster.find({
+            where: {
+                workerJobCardNo: In(workerJobCardNos),
+                demanduniqueID: In(demanduniqueIDs),
+            },
+        });
+
+        for (const record of demandMasterRecords) {
+            const key = `${record.workerJobCardNo}-${record.demanduniqueID}`;
+            const totalWorkDays = totalWorkDaysMap.get(key);
+
+            if (record.workallostatus === "0") {
+                record.total_pending = Math.max(record.total_pending - totalWorkDays, 0);
+                record.workallostatus = "1";
+            } else if (record.workallostatus === "1") {
+                record.total_pending = Math.max(record.total_pending - totalWorkDays, 0);
+            }
+
+            record.dateoflastallocation = new Date();
+
+            await this.demandMaster.save(record);
+        }
+
+        // Save Employment records
+        const result = await this.employment.save(newWorkAllocations);
+
+        // Backtrack calculations and updates
+        const totalWagePaid = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.totalWagePaid, 0);
+        const personDaysGeneratedProvided = createDto.CreateEmploymentDtos.reduce((sum, dto) => sum + dto.noOfDaysWorkAlloted, 0);
+        const totalLabourProvided = createDto.CreateEmploymentDtos.length;
+
+        const schemeIds = createDto.CreateEmploymentDtos.map(dto => dto.schemeId);
+        const schemes = await this.masterSchemeRepository.findByIds(schemeIds);
+
+        const updates = schemes.map(scheme => ({
+            scheme_sl: scheme.scheme_sl,
+            schemeId: scheme.schemeId,
+            totalCostprovided: scheme.totalCostprovided + totalWagePaid,
+            totalLabourprovided: scheme.totalLabourprovided + totalLabourProvided,
+            personDaysGeneratedprovided: scheme.personDaysGeneratedprovided + personDaysGeneratedProvided,
+        }));
+
+        await Promise.all([
+            this.workallocation.update(
+                { workAllocationID: In(workAllocationIDs) },
+                { empId: employmentID, empStatus: "1" }
+            ),
+            this.Demandallotmenthistroy.update(
+                { demanduniqueID: In(demanduniqueIDs) },
+                { empid: employmentID, empStatus: "1" }
+            ),
+            ...updates.map(update =>
+                this.masterSchemeRepository.update(
+                    { schemeId: update.schemeId },
+                    {
+                        totalCostprovided: update.totalCostprovided,
+                        totalLabourprovided: update.totalLabourprovided,
+                        personDaysGeneratedprovided: update.personDaysGeneratedprovided,
+                    }
+                )
+            ),
+            ...updates.map(update =>
+                this.MasterSchemeExpendutureRepository.update(
+                    { schemeId: update.scheme_sl },
+                    {
+                        totalWageCost: update.totalCostprovided,
+                        totalLabour: update.totalLabourprovided,
+                        personDaysGenerated: update.personDaysGeneratedprovided,
+                        totalUnskilledWorkers: update.totalLabourprovided,
+                    }
+                )
+            )
+        ]);
+
+        return {
+            errorCode: 0,
+            message: "Employment Created Successfully",
+            employmentID: employmentID,
+        };
+    } catch (error) {
+        console.error("Error creating employment:", error);
+        throw new Error("Failed to create employment");
+    }
+}
+
+// Utility function to calculate work days
+private calculateWorkDays(fromDate: Date, toDate: Date): number {
+    return Math.ceil((toDate.getTime() - fromDate.getTime()) / (1000 * 3600 * 24)) + 1;
+}
+
+// Utility function to add days to a date
+private addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
 
 
+
+  async getEmploymentSummary(): Promise<any> {
+    return await this.employment.query(`
+      SELECT 
+        md.departmentName,
+        md.departmentNo,
+        COUNT(DISTINCT scheme.districtcode) AS 'No. of Districts where schemes are running',
+        COUNT(
+            CASE WHEN scheme.StatusOfWork = "S" THEN 1
+        END) AS 'Total no. of On-going Schemes where Job Card holders are Employed',
+        COUNT(DISTINCT emp.workerJobCardNo,emp.workerName) AS 'Total no. of On-going Schemes where Job Card holders are Employed',
+     COALESCE(SUM(scheme_exp.totalWageCost), 0) AS 'Total Wage Paid',
+    COALESCE(SUM(scheme_exp.personDaysGenerated), 0) AS 'Total no. of Persondays generated',
+    COALESCE(AVG(emp.noOfDaysWorkAlloted), 0) AS 'Avg. Days of Employment per Unique Household',
+    COALESCE(AVG(scheme_exp.personDaysGenerated), 0) AS Persondays_generated
+      FROM masterdepartment md
+      LEFT JOIN master_scheme scheme ON md.departmentNo = scheme.FundingDepttID AND scheme.finYear = '2024-2025'
+      LEFT JOIN master_scheme_expenduture scheme_exp ON scheme.scheme_sl = scheme_exp.schemeId AND scheme_exp.finYear = '2024-2025'
+      LEFT JOIN employment emp ON scheme.scheme_sl = emp.schemeId AND emp.finYear = '2024-2025'
+      GROUP BY emp.departmentNo, md.departmentName
+      ORDER BY md.departmentName ASC;
+    `);
+  }
+
+
+  async getExecuting_Department(): Promise<any> {
+    return await this.employment.query(`
+     SELECT 
+    md.departmentName AS 'Executing Department',
+    md.departmentNo,
+    COUNT(DISTINCT scheme.districtcode) AS 'No. of Districts where schemes are running',
+    COUNT(
+        CASE WHEN scheme.StatusOfWork = "S" THEN 1
+    END) AS 'Total no. of On-going Schemes where Job Card holders are Employed',
+    COUNT(DISTINCT emp.workerJobCardNo,emp.workerName) AS 'Total no. of On-going Schemes where Job Card holders are Employed',
+ COALESCE(SUM(scheme_exp.totalWageCost), 0) AS 'Total Wage Paid',
+    COALESCE(SUM(scheme_exp.personDaysGenerated), 0) AS 'Total no. of Persondays generated',
+    COALESCE(AVG(emp.noOfDaysWorkAlloted), 0) AS 'Avg. Days of Employment per Unique Household',
+    COALESCE(AVG(scheme_exp.personDaysGenerated), 0) AS Persondays_generated
+FROM masterdepartment md
+LEFT JOIN master_scheme scheme ON md.departmentNo = scheme.ExecutingDepttID AND scheme.finYear = '2024-2025'
+LEFT JOIN master_scheme_expenduture scheme_exp ON scheme.scheme_sl = scheme_exp.schemeId AND scheme_exp.finYear = '2024-2025'
+LEFT JOIN employment emp ON scheme.scheme_sl = emp.schemeId AND emp.finYear = '2024-2025'
+GROUP BY md.departmentNo, md.departmentName
+ORDER BY md.departmentName ASC
+    `);
+  }
+}
 
   
-    }
+    
 
